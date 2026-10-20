@@ -103,12 +103,12 @@ const FACTIONS = {
   xiyu:     { color: '#d8b26e', name: t => (t < -175.5 ? '西域诸国' : '西域诸国（役属匈奴）'), mapName: () => '西域', realm: t => (t < -175.5 ? null : 'xn') },
   sai:      { color: '#8fb8a8', name: () => '塞种' },
   yuezhi:   { color: '#c9a0dc', name: t => (t < -175.5 ? '月氏' : '大月氏') },
-  qiang:    { color: '#d4b896', name: () => '羌' },
+  qiang:    { color: '#c4917a', name: () => '羌' },
   nanyue:   { color: '#a6bd3a', name: t => (t >= -182.8 && t < -178.5 ? '南越（赵佗称帝）' : '南越') },
   minyue:   { color: '#b07d4f', name: () => '闽越' },
   dongou:   { color: '#e0c070', name: () => '东瓯' },
-  chaoxian: { color: '#8fa3b8', name: t => (t < -194.5 ? '朝鲜（箕氏）' : '卫氏朝鲜') },
-  xinan:    { color: '#c9bf9b', name: () => '西南夷' },
+  chaoxian: { color: '#9a8fb8', name: t => (t < -194.5 ? '朝鲜（箕氏）' : '卫氏朝鲜') },
+  xinan:    { color: '#8fb0c0', name: () => '西南夷' },
   yue:      { color: '#b8c8a0', name: () => '骆越与其他', hideLabel: () => true },
 };
 

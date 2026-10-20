@@ -65,22 +65,22 @@ const BOOK = {
 
 const FACTIONS = {
   han:        { color: '#c4433a', name: t => (t < 75.6 ? '东汉（明帝）' : t < 88.1 ? '东汉（章帝）' : '东汉（和帝）'), mapName: () => '汉', realm: 'han' },
-  xiyuhan:    { color: '#e39a63', name: t => (t < 75.9 ? '西域都护府' : t < 91.9 ? '西域（班超所领诸国）' : '西域都护府（班超）'), mapName: () => '西域', realm: 'han' },
+  xiyuhan:    { color: '#e07a5f', name: t => (t < 75.9 ? '西域都护府' : t < 91.9 ? '西域（班超所领诸国）' : '西域都护府（班超）'), mapName: () => '西域', realm: 'han' },
   xiyu:       { color: '#d8b26e', name: t => (t < 61.5 ? '西域诸国（莎车称雄）' : '西域诸国（役属北匈奴）'), mapName: () => '西域' },
   beixiongnu: { color: '#3a3d44', name: t => (t < 91.2 ? '北匈奴' : '北匈奴余部'), mapName: () => '北匈奴' },
   nanxiongnu: { color: '#6b6e78', name: () => '南匈奴', realm: 'fan' },
-  wuhuan:     { color: '#b49a6c', name: () => '乌桓（内附）', mapName: () => '乌桓', realm: 'fan' },
+  wuhuan:     { color: '#c4a46a', name: () => '乌桓（内附）', mapName: () => '乌桓', realm: 'fan' },
   xianbei:    { color: '#7a6446', name: t => (t < 91.2 ? '鲜卑' : '鲜卑诸部（据匈奴故地）'), mapName: () => '鲜卑' },
   dingling:   { color: '#7d8a99', name: () => '丁零 · 坚昆' },
   wusun:      { color: '#5f9e88', name: () => '乌孙' },
   dayuan:     { color: '#9aa860', name: () => '大宛' },
   kangju:     { color: '#7f9cc7', name: () => '康居' },
   yuezhi:     { color: '#c9a0dc', name: () => '贵霜（大月氏）', mapName: () => '贵霜' },
-  qiang:      { color: '#d4b896', name: t => (t < 77.4 ? '羌' : '羌（烧当等种）'), mapName: () => '羌' },
+  qiang:      { color: '#c4917a', name: t => (t < 77.4 ? '羌' : '羌（烧当等种）'), mapName: () => '羌' },
   gouli:      { color: '#9c7f9e', name: () => '高句丽 · 濊貊', mapName: () => '高句丽' },
   fuyu:       { color: '#6f8fa0', name: () => '夫余' },
-  sanhan:     { color: '#a9b98f', name: () => '三韩' },
-  xinan:      { color: '#c9bf9b', name: () => '哀牢', mapName: () => '哀牢' },
+  sanhan:     { color: '#9fbf8a', name: () => '三韩' },
+  xinan:      { color: '#8fb0c0', name: () => '哀牢', mapName: () => '哀牢' },
   yue:        { color: '#b8c8a0', name: () => '珠厓', mapName: () => '珠厓' },
 };
 

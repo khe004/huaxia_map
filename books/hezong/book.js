@@ -90,7 +90,7 @@ const FACTIONS = {
   ba:        { color: '#1f6fb2', name: () => '巴' },
   shu:       { color: '#7b4a2e', name: () => '蜀' },
   yiqu:      { color: '#ffd1dc', name: () => '义渠' },
-  hu:        { color: '#c9bf9b', name: () => '北方诸胡' },
+  hu:        { color: '#9c8fb0', name: () => '北方诸胡' },
 };
 
 // 秦郡治所（用于近似划分战国疆域），另加河西、大梁、中山三处

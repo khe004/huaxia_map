@@ -85,11 +85,11 @@ const FACTIONS = {
   dayuan:    { color: '#e0915a', name: () => '大宛' },
   kangju:    { color: '#7f9cc7', name: () => '康居' },
   yuezhi:    { color: '#c9a0dc', name: () => '贵霜（大月氏）', mapName: () => '贵霜' },
-  qiang:     { color: '#d4b896', name: () => '羌' },
+  qiang:     { color: '#c4917a', name: () => '羌' },
   gouli:     { color: '#9c7f9e', name: () => '高句丽 · 濊貊', mapName: () => '高句丽' },
   fuyu:      { color: '#6f8fa0', name: () => '夫余' },
-  sanhan:    { color: '#a9b98f', name: () => '三韩' },
-  xinan:     { color: '#c9bf9b', name: () => '哀牢等西南夷', mapName: () => '哀牢' },
+  sanhan:    { color: '#9fbf8a', name: () => '三韩' },
+  xinan:     { color: '#8fb0c0', name: () => '哀牢等西南夷', mapName: () => '哀牢' },
   yue:       { color: '#b8c8a0', name: () => '珠厓', mapName: () => '珠厓' },
 };
 

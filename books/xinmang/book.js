@@ -75,7 +75,7 @@ const FACTIONS = {
   gengshi:  { color: '#c4433a', name: t => (t < 23.1 ? '绿林军' : t < 25.7 ? '更始政权（刘玄）' : '更始余部'), mapName: t => (t < 23.1 ? '绿林' : '更始'), realm: 'zhu' },
   chimei:   { color: '#8f2f5a', name: t => (t < 25.45 ? '赤眉军（樊崇）' : '赤眉（立刘盆子）'), mapName: () => '赤眉', realm: 'zhu' },
   liuxiu:   { color: '#e2873a', name: t => (t < 24.6 ? '刘秀（更始大司马）' : t < 25.45 ? '刘秀（萧王）' : '东汉（光武帝）'), mapName: t => (t < 25.45 ? '刘秀' : '东汉'), realm: 'zhu' },
-  wanglang: { color: '#6d7fa8', name: () => '王郎（邯郸）', mapName: () => '王郎', realm: 'zhu' },
+  wanglang: { color: '#6d8f7a', name: () => '王郎（邯郸）', mapName: () => '王郎', realm: 'zhu' },
   weixiao:  { color: '#4f8f6a', name: () => '隗嚣（陇右）', mapName: () => '隗嚣', realm: 'zhu' },
   gongsun:  { color: '#d1b04a', name: t => (t < 25.2 ? '公孙述（蜀王）' : '成家（公孙述）'), mapName: () => '公孙述', realm: 'zhu' },
   dourong:  { color: '#86b6cf', name: () => '窦融（河西）', mapName: () => '窦融', realm: 'zhu' },
@@ -91,10 +91,10 @@ const FACTIONS = {
   dayuan:   { color: '#e0915a', name: () => '大宛' },
   kangju:   { color: '#7f9cc7', name: () => '康居' },
   yuezhi:   { color: '#c9a0dc', name: () => '大月氏' },
-  qiang:    { color: '#d4b896', name: () => '羌' },
+  qiang:    { color: '#c4917a', name: () => '羌' },
   gouli:    { color: '#9c7f9e', name: t => (t < 12.4 ? '高句丽 · 沃沮' : '高句丽（莽改“下句丽”）'), mapName: () => '高句丽' },
-  sanhan:   { color: '#a9b98f', name: () => '三韩' },
-  xinan:    { color: '#c9bf9b', name: t => (t < 12.4 ? '西南夷' : '西南夷（句町等叛）'), mapName: () => '西南夷' },
+  sanhan:   { color: '#9fbf8a', name: () => '三韩' },
+  xinan:    { color: '#8fb0c0', name: t => (t < 12.4 ? '西南夷' : '西南夷（句町等叛）'), mapName: () => '西南夷' },
   yue:      { color: '#b8c8a0', name: () => '珠厓', mapName: () => '珠厓' },
 };
 

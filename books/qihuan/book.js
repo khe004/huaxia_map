@@ -90,11 +90,11 @@ const FACTIONS = {
   yi:      { color: '#f2e394', name: () => '莱夷' },
   di:      { color: '#c9bf9b', name: () => '狄' },
   rong:    { color: '#ffd1dc', name: () => '西戎' },
-  hu:      { color: '#9fb8a0', name: () => '山戎 · 东胡' },
+  hu:      { color: '#9c8fb0', name: () => '山戎 · 东胡' },
   yong:    { color: '#8e2a5b', name: () => '庸' },
   ba:      { color: '#5b7fd6', name: () => '巴' },
   shu:     { color: '#7b4a2e', name: () => '蜀' },
-  xny:     { color: '#d8cfc0', name: () => '西南夷' },
+  xny:     { color: '#b9c49a', name: () => '西南夷' },
   man:     { color: '#d2a679', name: () => '群蛮' },
   baiyue:  { color: '#a6bd3a', name: () => '百越' },
 };

@@ -78,7 +78,7 @@ const FACTIONS = {
   shouchun:   { color: '#e8a33d', name: t => (t < 256 ? '毌丘俭、文钦（寿春）' : '诸葛诞（寿春）'), mapName: t => (t < 256 ? '毌丘俭' : '诸葛诞') },
   tufa:       { color: '#b05a7a', name: () => '秃发树机能', mapName: () => '树机能' },
   xiyu:       { color: '#d8b26e', name: () => '西域诸国', mapName: () => '西域' },
-  mobei:      { color: '#d9d3c6', name: () => '塞外诸部（无统一政权）', mapName: () => '塞外诸部', hideLabel: () => true },
+  mobei:      { color: '#e2eef6', name: () => '塞外诸部（无统一政权）', mapName: () => '塞外诸部', hideLabel: () => true },
   tuoba:      { color: '#7a6446', name: () => '鲜卑拓跋部（力微）', mapName: () => '拓跋' },
   yuwen:      { color: '#8c9a6a', name: () => '鲜卑宇文部', mapName: () => '宇文' },
   murong:     { color: '#c9a35a', name: () => '鲜卑慕容部', mapName: () => '慕容' },
@@ -87,10 +87,10 @@ const FACTIONS = {
   dayuan:     { color: '#9aa860', name: () => '大宛' },
   kangju:     { color: '#7f9cc7', name: () => '康居' },
   yuezhi:     { color: '#c9a0dc', name: () => '贵霜（大月氏）', mapName: () => '贵霜' },
-  qiang:      { color: '#d4b896', name: () => '羌' },
+  qiang:      { color: '#c4917a', name: () => '羌' },
   gouli:      { color: '#9c7f9e', name: () => '高句丽 · 濊貊', mapName: () => '高句丽' },
   fuyu:       { color: '#6f8fa0', name: () => '夫余' },
-  sanhan:     { color: '#a9b98f', name: () => '三韩' },
+  sanhan:     { color: '#9fbf8a', name: () => '三韩' },
   yue:        { color: '#b8c8a0', name: () => '珠厓', mapName: () => '珠厓' },
 };
 
