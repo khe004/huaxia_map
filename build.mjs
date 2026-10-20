@@ -17,6 +17,7 @@ const { BOOK, FACTIONS, EVENTS, PEOPLE_RAW } = ctx.__;
 const people = new Set(PEOPLE_RAW.map(p => p[0])), problems = [];
 EVENTS.forEach(e => {
   e.who.forEach(w => people.has(w) || problems.push(`事件「${e.t}」的人物「${w}」不在人物表中`));
+  (e.post || []).forEach(w => e.who.includes(w) || problems.push(`事件「${e.t}」的身后人物「${w}」不在 who 中`));
   if (e.y === 0) problems.push(`事件「${e.t}」的年份为 0（没有公元 0 年）`);
   if (e.y < BOOK.range[0] || e.y > BOOK.range[1]) problems.push(`事件「${e.t}」的年份 ${e.y} 超出时间轴范围`);
 });
@@ -45,7 +46,7 @@ if (SERIES_MODE) {
     const es = c.e.slice().sort((u, v) => u.y - v.y || u.mo - v.mo), f = es[0], l = es[es.length - 1];
     b.first = [f.y, f.mo, f.t]; b.last = [l.y, l.mo, l.t];
     for (const [n] of c.p) (seen[n] = seen[n] || []).push(k);
-    for (const e of c.e) for (const n of e.who) (seen['\0' + n] = seen['\0' + n] || []).push([k, e.y, e.mo, e.t]);
+    for (const e of c.e) for (const n of e.who) (seen['\0' + n] = seen['\0' + n] || []).push([k, e.y, e.mo, e.t, e.post && e.post.includes(n) ? 1 : 0]);
   });
   SERIES.people = {};
   for (const n of Object.keys(seen)) if (n[0] !== '\0' && new Set(seen[n]).size > 1) SERIES.people[n] = seen['\0' + n] || [];
