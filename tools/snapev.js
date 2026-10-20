@@ -3,7 +3,7 @@
 // 地图在“第一个时间 ≥ 快照时间的事件”处显示变化，读者按事件翻页时就在那里看到。
 // 若该事件简介里没有提到变动涉及的任何种子点名，也不在三个月之内，就列出来人工复核，
 // 同时列出前一个事件，便于判断是该把快照挪到前一个事件、补一句简介，还是补一个事件。
-// 另检查快照是否按时间排序。开局快照（不晚于第一个事件）和不改变任何地块的快照不列。
+// 另检查快照是否按时间排序，并列出不改变任何地块的空操作快照。开局快照（不晚于第一个事件）不列。
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
@@ -36,7 +36,8 @@ for (const id of ids) {
       idx.forEach(i => { cur[i] = f; });
     }
     const ch = []; cur.forEach((f, i) => { if (f !== prev[i]) ch.push(i); });
-    if (t <= t0 + 1e-9 || !ch.length) return;
+    if (t <= t0 + 1e-9) return;
+    if (!ch.length) { out.push(`  ∅ 空操作：[${y}, ${m}] ${list.map(([f, tok]) => f + ' ' + tok).join('；')}（不改变任何地块）`); return; }
     const names = ch.map(i => seeds[i].n);
     const eff = EV.find(e => evT(e) >= t - 1e-9);
     // 势力名（含括号中的人名）中两字以上的词，出现在事件标题里也算相关
