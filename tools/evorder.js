@@ -5,7 +5,7 @@
 // 4. 同年同月的几个事件，排在后面的事件简介里写着前一个事件的人“死后”等字样（按数组顺序排先后，可能颠倒）
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
-const ids = process.argv.slice(2).length ? process.argv.slice(2) : JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
+const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.PC=PEOPLE_COMMON', pc);
 const yr = (q, n) => (n ? (q ? -n : +n) : null);
 const lifeOf = s => { const m = (s || '').match(/^(前)?(\d+)?\??\s*[–-]\s*(前)?(\d+)?/); return m ? [yr(m[1], m[2]), yr(m[3], m[4])] : [null, null]; };

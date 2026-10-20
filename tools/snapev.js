@@ -6,7 +6,7 @@
 // 另检查快照是否按时间排序，并列出不改变任何地块的空操作快照。开局快照（不晚于第一个事件）不列。
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
-const ids = process.argv.slice(2).length ? process.argv.slice(2) : JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
+const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const tOf = (y, m) => y + (m - 1) / 12;
 let total = 0;
 for (const id of ids) {

@@ -64,7 +64,7 @@ const BOOK = {
 };
 
 const FACTIONS = {
-  han:        { color: '#c4433a', name: t => (t < 189.3 ? '东汉（灵帝）' : t < 189.7 ? '东汉（少帝）' : '东汉（献帝 · 董卓专政）'), mapName: () => '汉', realm: 'han' },
+  han:        { color: '#c4433a', name: t => (t < 189.3 ? '东汉（灵帝）' : t < 189.75 ? '东汉（少帝）' : '东汉（献帝 · 董卓专政）'), mapName: () => '汉', realm: 'han' },
   huangjin:   { color: '#e0b631', name: t => (t < 185 ? '黄巾（张角）' : '黄巾余部'), mapName: () => '黄巾', realm: 'pan' },
   heishan:    { color: '#4f5b66', name: () => '黑山（张燕）', mapName: () => '黑山', realm: 'pan' },
   baibo:      { color: '#a06b4f', name: () => '白波（郭太）', mapName: () => '白波', realm: 'pan' },
@@ -72,9 +72,9 @@ const FACTIONS = {
   zhangchun:  { color: '#6d7fa8', name: () => '张纯、张举与乌桓', mapName: () => '张纯', realm: 'pan' },
   xiyuhan:    { color: '#e07a5f', name: () => '西域长史（车师、鄯善等）', mapName: () => '西域长史', realm: 'han' },
   xiyu:       { color: '#d8b26e', name: () => '西域诸国（汉威渐衰）', mapName: () => '西域' },
-  nanxiongnu: { color: '#6b6e78', name: t => (t < 188.2 ? '南匈奴' : '南匈奴（内乱，单于被杀）'), mapName: () => '南匈奴', realm: t => (t < 188.2 ? 'fan' : null) },
-  wuhuan:     { color: '#c4a46a', name: t => (t > 187.4 && t < 189.3 ? '乌桓（丘力居附张纯）' : '乌桓（内附）'), mapName: () => '乌桓', realm: t => (t > 187.4 && t < 189.3 ? null : 'fan') },
-  xianbei:    { color: '#7a6446', name: t => (t < 181.5 ? '鲜卑（檀石槐联盟）' : '鲜卑（和连）'), mapName: () => '鲜卑' },
+  nanxiongnu: { color: '#6b6e78', name: t => (t < 188.16 ? '南匈奴' : '南匈奴（内乱，单于被杀）'), mapName: () => '南匈奴', realm: t => (t < 188.16 ? 'fan' : null) },
+  wuhuan:     { color: '#c4a46a', name: t => (t > 187.49 && t < 189.3 ? '乌桓（丘力居附张纯）' : '乌桓（内附）'), mapName: () => '乌桓', realm: t => (t > 187.49 && t < 189.3 ? null : 'fan') },
+  xianbei:    { color: '#7a6446', name: t => (t < 181.41 ? '鲜卑（檀石槐联盟）' : '鲜卑（和连）'), mapName: () => '鲜卑' },
   mobei:      { color: '#e2eef6', name: () => '塞外诸部（无统一政权）', mapName: () => '塞外诸部', hideLabel: () => true },
   dongbu:     { color: '#8c9a6a', name: () => '东部鲜卑（素利、弥加、厥机）', mapName: () => '东部鲜卑' },
   dingling:   { color: '#7d8a99', name: () => '丁零 · 坚昆' },

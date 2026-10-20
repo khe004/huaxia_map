@@ -1,7 +1,7 @@
 // 用法：node tools/refs.js [书 …]：列出事件 refs 中不在 BOOK.source.titles 里的篇名
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
-const ids = process.argv.slice(2).length ? process.argv.slice(2) : JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
+const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 let n = 0;
 for (const id of ids) {
   const c = {}; vm.createContext(c);

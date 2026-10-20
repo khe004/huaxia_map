@@ -80,17 +80,17 @@ const BOOK = {
 };
 
 // 七国之乱：景帝三年正月起兵，三月吴楚败，赵坚守到七月（t 为 年 + (月 − 1) / 12）
-const QIGUO = t => (t >= -153.92 && t < -153.45 ? 'pan' : 'han');
+const QIGUO = t => (t >= -153.92 && t < -153.5 ? 'pan' : 'han');
 const FACTIONS = {
   han:      { color: '#c4433a', name: () => '朝廷直辖', mapName: () => '汉', realm: 'han' },
   chu:      { color: '#3d63a8', name: t => (t < -201 ? '楚（韩信）' : t < -153.75 ? '楚（刘交一系）' : '楚（刘礼）'), realm: QIGUO },
   qi:       { color: '#d6702a', name: t => (t < -188.5 ? '齐（刘肥）' : t < -179 ? '齐（刘襄）' : t < -164 ? '齐（刘则）' : '齐（刘将闾）'), realm: 'han' },
   qixi:     { color: '#c9a227', name: () => '济南 · 菑川 · 胶西 · 胶东', mapName: () => '齐地四国', realm: QIGUO },
-  wu:       { color: '#0f7c6b', name: t => (t < -195.2 ? '荆（刘贾）' : t < -153.5 ? '吴（刘濞）' : '江都（刘非）'), realm: t => (t >= -153.92 && t < -153.7 ? 'pan' : 'han') },
+  wu:       { color: '#0f7c6b', name: t => (t < -195.2 ? '荆（刘贾）' : t < -153.5 ? '吴（刘濞）' : '江都（刘非）'), realm: t => (t >= -153.92 && t < -153.75 ? 'pan' : 'han') },
   liang:    { color: '#9a8ae0', name: t => (t < -195.8 ? '梁（彭越）' : t < -181 ? '梁（刘恢）' : t < -168 ? '梁（刘揖）' : t < -143.5 ? '梁（刘武）' : '梁（刘买）'), realm: 'han' },
   zhao:     { color: '#3c8a52', name: t => (t < -198 ? '赵（张敖）' : t < -194 ? '赵（刘如意）' : t < -181 ? '赵（刘友）' : '赵（刘遂）'), realm: QIGUO },
-  yan:      { color: '#7fb3e6', name: t => (t < -201.45 ? '燕（臧荼）' : t < -194.85 ? '燕（卢绾）' : t < -181 ? '燕（刘建）' : t < -178 ? '燕（刘泽）' : '燕'), realm: t => (t >= -194.85 && t < -194.6 ? 'pan' : 'han') },
-  dai:      { color: '#8c6239', name: t => (t < -199.5 ? '代（刘喜）' : t < -195.95 ? '代（刘如意）' : t < -179.2 ? '代（刘恒）' : '代'), realm: 'han' },
+  yan:      { color: '#7fb3e6', name: t => (t < -201.45 ? '燕（臧荼）' : t < -194.85 ? '燕（卢绾）' : t < -181 ? '燕（刘建）' : t < -178 ? '燕（刘泽）' : '燕'), realm: t => (t >= -194.85 && t < -194.67 ? 'pan' : 'han') },
+  dai:      { color: '#8c6239', name: t => (t < -199.5 ? '代（刘喜）' : t < -195.95 ? '代（刘如意）' : t < -179.21 ? '代（刘恒）' : '代'), realm: 'han' },
   hanwang:  { color: '#e57fb0', name: t => (t < -200.3 ? '韩（韩王信）' : '韩王信（降匈奴）'), realm: t => (t < -200.3 ? 'han' : 'xn') },
   huainan:  { color: '#5ec4cf', name: t => (t < -195.2 ? '淮南（英布）' : t < -174 ? '淮南（刘长）' : '淮南 · 衡山 · 庐江'), mapName: t => (t < -174 ? '淮南' : '淮南三国'), realm: t => (t >= -195.42 && t < -195.17 ? 'pan' : 'han') },
   changsha: { color: '#93c47d', name: () => '长沙（吴氏）', realm: 'han' },
@@ -104,7 +104,7 @@ const FACTIONS = {
   sai:      { color: '#8fb8a8', name: () => '塞种' },
   yuezhi:   { color: '#c9a0dc', name: t => (t < -175.5 ? '月氏' : '大月氏') },
   qiang:    { color: '#c4917a', name: () => '羌' },
-  nanyue:   { color: '#a6bd3a', name: t => (t >= -182.8 && t < -178.5 ? '南越（赵佗称帝）' : '南越') },
+  nanyue:   { color: '#a6bd3a', name: t => (t >= -182.8 && t < -178.59 ? '南越（赵佗称帝）' : '南越') },
   minyue:   { color: '#b07d4f', name: () => '闽越' },
   dongou:   { color: '#e0c070', name: () => '东瓯' },
   chaoxian: { color: '#9a8fb8', name: t => (t < -194.5 ? '朝鲜（箕氏）' : '卫氏朝鲜') },

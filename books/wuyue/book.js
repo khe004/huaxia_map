@@ -76,7 +76,7 @@ const FACTIONS = {
   zhou:    { color: '#d4b44a', name: () => '周' },
   jin:     { color: '#3c8a52', name: () => '晋' },
   qin:     { color: '#3a3d44', name: () => '秦' },
-  qi:      { color: '#d6702a', name: t => (t >= -481.5 ? '齐（田氏专政）' : '齐') },
+  qi:      { color: '#d6702a', name: t => (t >= -480.67 ? '齐（田氏专政）' : '齐') },
   chu:     { color: '#c4433a', name: () => '楚' },
   lu:      { color: '#2aa3a3', name: () => '鲁' },
   song:    { color: '#4b2e83', name: () => '宋' },

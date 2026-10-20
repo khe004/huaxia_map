@@ -2,7 +2,7 @@
 // 人名取自全部各卷的人物表；本卷人物表里没有的标“＋”（需要先补进本卷人物表）
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
-const all = JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
+const all = require('./books.js')();
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : all;
 const load = id => { const c = {}; vm.createContext(c); vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`, 'utf8') + ';this.X={EVENTS,PEOPLE_RAW}', c); return c.X; };
 const names = new Set(); all.forEach(id => load(id).PEOPLE_RAW.forEach(p => names.add(p[0])));

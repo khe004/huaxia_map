@@ -42,8 +42,10 @@ function resolve(tok, cur) {
 }
 const tOf = (y, m) => y + (m - 1) / 12;
 
-const PEOPLE = new Map(PEOPLE_RAW.map(([n, f, zi, life, bio]) => [n, { n, f, zi, life, bio, ev: [] }]));
-EVENTS.forEach((e, i) => { e.i = i; e.who.forEach(n => { const p = PEOPLE.get(n); if (p) p.ev.push(i); else console.warn('missing person', n); }); });
+const PEOPLE = new Map(PEOPLE_RAW.map(([n, f, zi, life, bio]) => [n, { n, f, zi, life, bio, ev: [], live: [] }]));
+// post：事件发生时此人已故（追尊、图像、平反，或事件开头追述其生前之事）。行迹、交汇图、同场人物、编号都只计 live（在世时的事件）
+const isPost = (e, n) => !!(e.post && e.post.includes(n));
+EVENTS.forEach((e, i) => { e.i = i; e.who.forEach(n => { const p = PEOPLE.get(n); if (p) { p.ev.push(i); if (!isPost(e, n)) p.live.push(i); } else console.warn('missing person', n); }); });
 
 // 时间轴步进：每年一个“年初”步，其后是当年各事件（按月份）。疆域按步计算，同一年内可多次变化。
 const STEPS = [], YEAR_STEP = {}, EV_STEP = [];
@@ -342,11 +344,11 @@ function renderTerritory() {
 // ---------- render: events ----------
 function visibleEvents() {
   const y = state.year;
-  if (state.person) return PEOPLE.get(state.person).ev.map(i => EVENTS[i]);
+  if (state.person) return PEOPLE.get(state.person).live.map(i => EVENTS[i]);
   return EVENTS.filter(e => EV_STEP[e.i] <= state.step);
 }
 function renderEvents() {
-  const y = state.year, focusP = state.person ? new Set(PEOPLE.get(state.person).ev) : null;
+  const y = state.year, focusP = state.person ? new Set(PEOPLE.get(state.person).live) : null;
   const evs = visibleEvents();
   const sel = gEv.selectAll('g.ev').data(evs, d => d.i).join(en => {
     const g = en.append('g').attr('transform', d => `translate(${proj(d.ll)})`);
@@ -407,7 +409,7 @@ function renderPersonPath() {
   gPath.selectAll('*').remove();
   if (!state.person) return;
   // 身后出现的事件不计入行迹
-  const evs = PEOPLE.get(state.person).ev.map(i => EVENTS[i]).filter(e => !isPost(e, state.person)).sort((a, b) => EV_STEP[a.i] - EV_STEP[b.i]);
+  const evs = PEOPLE.get(state.person).live.map(i => EVENTS[i]).sort((a, b) => EV_STEP[a.i] - EV_STEP[b.i]);
   const ps = []; evs.forEach(e => { const p = proj(e.ll); const l = ps[ps.length - 1]; if (!l || Math.hypot(l[0] - p[0], l[1] - p[1]) > 1) ps.push(p); });
   if (ps.length > 1) gPath.append('path').attr('class', 'ppath').attr('d', d3.line().curve(d3.curveCatmullRom.alpha(.5))(ps));
   const nums = new Map();
@@ -511,7 +513,6 @@ const pbody = $('#pbody');
 const fdot = f => `<i style="background:${fColor(f)}"></i>`;
 // post：身后出现在事件中（追尊、图像、平反等），此人当时已故
 const chip = (n, post) => { const p = PEOPLE.get(n); return `<button class="chip${post ? ' post' : ''}" data-person="${n}"${post ? ' title="此时已故，身后出现在这一事件中"' : ''}>${fdot(p.f)}${n}${p.zi ? `<small>${p.zi}</small>` : ''}${post ? '<em>身后</em>' : ''}</button>`; };
-const isPost = (e, n) => !!(e.post && e.post.includes(n));
 // 出处：chapters（章回体，回数 + 回目）或 sections（篇目名）
 const SRC = B.source || { type: 'sections', heading: '出处' };
 function chapterNum(n) {
@@ -651,26 +652,33 @@ function renderPerson(n) {
   const p = PEOPLE.get(n);
   const evs = p.ev.slice().sort((a, b) => EV_STEP[a] - EV_STEP[b]).map(i => EVENTS[i]);
   // 合集里，此人在其他卷的事件按时间插入，标明见第几卷，点击跳到那一卷的该事件
-  // 两卷重叠处同一事件（同名同年）在本卷已有的，不再重复列出
-  const others = (SER && SER.people && SER.people[n] || []).filter(x => x[0] !== serIdx && !evs.some(e => e.t === x[3] && e.y === x[1])).map(([k, y, mo, t, post]) => ({ k, y, mo, t, post }));
+  // 两卷重叠处同一事件在本卷已有的，不再重复列出：同年，且标题有一段相同（如“商鞅变法”与“商鞅变法 · 徙木立信”、“魏拔邯郸 · 桂陵之战”与“桂陵之战 · 围魏救赵”）
+  const segs = t => t.split(' · '), sameEv = (e, y, t) => e.y === y && segs(e.t).some(s => segs(t).includes(s));
+  const others = (SER && SER.people && SER.people[n] || []).filter(x => x[0] !== serIdx && !evs.some(e => sameEv(e, x[1], x[3]))).map(([k, y, mo, t, post]) => ({ k, y, mo, t, post }));
   const merged = [...evs.map(e => ({ e, y: e.y, mo: e.mo })), ...others].sort((u, v) => u.y - v.y || u.mo - v.mo || (u.e ? serIdx : u.k) - (v.e ? serIdx : v.k));
   const co = new Map();
-  evs.forEach(e => e.who.forEach(w => { if (w !== n) co.set(w, (co.get(w) || 0) + 1); }));
+  evs.filter(e => !isPost(e, n)).forEach(e => e.who.forEach(w => { if (w !== n && !isPost(e, w)) co.set(w, (co.get(w) || 0) + 1); }));
   const coTop = [...co].sort((a, b) => b[1] - a[1]).slice(0, 10);
   // 生卒年：形如 161–223、?–220、前232–前202
   const lm = p.life.match(/^(前)?(\d+)?\??\s*[–-]\s*(前)?(\d+)/);
   const a = lm && lm[2] ? (lm[1] ? -lm[2] : +lm[2]) : null, b = lm ? (lm[3] ? -lm[4] : +lm[4]) : null;
   const fy = evs.length ? evs[evs.length - 1].y : state.year;
   const pad = Math.max(10, (Y1 - Y0) * .3), lo = Y0 - pad, hi = Y1 + pad * .5, sc = v => (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * 100;
-  const life = b ? `<div class="lifebar" title="生卒年"><div style="left:${sc(a || b - 40)}%;width:${sc(b) - sc(a || b - 40)}%;background:${fColor(p.f)};${a ? '' : 'opacity:.45'}"></div>${evs.filter(e => !isPost(e, n)).map(e => `<div style="left:${sc(e.y)}%;width:2px;background:var(--ink)"></div>`).join('')}</div>` : '';
+  // 夏历十二月去世折成公历次年一二月，事件年份可能比卒年晚一年，寿命条画到最后一个在世事件为止（最多延长一年）
+  const lastLive = p.live.length ? Math.max(...p.live.map(i => EVENTS[i].y)) : null, b2 = b != null && lastLive != null && lastLive > b ? Math.min(lastLive, b + 1) : b;
+  const life = b ? `<div class="lifebar" title="生卒年"><div style="left:${sc(a || b - 40)}%;width:${sc(b2) - sc(a || b - 40)}%;background:${fColor(p.f)};${a ? '' : 'opacity:.45'}"></div>${evs.filter(e => !isPost(e, n)).map(e => `<div style="left:${sc(e.y)}%;width:2px;background:var(--ink)"></div>`).join('')}</div>` : '';
   pbody.innerHTML = `
     <button class="back">‹ 返回</button>
     <h2>${n}${p.zi ? `<small>字${p.zi}</small>` : ''}</h2>
     <div class="meta"><span class="chip" style="cursor:default">${fdot(p.f)}${fName(p.f, fy)}</span><span>${p.life}</span></div>
     ${life}
     <p>${rich(p.bio)}</p>
-    <h3>经历事件 <span>${evs.length} 件${others.length ? `，另有 ${others.length} 件见其他卷` : ''} · 地图上以金色虚线连出行迹</span></h3>
-    <div class="list">${merged.map((x, k) => (x.e ? (isPost(x.e, n) ? evItem(x.e).replace('</span><span class="s">', '<em class="post" title="此时已故，身后出现在这一事件中">身后</em></span><span class="s">') : evItem(x.e)) : otherItem(x, n)).replace('<span class="y">', `<span class="y">${k + 1}. `)).join('')}</div>
+    <h3>经历事件 <span>${p.live.length} 件${evs.length > p.live.length ? `，身后 ${evs.length - p.live.length} 件` : ''}${others.length ? `，另有 ${others.length} 件见其他卷` : ''} · 地图上以金色虚线连出行迹，序号与金圈一致</span></h3>
+    <div class="list">${(() => { let k = 0; return merged.map(x => {
+      // 序号只给本卷在世时的事件，与地图上金圈的序号一致；他卷事件与身后事件不编号
+      if (!x.e) return otherItem(x, n);
+      if (isPost(x.e, n)) return evItem(x.e).replace('</span><span class="s">', '<em class="post" title="此时已故，身后出现在这一事件中">身后</em></span><span class="s">');
+      return evItem(x.e).replace('<span class="y">', `<span class="y">${++k}. `); }).join(''); })()}</div>
     ${coTop.length ? `<h3>同场人物 <span>共同出现的事件数</span></h3><div class="chips">${coTop.map(([w, c]) => chip(w).replace('</button>', `<small>×${c}</small></button>`)).join('')}</div>` : ''}`;
 }
 
@@ -703,6 +711,11 @@ if (SER) {
   const q = new URLSearchParams(location.search), ei = EVENTS.findIndex(e => e.t === q.get('ev')), pn = q.get('p');
   if (ei >= 0) { if (pn && PEOPLE.has(pn)) { setTab('people'); openPerson(pn); } openEvent(ei); }
   // 只带 ?p=人物（如从目录页的检索进入）：打开此人的人物页
-  else if (pn && PEOPLE.has(pn)) { setTab('people'); openPerson(pn); }
+  else if (pn && PEOPLE.has(pn)) {
+    // 时间轴与疆域跳到此人在本卷的第一个（在世）事件，与人物页、金色行迹一致
+    const P = PEOPLE.get(pn), first = (P.live.length ? P.live : P.ev).slice().sort((a, b) => EV_STEP[a] - EV_STEP[b])[0];
+    if (first != null) setStep(EV_STEP[first]);
+    setTab('people'); openPerson(pn);
+  }
 }
 })();

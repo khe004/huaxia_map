@@ -12,8 +12,8 @@ const r = f => readFileSync(new URL(f, import.meta.url), 'utf8');
 const bookSrc = r(`./books/${id}/book.js`);
 // 在沙箱里执行一次书的数据，读取配置并做基本校验
 const ctx = {}; vm.createContext(ctx);
-vm.runInContext(bookSrc + '\n;this.__ = { BOOK, FACTIONS, EVENTS, PEOPLE_RAW, SNAPSHOTS, SEEDS_RAW };', ctx);
-const { BOOK, FACTIONS, EVENTS, PEOPLE_RAW } = ctx.__;
+vm.runInContext(bookSrc + '\n;this.__ = { BOOK, FACTIONS, EVENTS, PEOPLE_RAW, SNAPSHOTS, SEEDS_RAW, PHASES: typeof PHASES === "undefined" ? [] : PHASES };', ctx);
+const { BOOK, FACTIONS, EVENTS, PEOPLE_RAW, PHASES } = ctx.__;
 const people = new Set(PEOPLE_RAW.map(p => p[0])), problems = [];
 EVENTS.forEach(e => {
   e.who.forEach(w => people.has(w) || problems.push(`事件「${e.t}」的人物「${w}」不在人物表中`));
@@ -22,6 +22,8 @@ EVENTS.forEach(e => {
   if (e.y < BOOK.range[0] || e.y > BOOK.range[1]) problems.push(`事件「${e.t}」的年份 ${e.y} 超出时间轴范围`);
 });
 PEOPLE_RAW.forEach(p => FACTIONS[p[1]] || problems.push(`人物「${p[0]}」的势力「${p[1]}」未定义`));
+// 阶段按闭区间 [起年, 止年] 归入事件，相邻阶段不能共用同一年，否则该年的事件在大事记里出现两次
+PHASES.forEach((ph, i) => { if (i && ph[0] <= PHASES[i - 1][1]) problems.push(`阶段「${PHASES[i - 1][2]}」与「${ph[2]}」在 ${ph[0]} 年重叠`); });
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
 // 跨卷人物的统一简介（books/_people.js）：覆盖本书同名人物的字、生卒、简介；引文出处与本书默认出处相同的去掉前缀
 const common = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_people.js') + '\n;this.p = PEOPLE_COMMON;', c); return c.p; })();

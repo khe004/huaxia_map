@@ -11,7 +11,7 @@ const fy = y => (y < 0 ? `前 ${-y}` : `${y}`);
 let prevLast = null;
 // 目录页检索用的索引：全部事件与人物（跨卷人物合为一条，列出所在各卷）
 const pcx = {}; vm.createContext(pcx); vm.runInContext(r('./books/_people.js') + ';this.PC = PEOPLE_COMMON;', pcx);
-const plain = s => String(s).replace(/\*\*(?:[^*|]{1,4}\|)?([^*]*)\*\*/g, '“$1”').replace(/““/g, '“').replace(/””/g, '”');
+const plain = s => String(s).replace(/\*\*(?:[^|*]{1,6}\|)?([^*]*)\*\*/g, '“$1”').replace(/““/g, '“').replace(/””/g, '”');
 const IDX = { books: [], events: [], people: {} };
 const rows = S.books.map((b, i) => {
   execFileSync('node', [new URL('./build.mjs', import.meta.url).pathname, b.id, '--series'], { stdio: 'inherit' });
@@ -56,7 +56,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 const B = IDX.books, vol = k => '卷' + CN(k + 1);
 const fy = (y, k) => (B[k][2] != null && y < B[k][2] ? '约' : '') + (y < 0 ? '前' + -y : y);
 const KN = { war: '战事', pol: '政事', dip: '外交' };
-const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, mo, t, p, m, kind, who, d, cal, key: [t, p, m, who, cal, d].join('\\u0001') }));
+const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, mo, t, p, m, kind, who, d, cal }));
 const PP = Object.entries(IDX.people).map(([n, [zi, life, bio, bk]]) => ({ n, zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
 const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), vols = $('#vols'), cnt = $('#cnt'), volSel = $('#vol');
 let filt = 'all', lim = { p: 12, e: 30 };
@@ -114,15 +114,15 @@ const html = `<title>${esc(S.title)}</title>
 <style>
 :root {
   --bg: #e6e8e1; --panel: #f7f7f2; --chip: #ebece5; --ink: #1c2125; --ink2: #49525a; --muted: #747d84; --line: #b3bbba;
-  --seal: #b3322a; --land: #f3f2eb; --hl: #d8941c;
+  --seal: #b3322a; --land: #f3f2eb; --hl: #d8941c; --dip: #2a7068;
   --f-display: "Ma Shan Zheng", "STKaiti", "KaiTi", serif;
   --f-serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
   --f-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --bg: #0f1317; --panel: #141920; --chip: #1f262c; --ink: #e8e5db; --ink2: #bcb9af; --muted: #868b8e; --line: #343d44; --seal: #e3624f; --land: #232a30; --hl: #f0b43c; color-scheme: dark; }
+  :root:not([data-theme="light"]) { --bg: #0f1317; --panel: #141920; --chip: #1f262c; --ink: #e8e5db; --ink2: #bcb9af; --muted: #868b8e; --line: #343d44; --seal: #e3624f; --land: #232a30; --hl: #f0b43c; --dip: #5fb3a6; color-scheme: dark; }
 }
-:root[data-theme="dark"] { --bg: #0f1317; --panel: #141920; --chip: #1f262c; --ink: #e8e5db; --ink2: #bcb9af; --muted: #868b8e; --line: #343d44; --seal: #e3624f; --land: #232a30; --hl: #f0b43c; color-scheme: dark; }
+:root[data-theme="dark"] { --bg: #0f1317; --panel: #141920; --chip: #1f262c; --ink: #e8e5db; --ink2: #bcb9af; --muted: #868b8e; --line: #343d44; --seal: #e3624f; --land: #232a30; --hl: #f0b43c; --dip: #5fb3a6; color-scheme: dark; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-sans); font-size: 14px; }
 :focus-visible { outline: 2px solid var(--hl); outline-offset: 2px; }
 main { max-width: 760px; margin: 0 auto; padding: 40px max(16px, env(safe-area-inset-left, 0px)) 56px; }
@@ -174,7 +174,7 @@ div.hit { cursor: pointer; }
 .hit .m { grid-column: 2; color: var(--muted); font-size: 12px; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
 .hit .k { display: inline-block; width: 7px; height: 7px; margin-right: 6px; vertical-align: 2px; background: var(--ink); border-radius: 50%; }
 .hit .k.war { background: var(--seal); border-radius: 0; transform: rotate(45deg); }
-.hit .k.dip { background: #2a7068; border-radius: 0; }
+.hit .k.dip { background: var(--dip); border-radius: 0; }
 .hit .vb { border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; color: var(--ink2); text-decoration: none; font-size: 12px; }
 .hit .vb:hover { border-color: var(--seal); color: var(--seal); }
 mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }

@@ -4,7 +4,7 @@
 // 若是生前的言行被一并叙述（如事件跨越数年），可以不改。
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
-const ids = process.argv.slice(2).length ? process.argv.slice(2) : JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
+const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.PC=PEOPLE_COMMON', pc);
 const death = s => { const m = (s || '').match(/[–-]\s*(前)?(\d+)\s*$/); return m ? (m[1] ? -m[2] : +m[2]) : null; };
 let n = 0;

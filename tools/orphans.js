@@ -1,7 +1,7 @@
 // 用法：node tools/orphans.js [书 …]：列出人物表里没有挂到任何事件上的人物
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
-const ids = process.argv.slice(2).length ? process.argv.slice(2) : JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
+const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 let n = 0;
 for (const id of ids) {
   const c = {}; vm.createContext(c);

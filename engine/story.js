@@ -23,10 +23,11 @@ const shortT = t => { const s = t.split(' · ')[0]; return s.length > 6 ? s.slic
 let geom = null;
 
 function renderChips() {
-  const list = [...PEOPLE.values()].filter(p => p.ev.length >= 2).sort((a, b) => b.ev.length - a.ev.length);
+  // 只计在世时的事件（身后出现的追尊、图像等不连线）
+  const list = [...PEOPLE.values()].filter(p => p.live.length >= 2).sort((a, b) => b.live.length - a.live.length);
   sChips.innerHTML = list.map(p => {
     const on = sel.includes(p.n);
-    return `<button class="schip${on ? ' on' : ''}" data-sp="${p.n}" style="${on ? `--pc:${pColor(p.n)}` : ''}">${p.n}<small>${p.ev.length}</small></button>`;
+    return `<button class="schip${on ? ' on' : ''}" data-sp="${p.n}" style="${on ? `--pc:${pColor(p.n)}` : ''}">${p.n}<small>${p.live.length}</small></button>`;
   }).join('');
 }
 sChips.addEventListener('click', e => {
@@ -84,12 +85,12 @@ function renderStory() {
   const off = new Map(); // `${person}|${event}` → y 偏移
   const gap = Math.min(4, (RH - 6) / Math.max(1, sel.length));
   for (const e of COLS) {
-    const ps = sel.filter(n => e.who.includes(n));
+    const ps = sel.filter(n => e.who.includes(n) && !isPost(e, n));
     ps.forEach((n, i) => off.set(n + '|' + e.i, (i - (ps.length - 1) / 2) * gap));
   }
   const lines = S.append('g').attr('class', 'slines' + (state.person && sel.includes(state.person) ? ' hot' : ''));
   for (const n of sel) {
-    const evs = PEOPLE.get(n).ev.map(i => EVENTS[i]).sort((a, b) => EV_STEP[a.i] - EV_STEP[b.i]);
+    const evs = PEOPLE.get(n).live.map(i => EVENTS[i]).sort((a, b) => EV_STEP[a.i] - EV_STEP[b.i]);
     if (!evs.length) continue;
     const P = evs.map(e => [xCol(colOf.get(e.i)), yRow(rowOf.get(e.j)) + off.get(n + '|' + e.i)]);
     let d = `M${P[0][0] - 10},${P[0][1]}L${P[0][0]},${P[0][1]}`;
@@ -114,7 +115,7 @@ function renderStory() {
   const nodes = S.append('g');
   for (const e of COLS) {
     const x = xCol(colOf.get(e.i)), y = yRow(rowOf.get(e.j));
-    const os = sel.filter(n => e.who.includes(n)).map(n => off.get(n + '|' + e.i));
+    const os = sel.filter(n => e.who.includes(n) && !isPost(e, n)).map(n => off.get(n + '|' + e.i));
     const lo = os.length ? Math.min(...os) : 0, hi = os.length ? Math.max(...os) : 0;
     const g = nodes.append('g').attr('class', 'snode ' + e.k + (state.sel === e.i ? ' sel' : '')).attr('data-e', e.i);
     g.append('rect').attr('x', x - 6).attr('y', y + lo - 6).attr('width', 12).attr('height', hi - lo + 12).attr('rx', 6);

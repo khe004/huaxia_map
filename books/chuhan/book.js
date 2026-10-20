@@ -57,18 +57,18 @@ const BOOK = {
 const FACTIONS = {
   qin:      { color: '#55585e', name: t => (t < -206.3 ? '秦' : '秦（子婴）') },
   zhangchu: { color: '#e09f1f', name: () => '张楚' },
-  chu:      { color: '#3d63a8', name: t => (t < -205.95 ? '楚' : t < -202.1 ? '西楚' : '楚（韩信）') },
-  han:      { color: '#c4433a', name: t => (t < -205.95 ? '沛公' : '汉') },
+  chu:      { color: '#3d63a8', name: t => (t < -205.92 ? '楚' : t < -202 ? '西楚' : '楚（韩信）') },
+  han:      { color: '#c4433a', name: t => (t < -205.92 ? '沛公' : '汉') },
   sanqin:   { color: '#8c6239', name: () => '三秦' },
-  zhao:     { color: '#3c8a52', name: t => (t < -205.95 ? '赵' : t < -202.1 ? '赵 · 常山 · 代' : '赵（张耳）') },
-  yan:      { color: '#7fb3e6', name: t => (t < -205.95 ? '燕' : t < -202.1 ? '燕 · 辽东' : '燕（臧荼）') },
-  qi:       { color: '#d6702a', name: t => (t < -205.95 ? '齐' : t < -205.6 ? '三齐' : '齐') },
-  wei:      { color: '#9a8ae0', name: t => (t < -205.95 ? '魏' : t < -202.1 ? '西魏 · 殷' : '梁（彭越）') },
-  hanguo:   { color: '#e57fb0', name: t => (t < -202.1 ? '韩 · 河南' : '韩（韩王信）') },
-  yingbu:   { color: '#2aa3a3', name: t => (t < -202.1 ? '九江王' : '淮南（英布）') },
-  linjiang: { color: '#93c47d', name: t => (t < -202.1 ? '临江 · 衡山' : '长沙（吴芮）') },
+  zhao:     { color: '#3c8a52', name: t => (t < -205.92 ? '赵' : t < -202 ? '赵 · 常山 · 代' : '赵（张耳）') },
+  yan:      { color: '#7fb3e6', name: t => (t < -205.92 ? '燕' : t < -202 ? '燕 · 辽东' : '燕（臧荼）') },
+  qi:       { color: '#d6702a', name: t => (t < -205.92 ? '齐' : t < -205.6 ? '三齐' : '齐') },
+  wei:      { color: '#9a8ae0', name: t => (t < -205.92 ? '魏' : t < -202 ? '西魏 · 殷' : '梁（彭越）') },
+  hanguo:   { color: '#e57fb0', name: t => (t < -202 ? '韩 · 河南' : '韩（韩王信）') },
+  yingbu:   { color: '#2aa3a3', name: t => (t < -202 ? '九江王' : '淮南（英布）') },
+  linjiang: { color: '#93c47d', name: t => (t < -202 ? '临江 · 衡山' : '长沙（吴芮）') },
   nanyue:   { color: '#a6bd3a', name: () => '南越' },
-  qun:      { color: '#c9bf9b', name: t => (t < -205.95 ? '其他（秦亡后未定）' : '其他'), hideLabel: () => true },
+  qun:      { color: '#c9bf9b', name: t => (t < -205.92 ? '其他（秦亡后未定）' : '其他'), hideLabel: () => true },
 };
 
 // 秦郡：故国|郡|郡治经度,纬度
