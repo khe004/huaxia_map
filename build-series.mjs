@@ -9,11 +9,28 @@ const cn = n => { const D = '〇一二三四五六七八九', t = Math.floor(n /
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const fy = y => (y < 0 ? `前 ${-y}` : `${y}`);
 let prevLast = null;
+// 目录页检索用的索引：全部事件与人物（跨卷人物合为一条，列出所在各卷）
+const pcx = {}; vm.createContext(pcx); vm.runInContext(r('./books/_people.js') + ';this.PC = PEOPLE_COMMON;', pcx);
+const plain = s => String(s).replace(/\*\*(?:[^*|]{1,4}\|)?([^*]*)\*\*/g, '“$1”').replace(/““/g, '“').replace(/””/g, '”');
+const IDX = { books: [], events: [], people: {} };
 const rows = S.books.map((b, i) => {
   execFileSync('node', [new URL('./build.mjs', import.meta.url).pathname, b.id, '--series'], { stdio: 'inherit' });
   const c = {}; vm.createContext(c);
-  vm.runInContext(r(`./books/${b.id}/book.js`) + '\n;this.__ = { BOOK, EVENTS, PEOPLE_RAW };', c);
-  const { BOOK, EVENTS, PEOPLE_RAW } = c.__;
+  vm.runInContext(r(`./books/${b.id}/book.js`) + '\n;this.__ = { BOOK, EVENTS, PEOPLE_RAW, FACTIONS };', c);
+  const { BOOK, EVENTS, PEOPLE_RAW, FACTIONS } = c.__;
+  IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
+  const evOf = new Map();
+  for (const e of EVENTS) {
+    IDX.events.push([i, e.y, e.mo, e.t, e.p, e.m, e.k, e.who.join('、'), plain(e.d), e.cal || '']);
+    for (const n of e.who) evOf.set(n, (evOf.get(n) || []).concat(e));
+  }
+  for (const [n, f, zi, life, bio] of PEOPLE_RAW) {
+    const cm = pcx.PC[n], es = (evOf.get(n) || []).sort((u, v) => u.y - v.y || u.mo - v.mo), t = es.length ? es[0].y + (es[0].mo - 1) / 12 : BOOK.range[0];
+    let fn = f; try { fn = FACTIONS[f].name(t).replace(/（[^）]*）/g, ''); } catch (err) {}
+    const P = IDX.people[n] || (IDX.people[n] = [cm ? cm[0] : zi, cm ? cm[1] : life, plain(cm ? cm[2] : bio), []]);
+    if (!cm && bio && !P[2]) P[2] = plain(bio);
+    P[3].push([i, fn, es.length]);
+  }
   // 与上一卷时间重叠（上卷末事件晚于本卷首事件）时，在年份后注明
   const es = EVENTS.slice().sort((u, v) => u.y - v.y || u.mo - v.mo), f = es[0], l = es[es.length - 1];
   const ov = prevLast && prevLast.y + (prevLast.mo - 1) / 12 > f.y + (f.mo - 1) / 12 ? `与上卷重叠 ${f.y === prevLast.y ? fy(f.y) + ' 年' : fy(f.y) + ' – ' + fy(prevLast.y)}` : '';
@@ -33,6 +50,62 @@ const rows = S.books.map((b, i) => {
   </a>
 </li>`;
 });
+const searchJs = `(() => {
+const CN = n => { const D = '〇一二三四五六七八九', t = Math.floor(n / 10), o = n % 10; return n < 10 ? D[n] : (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const B = IDX.books, vol = k => '卷' + CN(k + 1);
+const fy = (y, k) => (B[k][2] != null && y < B[k][2] ? '约' : '') + (y < 0 ? '前' + -y : y);
+const KN = { war: '战事', pol: '政事', dip: '外交' };
+const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, mo, t, p, m, kind, who, d, cal, key: [t, p, m, who, cal, d].join('\\u0001') }));
+const PP = Object.entries(IDX.people).map(([n, [zi, life, bio, bk]]) => ({ n, zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
+const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), vols = $('#vols'), cnt = $('#cnt'), volSel = $('#vol');
+let filt = 'all', lim = { p: 12, e: 30 };
+const mk = (s, terms) => { let h = esc(s); for (const t of terms) h = h.split(esc(t)).join('\\u0002' + esc(t) + '\\u0003'); return h.replace(/\\u0002/g, '<mark>').replace(/\\u0003/g, '</mark>'); };
+const snip = (s, terms, n = 46) => { let i = -1; for (const t of terms) { const j = s.indexOf(t); if (j >= 0 && (i < 0 || j < i)) i = j; }
+  if (i < 0) return s.length > n * 2 ? s.slice(0, n * 2) + '…' : s; const a = Math.max(0, i - n), b = Math.min(s.length, i + n);
+  return (a ? '…' : '') + s.slice(a, b) + (b < s.length ? '…' : ''); };
+const evHref = e => B[e.k][0] + '/index.html?ev=' + encodeURIComponent(e.t);
+const pHref = (n, k) => B[k][0] + '/index.html?p=' + encodeURIComponent(n);
+function scoreP(p, terms) { let s = 0; for (const t of terms) {
+  if (p.n === t) s += 100; else if (p.n.startsWith(t)) s += 60; else if (p.n.includes(t)) s += 40; else if (p.zi && p.zi.includes(t)) s += 30;
+  else if (p.bio.includes(t) || p.bk.some(b => b[1].includes(t))) s += 5; else return 0; } return s + Math.min(p.ne, 20) / 10; }
+function scoreE(e, terms) { let s = 0; for (const t of terms) {
+  if (e.t.includes(t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (e.p.includes(t) || e.m.includes(t) || e.cal.includes(t)) s += 20;
+  else if (e.who.includes(t)) s += 15; else if (e.d.includes(t)) s += 5; else return 0; } return s; }
+function run() {
+  const raw = q.value.trim(), terms = raw.split(/\\s+/).filter(Boolean), v = volSel.value === '' ? null : +volSel.value;
+  try { history.replaceState(null, '', raw ? '#q=' + encodeURIComponent(raw) + (v != null ? '&v=' + v : '') : location.pathname + location.search); } catch (err) {}
+  const on = terms.length > 0; res.hidden = opts.hidden = !on; vols.hidden = on; if (!on) return;
+  const psS = filt === 'e' ? [] : PP.filter(p => v == null || p.bk.some(b => b[0] === v)).map(p => [p, scoreP(p, terms)]).filter(x => x[1]).sort((a, b) => b[1] - a[1]), ps = psS.map(x => x[0]);
+  const esS = filt === 'p' ? [] : EV.filter(e => v == null || e.k === v).map(e => [e, scoreE(e, terms)]).filter(x => x[1]).sort((a, b) => b[1] - a[1] || a[0].y - b[0].y || a[0].mo - b[0].mo), es = esS.map(x => x[0]);
+  // 两类都有结果时，人物只先列 6 位；最佳匹配更好的一类排在前面
+  const lp = filt === 'all' && es.length && lim.p < 1e9 ? 6 : lim.p, evFirst = esS.length && (!psS.length || esS[0][1] > psS[0][1]);
+  cnt.textContent = (filt !== 'e' ? ps.length + ' 位人物' : '') + (filt === 'all' ? ' · ' : '') + (filt !== 'p' ? es.length + ' 个事件' : '');
+  let hp = '', he = '';
+  if (ps.length) hp = '<div><h2><span>人物</span></h2><div class="rl">' + ps.slice(0, lp).map(p => { const k0 = (v != null ? p.bk.find(b => b[0] === v) : p.bk.slice().sort((a, b) => b[2] - a[2])[0])[0];
+    return '<div class="hit" data-href="' + pHref(p.n, k0) + '"><span class="y">' + esc(p.life || '') + '</span><a class="t" href="' + pHref(p.n, k0) + '">' + mk(p.n, terms) + (p.zi ? '<small>字' + mk(p.zi, terms) + '</small>' : '') + '</a>'
+      + '<span class="s">' + mk(snip(p.bio, terms), terms) + '</span><span class="m">' + p.bk.map(([k, f, n]) => '<a class="vb" href="' + pHref(p.n, k) + '" title="' + esc(B[k][1]) + ' · ' + esc(f) + ' · ' + n + ' 个事件">' + vol(k) + ' ' + esc(B[k][1]) + '</a>').join('') + '</span></div>'; }).join('')
+    + '</div>' + (ps.length > lp ? '<button class="more" data-more="p">显示全部 ' + ps.length + ' 位 ›</button>' : '') + '</div>';
+  if (es.length) he = '<div><h2><span>事件</span></h2><div class="rl">' + es.slice(0, lim.e).map(e => '<a class="hit" href="' + evHref(e) + '"><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '"></i>' + mk(e.t, terms) + '</span>'
+      + '<span class="s">' + mk(snip(e.d, terms), terms) + '</span><span class="m"><span>' + vol(e.k) + '《' + esc(B[e.k][1]) + '》</span><span>' + mk(e.p + '（' + e.m + '）', terms) + '</span><span>' + KN[e.kind] + '</span>' + (e.who ? '<span>' + mk(e.who.length > 40 ? e.who.slice(0, 40) + '…' : e.who, terms) + '</span>' : '') + '</span></a>').join('')
+    + '</div>' + (es.length > lim.e ? '<button class="more" data-more="e">显示全部 ' + es.length + ' 个 ›</button>' : '') + '</div>';
+  const h = evFirst ? he + hp : hp + he;
+  res.innerHTML = h || '<p class="empty">没有找到“' + esc(raw) + '”。可以换个写法，如人名、字、古地名、今地名或年号。</p>';
+  kb = -1;
+}
+let kb = -1, timer;
+q.addEventListener('input', () => { lim = { p: 12, e: 30 }; clearTimeout(timer); timer = setTimeout(run, 80); });
+volSel.addEventListener('change', run);
+opts.addEventListener('click', ev => { const b = ev.target.closest('button[data-f]'); if (!b) return; filt = b.dataset.f; opts.querySelectorAll('button[data-f]').forEach(x => x.setAttribute('aria-pressed', x === b)); run(); });
+res.addEventListener('click', ev => { const b = ev.target.closest('[data-more]'); if (b) { lim[b.dataset.more] = 1e9; run(); return; }
+  const h = ev.target.closest('div.hit'); if (h && !ev.target.closest('a')) location.href = h.dataset.href; });
+q.addEventListener('keydown', ev => { const hs = [...res.querySelectorAll('.hit')]; if (!hs.length) return;
+  if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') { ev.preventDefault(); kb = Math.max(0, Math.min(hs.length - 1, kb + (ev.key === 'ArrowDown' ? 1 : -1))); hs.forEach((h, i) => h.classList.toggle('kb', i === kb)); hs[kb].scrollIntoView({ block: 'nearest' }); }
+  if (ev.key === 'Enter') { const h = hs[kb >= 0 ? kb : 0]; location.href = h.dataset.href || h.href; }
+  if (ev.key === 'Escape') { q.value = ''; run(); } });
+document.addEventListener('keydown', ev => { if (ev.key === '/' && document.activeElement !== q) { ev.preventDefault(); q.focus(); } });
+const hp = new URLSearchParams(location.hash.slice(1)); if (hp.get('q')) { q.value = hp.get('q'); if (hp.get('v') != null) volSel.value = hp.get('v'); run(); }
+})();`;
 const html = `<title>${esc(S.title)}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -75,6 +148,38 @@ li.era-start:not(:first-child) { margin-top: 14px; }
 .go { color: var(--muted); font-size: 22px; }
 .vol:hover .go { color: var(--seal); }
 .note { margin-top: 28px; color: var(--muted); font-size: 12.5px; line-height: 1.8; }
+.search { margin-top: 28px; }
+.sbox { position: relative; }
+.sbox input { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; padding: 11px 14px 11px 38px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); }
+.sbox input:focus { outline: none; border-color: var(--seal); box-shadow: 0 0 0 3px color-mix(in srgb, var(--seal) 18%, transparent); }
+.sbox svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 17px; height: 17px; color: var(--muted); pointer-events: none; }
+.sbox kbd { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font: 11px var(--f-sans); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; }
+.sbox input:not(:placeholder-shown) ~ kbd { display: none; }
+.sopts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; font-size: 13px; }
+.sopts button, .sopts select { font: inherit; font-size: 13px; border: 1px solid var(--line); background: var(--panel); color: var(--ink2); border-radius: 999px; padding: 3px 12px; cursor: pointer; }
+.sopts button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--land); }
+.sopts select { border-radius: 6px; padding: 3px 8px; }
+.sopts .cnt { margin-left: auto; color: var(--muted); font-size: 12.5px; }
+.res { margin-top: 14px; display: grid; gap: 18px; }
+.res[hidden], .vols[hidden] { display: none; }
+.res h2 { margin: 0 0 6px; font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: .08em; display: flex; justify-content: space-between; }
+.rl { display: grid; gap: 2px; }
+.hit { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 2px 12px; padding: 9px 10px; margin-inline: -10px; border-radius: 6px; color: inherit; text-decoration: none; }
+.hit:hover, .hit.kb { background: var(--chip); }
+div.hit { cursor: pointer; }
+.hit .y { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; padding-top: 2px; }
+.hit .t { color: inherit; text-decoration: none; font-family: var(--f-serif); font-weight: 700; font-size: 15.5px; }
+.hit .t small { font-family: var(--f-sans); font-weight: 400; font-size: 12.5px; color: var(--muted); margin-left: 6px; }
+.hit .s { grid-column: 2; color: var(--ink2); font-size: 13px; line-height: 1.65; }
+.hit .m { grid-column: 2; color: var(--muted); font-size: 12px; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+.hit .k { display: inline-block; width: 7px; height: 7px; margin-right: 6px; vertical-align: 2px; background: var(--ink); border-radius: 50%; }
+.hit .k.war { background: var(--seal); border-radius: 0; transform: rotate(45deg); }
+.hit .k.dip { background: #2a7068; border-radius: 0; }
+.hit .vb { border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; color: var(--ink2); text-decoration: none; font-size: 12px; }
+.hit .vb:hover { border-color: var(--seal); color: var(--seal); }
+mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }
+.more { font: inherit; font-size: 13px; margin-top: 6px; border: 0; background: none; color: var(--seal); cursor: pointer; padding: 4px 0; }
+.empty { color: var(--muted); padding: 10px 0; }
 @media (max-width: 520px) {
   main { padding-top: 24px; }
   h1 { font-size: 34px; }
@@ -83,6 +188,8 @@ li.era-start:not(:first-child) { margin-top: 14px; }
   .era:empty { display: none; }
   .body { grid-template-columns: auto minmax(0, 1fr); }
   .yrs { grid-column: 1 / -1; }
+  .hit { grid-template-columns: 1fr; }
+  .hit .s, .hit .m { grid-column: 1; }
 }
 @media (prefers-reduced-motion: reduce) { .vol { transition: none; } .vol:hover { transform: none; } }
 </style>
@@ -90,11 +197,26 @@ li.era-start:not(:first-child) { margin-top: 14px; }
   <h1>${esc(S.title)}<span class="seal">史</span></h1>
   <p class="sub">${esc(S.subtitle)}</p>
   <a class="start" href="${S.books[0].id}/index.html?at=start">从卷一读起 ›</a>
+  <section class="search" aria-label="检索">
+    <div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="检索全部 ${IDX.events.length} 个事件、${Object.keys(IDX.people).length} 位人物：人名、字、地名、年号、事件……" autocomplete="off" aria-label="检索人物与事件"><kbd>/</kbd></div>
+    <div class="sopts" id="sopts" hidden>
+      <button type="button" data-f="all" aria-pressed="true">全部</button><button type="button" data-f="p" aria-pressed="false">人物</button><button type="button" data-f="e" aria-pressed="false">事件</button>
+      <select id="vol" aria-label="限定卷"><option value="">全部卷</option>${S.books.map((b, i) => `<option value="${i}">卷${cn(i + 1)} ${esc(IDX.books[i][1])}</option>`).join('')}</select>
+      <span class="cnt" id="cnt"></span>
+    </div>
+    <div class="res" id="res" hidden></div>
+  </section>
+  <div class="vols" id="vols">
   <ol>
 ${rows.join('\n')}
   </ol>
   <p class="note">每卷页头有上一卷、下一卷和目录的链接。读到一卷的最后一个事件，时间轴右侧的“下一卷”按钮会亮起，点它从下一卷的开头接着读。</p>
+  </div>
 </main>
+<script>
+const IDX = ${JSON.stringify(IDX).replace(/</g, '\\u003c')};
+${searchJs}
+</script>
 `;
 writeFileSync(new URL('./dist/series/index.html', import.meta.url), html);
 console.log('dist/series/index.html', S.books.length, '卷');

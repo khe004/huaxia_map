@@ -702,5 +702,7 @@ if (B.view) svg.call(zoom.transform, HOME);
 if (SER) {
   const q = new URLSearchParams(location.search), ei = EVENTS.findIndex(e => e.t === q.get('ev')), pn = q.get('p');
   if (ei >= 0) { if (pn && PEOPLE.has(pn)) { setTab('people'); openPerson(pn); } openEvent(ei); }
+  // 只带 ?p=人物（如从目录页的检索进入）：打开此人的人物页
+  else if (pn && PEOPLE.has(pn)) { setTab('people'); openPerson(pn); }
 }
 })();
