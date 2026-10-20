@@ -68,6 +68,7 @@ button { font: inherit; color: inherit; }
   .series { margin-left: auto; }
 }
 .series .pos { color: var(--muted); font-size: 12px; padding: 0 2px; white-space: nowrap; }
+.series .ovl { color: var(--hl); font-size: 12px; padding: 0 2px; white-space: nowrap; cursor: help; }
 .nextbook.end { color: var(--land); background: var(--seal); border-color: var(--seal); animation: nbpulse 1.6s ease-in-out infinite; }
 @keyframes nbpulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, var(--seal) 25%, transparent); } }
 @media (prefers-reduced-motion: reduce) { .nextbook.end { animation: none; } }
@@ -304,7 +305,8 @@ button { font: inherit; color: inherit; }
   .stamp .big { font-size: 34px; }
   .legend { font-size: 11px; max-width: calc(100% - 24px); bottom: 8px; }
   .tl-hint { display: none; }
-  .series { margin-left: auto; }
+  .series { margin-left: auto; flex-wrap: wrap; justify-content: flex-end; }
+  .series .ovl { flex-basis: 100%; text-align: right; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ev.sel .ring, .ppath { animation: none; }

@@ -451,15 +451,29 @@ $('#play').onclick = () => {
 
 // 合集：上一卷 / 下一卷。链接带 ?at=start|end，接着上一卷的结尾或从下一卷的开头读起
 const bookHref = (b, at) => `../${b.id}/index.html${at ? '?at=' + at : ''}`;
+// 相邻两卷的时间重叠：前卷末事件晚于后卷首事件（同月首尾相接、同一事件衔接的不算）。返回说明文字，没有重叠时为空
+function overlapNote(a, b) {
+  if (!a || !b || !a.last || !b.first) return '';
+  const [y0, m0] = b.first, [y1, m1] = a.last;
+  if (y1 + (m1 - 1) / 12 <= y0 + (m0 - 1) / 12) return '';
+  return `在 ${ovSpan(b, a)} 重叠，两卷各从不同的线索叙述`;
+}
+function ovSpan(b, a) {
+  const y0 = b.first[0], y1 = a.last[0];
+  return y0 === y1 ? `${fmtYear(y0)} 年` : `${fmtYear(y0)}–${fmtYear(y1)} 年`;
+}
 if (SER) {
   const prev = SER.books[serIdx - 1], next = SER.books[serIdx + 1];
   const nav = $('#series'); nav.hidden = false;
   nav.innerHTML = `<span class="pos">卷${serIdx ? cnNum(serIdx + 1) : '一'} / ${cnNum(SER.books.length)}</span>`
     + `<a class="btn" href="../index.html" title="全部卷目">目录</a>`
     + (prev ? `<a class="btn" href="${bookHref(prev, 'end')}" title="上一卷：${esc(prev.brand)}（${esc(prev.years)}），从结尾读起">‹ ${esc(prev.brand)}</a>` : '');
+  const ov = overlapNote(prev, SER.books[serIdx]);
+  if (ov) nav.insertAdjacentHTML('beforeend', `<span class="ovl" title="与上一卷《${esc(prev.brand)}》${esc(ov)}">与上卷重叠 ${ovSpan(SER.books[serIdx], prev)}</span>`);
   if (next) {
     const a = $('#nextBook'); a.hidden = false; a.href = bookHref(next, 'start');
-    a.textContent = `下一卷：${next.brand} ›`; a.title = next.gap ? `${next.years} · 注意：${next.gap}` : next.years;
+    a.textContent = `下一卷：${next.brand} ›`; const nov = overlapNote(SER.books[serIdx], next);
+    a.title = [next.years, nov && `与本卷${nov}`, next.gap && `注意：${next.gap}`].filter(Boolean).join(' · ');
   }
 }
 function markBookEnd() { if (SER) $('#nextBook').classList.toggle('end', !EV_SORTED.some(e => EV_STEP[e.i] > state.step)); }
@@ -634,7 +648,8 @@ function renderPerson(n) {
   const p = PEOPLE.get(n);
   const evs = p.ev.slice().sort((a, b) => EV_STEP[a] - EV_STEP[b]).map(i => EVENTS[i]);
   // 合集里，此人在其他卷的事件按时间插入，标明见第几卷，点击跳到那一卷的该事件
-  const others = (SER && SER.people && SER.people[n] || []).filter(x => x[0] !== serIdx).map(([k, y, mo, t]) => ({ k, y, mo, t }));
+  // 两卷重叠处同一事件（同名同年）在本卷已有的，不再重复列出
+  const others = (SER && SER.people && SER.people[n] || []).filter(x => x[0] !== serIdx && !evs.some(e => e.t === x[3] && e.y === x[1])).map(([k, y, mo, t]) => ({ k, y, mo, t }));
   const merged = [...evs.map(e => ({ e, y: e.y, mo: e.mo })), ...others].sort((u, v) => u.y - v.y || u.mo - v.mo || (u.e ? serIdx : u.k) - (v.e ? serIdx : v.k));
   const co = new Map();
   evs.forEach(e => e.who.forEach(w => { if (w !== n) co.set(w, (co.get(w) || 0) + 1); }));

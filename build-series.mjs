@@ -7,11 +7,17 @@ const r = f => readFileSync(new URL(f, import.meta.url), 'utf8');
 const S = JSON.parse(r('./series.json'));
 const cn = n => { const D = '〇一二三四五六七八九', t = Math.floor(n / 10), o = n % 10; return n < 10 ? D[n] : (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+const fy = y => (y < 0 ? `前 ${-y}` : `${y}`);
+let prevLast = null;
 const rows = S.books.map((b, i) => {
   execFileSync('node', [new URL('./build.mjs', import.meta.url).pathname, b.id, '--series'], { stdio: 'inherit' });
   const c = {}; vm.createContext(c);
   vm.runInContext(r(`./books/${b.id}/book.js`) + '\n;this.__ = { BOOK, EVENTS, PEOPLE_RAW };', c);
   const { BOOK, EVENTS, PEOPLE_RAW } = c.__;
+  // 与上一卷时间重叠（上卷末事件晚于本卷首事件）时，在年份后注明
+  const es = EVENTS.slice().sort((u, v) => u.y - v.y || u.mo - v.mo), f = es[0], l = es[es.length - 1];
+  const ov = prevLast && prevLast.y + (prevLast.mo - 1) / 12 > f.y + (f.mo - 1) / 12 ? `与上卷重叠 ${f.y === prevLast.y ? fy(f.y) + ' 年' : fy(f.y) + ' – ' + fy(prevLast.y)}` : '';
+  prevLast = l;
   return `<li${b.era !== S.books[i - 1]?.era ? ' class="era-start"' : ''}>
   <span class="era">${b.era !== S.books[i - 1]?.era ? esc(b.era) : ''}</span>
   <a class="vol" href="${b.id}/index.html?at=start">
@@ -19,7 +25,7 @@ const rows = S.books.map((b, i) => {
     <span class="body">
       <span class="no">卷${cn(i + 1)}</span>
       <span class="name">${esc(BOOK.brand)}</span>
-      <span class="yrs">${esc(b.years)}</span>
+      <span class="yrs">${esc(b.years)}${ov ? `<em class="ovl">${ov}</em>` : ''}</span>
       <span class="blurb">${esc(b.blurb)}</span>
       <span class="meta">${EVENTS.length} 事件 · ${PEOPLE_RAW.length} 人物</span>
     </span>
@@ -59,6 +65,7 @@ li.era-start:not(:first-child) { margin-top: 14px; }
 .vol { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; color: inherit; text-decoration: none; transition: border-color .15s, transform .15s; }
 .vol:hover { border-color: var(--seal); transform: translateX(2px); }
 .vol .seal { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 4px; background: var(--chip); color: var(--seal); font-family: var(--f-display); font-size: 20px; }
+.ovl { font-style: normal; color: var(--hl); margin-left: 8px; }
 .body { display: grid; grid-template-columns: auto auto minmax(0, 1fr); column-gap: 10px; row-gap: 3px; align-items: baseline; }
 .no { color: var(--muted); font-size: 12.5px; }
 .name { font-family: var(--f-serif); font-weight: 700; font-size: 18px; }

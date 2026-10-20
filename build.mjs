@@ -41,6 +41,9 @@ if (SERIES_MODE) {
     const c = {}; vm.createContext(c);
     vm.runInContext(r(`./books/${b.id}/book.js`) + '\n;this.b = BOOK; this.p = PEOPLE_RAW; this.e = EVENTS;', c);
     b.brand = c.b.brand;
+    // 首末事件 [年, 月, 标题]：相邻两卷时间重叠时，页面据此提示重叠的年份
+    const es = c.e.slice().sort((u, v) => u.y - v.y || u.mo - v.mo), f = es[0], l = es[es.length - 1];
+    b.first = [f.y, f.mo, f.t]; b.last = [l.y, l.mo, l.t];
     for (const [n] of c.p) (seen[n] = seen[n] || []).push(k);
     for (const e of c.e) for (const n of e.who) (seen['\0' + n] = seen['\0' + n] || []).push([k, e.y, e.mo, e.t]);
   });
