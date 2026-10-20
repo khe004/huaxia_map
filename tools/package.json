@@ -1,0 +1,13 @@
+{
+  "name": "yutu-tools",
+  "private": true,
+  "description": "生成底图数据与地形图的脚本依赖；页面本身不需要这些",
+  "dependencies": {
+    "d3-geo": "3.1.0",
+    "mapshaper": "0.6.102",
+    "opencc-js": "1.0.5",
+    "pngjs": "7.0.0",
+    "sharp": "0.33.5",
+    "topojson-client": "3.1.0"
+  }
+}
