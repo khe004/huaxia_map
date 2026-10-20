@@ -17,6 +17,7 @@
   --panel: #f7f7f2;
   --chip: #ebece5;
   --seal: #b3322a;
+  --dip: #2a7068;
   --river: #2f73a0;
   --lake: #a9c6d6;
   --hl: #d8941c;
@@ -29,13 +30,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0f1317; --sea: #08121a; --land: #232a30; --land-x: #1a2026; --ink: #e8e5db; --ink2: #bcb9af;
-    --muted: #868b8e; --line: #343d44; --panel: #141920; --chip: #1f262c; --seal: #e3624f; --river: #5aa2c8; --lake: #163a4d;
+    --muted: #868b8e; --line: #343d44; --panel: #141920; --chip: #1f262c; --seal: #e3624f; --dip: #5fb3a6; --river: #5aa2c8; --lake: #163a4d;
     --hl: #f0b43c; --fo: .5; --terrain-o: .75; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0f1317; --sea: #08121a; --land: #232a30; --land-x: #1a2026; --ink: #e8e5db; --ink2: #bcb9af;
-  --muted: #868b8e; --line: #343d44; --panel: #141920; --chip: #1f262c; --seal: #e3624f; --river: #5aa2c8; --lake: #163a4d;
+  --muted: #868b8e; --line: #343d44; --panel: #141920; --chip: #1f262c; --seal: #e3624f; --dip: #5fb3a6; --river: #5aa2c8; --lake: #163a4d;
   --hl: #f0b43c; --fo: .5; --terrain-o: .75; color-scheme: dark;
 }
 html, body { height: 100%; }
@@ -115,8 +116,10 @@ button { font: inherit; color: inherit; }
 .ev .mk { stroke: var(--land); stroke-width: 1.5; }
 .ev.war .mk { fill: var(--seal); }
 .ev.pol .mk { fill: var(--ink); }
+.ev.dip .mk { fill: var(--dip); }
 .ev.past .mk { fill: var(--muted); stroke-width: 1; opacity: .55; }
 .ev.past.war .mk { fill: var(--seal); opacity: .38; }
+.ev.past.dip .mk { fill: var(--dip); opacity: .38; }
 .ev text { font-family: var(--f-serif); font-size: 12.5px; font-weight: 700; fill: var(--ink); paint-order: stroke; stroke: var(--land); stroke-width: 3.5px; stroke-linejoin: round; pointer-events: none; }
 .ev text .yr { font-family: var(--f-sans); font-weight: 500; fill: var(--muted); font-size: 11px; }
 .ev .ring { fill: none; stroke: var(--hl); stroke-width: 2.5; opacity: 0; }
@@ -183,6 +186,7 @@ button { font: inherit; color: inherit; }
 .syear { font-size: 10.5px; fill: var(--muted); text-anchor: middle; font-variant-numeric: tabular-nums; }
 .sev-t { font-family: var(--f-serif); font-size: 10.5px; fill: var(--ink2); writing-mode: vertical-rl; text-orientation: upright; letter-spacing: -1px; }
 .sev-t.war { fill: var(--seal); }
+.sev-t.dip { fill: var(--dip); }
 .sev-t.on { font-weight: 900; fill: var(--ink); }
 .scursor { fill: var(--hl); opacity: .16; pointer-events: none; }
 .sline { cursor: pointer; }
@@ -196,6 +200,7 @@ button { font: inherit; color: inherit; }
 .snode { cursor: pointer; }
 .snode rect { fill: var(--panel); stroke: var(--ink); stroke-width: 1.4; }
 .snode.war rect { stroke: var(--seal); }
+.snode.dip rect { stroke: var(--dip); }
 .snode:hover rect { fill: var(--chip); stroke-width: 2.2; }
 .snode.sel rect { stroke: var(--hl); stroke-width: 3; }
 
@@ -219,6 +224,7 @@ button { font: inherit; color: inherit; }
 .ticks { height: 14px; }
 .ticks button { position: absolute; top: 2px; transform: translateX(-50%); border: 0; padding: 0; border-radius: 50%; background: var(--ink2); opacity: .55; cursor: pointer; }
 .ticks button.war { background: var(--seal); }
+.ticks button.dip { background: var(--dip); border-radius: 1px; }
 .ticks button.on { opacity: 1; outline: 2px solid var(--hl); outline-offset: 1px; }
 .axis { height: 14px; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .axis span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
@@ -261,6 +267,7 @@ button { font: inherit; color: inherit; }
 .item .t i { font-style: normal; display: inline-block; width: 7px; height: 7px; margin-right: 6px; vertical-align: 2px; }
 .item .t i.war { background: var(--seal); transform: rotate(45deg); }
 .item .t i.pol { background: var(--ink); border-radius: 50%; }
+.item .t i.dip { background: var(--dip); }
 .item .s { grid-column: 2; font-size: 12px; color: var(--muted); }
 .item.other { color: inherit; text-decoration: none; opacity: .62; }
 .item.other:hover { opacity: 1; }

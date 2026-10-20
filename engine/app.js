@@ -6,6 +6,7 @@ const [W, H] = BASEMAP.size, [Y0, Y1] = B.range;
 const SER = SERIES && SERIES.books.findIndex(b => b.id === B.id) >= 0 ? SERIES : null;
 const serIdx = SER ? SER.books.findIndex(b => b.id === B.id) : -1;
 const $ = s => document.querySelector(s);
+const KIND = { war: '战事', pol: '政事', dip: '外交' };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
 // 年份：公元前用负数，没有公元 0 年
@@ -365,7 +366,7 @@ function renderEvents() {
   });
   sel.select('path.mk').attr('d', d => {
     const cur = focusP || d.y === y; const r = cur ? 6.5 : 3.2;
-    return d.k === 'war' ? `M0,${-r * 1.15}L${r * 1.15},0L0,${r * 1.15}L${-r * 1.15},0Z` : d3.symbol(d3.symbolCircle, Math.PI * r * r)();
+    return d.k === 'war' ? `M0,${-r * 1.15}L${r * 1.15},0L0,${r * 1.15}L${-r * 1.15},0Z` : d.k === 'dip' ? d3.symbol(d3.symbolSquare, 3.2 * r * r)() : d3.symbol(d3.symbolCircle, Math.PI * r * r)();
   });
   sel.sort((a, b) => (a.y === y) - (b.y === y) || (state.sel === a.i) - (state.sel === b.i));
   renderPersonPath();
@@ -431,7 +432,7 @@ $('#phases').innerHTML = PHASES.map(([a, b, n]) => `<div data-a="${a}" style="le
   if (B.axisTicks) ticks = B.axisTicks.filter(y => YEAR_STEP[y] != null);
   $('#axis').innerHTML = ticks.map(y => `<span style="left:${at(YEAR_STEP[y])}">${fmtYear(y)}</span>`).join('');
 }
-$('#ticks').innerHTML = EVENTS.map(e => `<button data-ev="${e.i}" class="${e.k === 'war' ? 'war' : ''}" style="left:${at(EV_STEP[e.i])};width:7px;height:7px;top:3.5px" title="${fmtYear(e.y)}：${esc(e.t)}" aria-label="${fmtYear(e.y)} ${esc(e.t)}"></button>`).join('');
+$('#ticks').innerHTML = EVENTS.map(e => `<button data-ev="${e.i}" class="${e.k === 'pol' ? '' : e.k}" style="left:${at(EV_STEP[e.i])};width:7px;height:7px;top:3.5px" title="${fmtYear(e.y)}：${esc(e.t)}" aria-label="${fmtYear(e.y)} ${esc(e.t)}"></button>`).join('');
 $('#ticks').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { stop(); setStep(EV_STEP[+b.dataset.ev], true); } });
 range.addEventListener('input', () => { setStep(+range.value); });
 $('#prevEv').onclick = () => { stop(); const e = [...EV_SORTED].reverse().find(e => EV_STEP[e.i] < state.step); if (e) setStep(EV_STEP[e.i], true); };
@@ -619,7 +620,7 @@ function renderEvent(i) {
     <button class="back">${backLabel}</button>
     <div class="kicker">${[fmtYearFull(e.y), ganzhi(e.y), e.cal || eraLine(e.y)].filter(Boolean).join(' · ')}</div>
     <h2>${e.t}</h2>
-    <div class="meta"><span>${e.p}（${e.m}）</span><span class="tag">${e.k === 'war' ? '战事' : '政事'}</span>${e.src ? `<span class="tag yy">${tagOf(e)}</span>` : ''}</div>
+    <div class="meta"><span>${e.p}（${e.m}）</span><span class="tag">${KIND[e.k] || '政事'}</span>${e.src ? `<span class="tag yy">${tagOf(e)}</span>` : ''}</div>
     <p>${rich(e.d)}</p>
     ${srcBlock(e.refs)}
     <h3>参与人物 <span>${e.who.length} 人</span></h3>

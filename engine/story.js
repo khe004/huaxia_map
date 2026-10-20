@@ -76,7 +76,7 @@ function renderStory() {
   let lastY = null;
   COLS.forEach((e, k) => {
     if (e.y !== lastY) { S.append('text').attr('class', 'syear').attr('x', xCol(k)).attr('y', 29).text(fmtYear(e.y)); lastY = e.y; }
-    S.append('text').attr('class', 'sev-t' + (e.k === 'war' ? ' war' : '')).attr('x', xCol(k)).attr('y', 34).attr('data-c', e.i).text(shortT(e.t));
+    S.append('text').attr('class', 'sev-t' + (e.k === 'pol' ? '' : ' ' + e.k)).attr('x', xCol(k)).attr('y', 34).attr('data-c', e.i).text(shortT(e.t));
   });
   S.append('rect').attr('class', 'scursor').attr('id', 's-cursor').attr('y', 20).attr('width', COLW).attr('height', H - 20);
 
