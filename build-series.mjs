@@ -22,7 +22,8 @@ const rows = S.books.map((b, i) => {
   const evOf = new Map();
   for (const e of EVENTS) {
     IDX.events.push([i, e.y, e.mo, e.t, e.p, e.m, e.k, e.who.join('、'), plain(e.d), e.cal || '']);
-    for (const n of e.who) evOf.set(n, (evOf.get(n) || []).concat(e));
+    // 人物的各卷事件数只计在世时的事件（post 身后出场不算）
+    for (const n of e.who) if (!(e.post || []).includes(n)) evOf.set(n, (evOf.get(n) || []).concat(e));
   }
   for (const [n, f, zi, life, bio] of PEOPLE_RAW) {
     const cm = pcx.PC[n], es = (evOf.get(n) || []).sort((u, v) => u.y - v.y || u.mo - v.mo), t = es.length ? es[0].y + (es[0].mo - 1) / 12 : BOOK.range[0];

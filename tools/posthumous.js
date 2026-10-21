@@ -6,7 +6,7 @@ const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.PC=PEOPLE_COMMON', pc);
-const death = s => { const m = (s || '').match(/[–-]\s*(前)?(\d+)\s*$/); return m ? (m[1] ? -m[2] : +m[2]) : null; };
+const death = s => { const m = (s || '').match(/[–-]\s*(前)?(\d+)\??\s*$/); return m ? (m[1] ? -m[2] : +m[2]) : null; };
 let n = 0;
 for (const id of ids) {
   const c = {}; vm.createContext(c);
@@ -15,6 +15,7 @@ for (const id of ids) {
   for (const e of c.X.EVENTS) for (const w of e.who) {
     const d = death(life.get(w)), post = (e.post || []).includes(w);
     if (d == null) continue;
+    if (e.src) continue; // 演义情节等虚构事件不按史实生卒检查
     const gone = d < e.y && !(d === e.y - 1 && e.mo < 3);
     if (gone && !post) out.push(`  ${e.y} ${e.t}：${w}（卒 ${d}）未标身后`);
     if (post && d > e.y) out.push(`  ${e.y} ${e.t}：${w}（卒 ${d}）标了身后但当时在世`);

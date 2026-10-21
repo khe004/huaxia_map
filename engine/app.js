@@ -344,7 +344,8 @@ function renderTerritory() {
 // ---------- render: events ----------
 function visibleEvents() {
   const y = state.year;
-  if (state.person) return PEOPLE.get(state.person).live.map(i => EVENTS[i]);
+  // 人物行迹模式只显示此人在世时的事件；当前选中的事件（如点开的“身后”事件）也一并显示
+  if (state.person) { const L = PEOPLE.get(state.person).live; return (state.sel != null && !L.includes(state.sel) ? L.concat(state.sel) : L).map(i => EVENTS[i]); }
   return EVENTS.filter(e => EV_STEP[e.i] <= state.step);
 }
 function renderEvents() {
@@ -632,8 +633,10 @@ function renderPeopleList() {
 function renderEvent(i) {
   const e = EVENTS[i];
   const backLabel = state.stack.length && state.stack[state.stack.length - 1].view.t === 'person' ? `‹ 返回 ${state.stack[state.stack.length - 1].view.n}` : '‹ 返回';
-  const order = state.person ? PEOPLE.get(state.person).ev.slice().sort((a, b) => EV_STEP[a] - EV_STEP[b]) : EV_SORTED.map(x => x.i);
-  const k = order.indexOf(i), pv = order[k - 1], nx = order[k + 1];
+  // 沿人物行迹浏览时只在其在世事件间前后翻；当前是身后事件时，取时间上前后最近的在世事件
+  const order = state.person ? PEOPLE.get(state.person).live.slice().sort((a, b) => EV_STEP[a] - EV_STEP[b]) : EV_SORTED.map(x => x.i);
+  let k = order.indexOf(i), pv, nx;
+  if (k >= 0) { pv = order[k - 1]; nx = order[k + 1]; } else { pv = [...order].reverse().find(j => EV_STEP[j] < EV_STEP[i]); nx = order.find(j => EV_STEP[j] > EV_STEP[i]); }
   pbody.innerHTML = `
     <button class="back">${backLabel}</button>
     <div class="kicker">${[fmtYearFull(e.y), ganzhi(e.y), e.cal || eraLine(e.y)].filter(Boolean).join(' · ')}</div>
@@ -662,18 +665,20 @@ function renderPerson(n) {
   // 生卒年：形如 161–223、?–220、前232–前202
   const lm = p.life.match(/^(前)?(\d+)?\??\s*[–-]\s*(前)?(\d+)/);
   const a = lm && lm[2] ? (lm[1] ? -lm[2] : +lm[2]) : null, b = lm ? (lm[3] ? -lm[4] : +lm[4]) : null;
-  const fy = evs.length ? evs[evs.length - 1].y : state.year;
+  const liveEvs = evs.filter(e => !isPost(e, n)), fy = liveEvs.length ? liveEvs[liveEvs.length - 1].y : evs.length ? evs[0].y : state.year;
   const pad = Math.max(10, (Y1 - Y0) * .3), lo = Y0 - pad, hi = Y1 + pad * .5, sc = v => (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * 100;
   // 夏历十二月去世折成公历次年一二月，事件年份可能比卒年晚一年，寿命条画到最后一个在世事件为止（最多延长一年）
   const lastLive = p.live.length ? Math.max(...p.live.map(i => EVENTS[i].y)) : null, b2 = b != null && lastLive != null && lastLive > b ? Math.min(lastLive, b + 1) : b;
-  const life = b ? `<div class="lifebar" title="生卒年"><div style="left:${sc(a || b - 40)}%;width:${sc(b2) - sc(a || b - 40)}%;background:${fColor(p.f)};${a ? '' : 'opacity:.45'}"></div>${evs.filter(e => !isPost(e, n)).map(e => `<div style="left:${sc(e.y)}%;width:2px;background:var(--ink)"></div>`).join('')}</div>` : '';
+  // 生年不详时左端默认按活 40 岁算，若有更早的在世事件则延伸到该事件
+  const firstLive = p.live.length ? Math.min(...p.live.map(i => EVENTS[i].y)) : null, a2 = a != null ? a : b != null ? Math.min(b - 40, firstLive ?? b - 40) : null;
+  const life = b ? `<div class="lifebar" title="生卒年"><div style="left:${sc(a2)}%;width:${sc(b2) - sc(a2)}%;background:${fColor(p.f)};${a ? '' : 'opacity:.45'}"></div>${evs.filter(e => !isPost(e, n)).map(e => `<div style="left:${sc(e.y)}%;width:2px;background:var(--ink)"></div>`).join('')}</div>` : '';
   pbody.innerHTML = `
     <button class="back">‹ 返回</button>
     <h2>${n}${p.zi ? `<small>字${p.zi}</small>` : ''}</h2>
     <div class="meta"><span class="chip" style="cursor:default">${fdot(p.f)}${fName(p.f, fy)}</span><span>${p.life}</span></div>
     ${life}
     <p>${rich(p.bio)}</p>
-    <h3>经历事件 <span>${p.live.length} 件${evs.length > p.live.length ? `，身后 ${evs.length - p.live.length} 件` : ''}${others.length ? `，另有 ${others.length} 件见其他卷` : ''} · 地图上以金色虚线连出行迹，序号与金圈一致</span></h3>
+    <h3>经历事件 <span>${p.live.length} 件${evs.length > p.live.length ? `，身后 ${evs.length - p.live.length} 件` : ''}${others.length ? `，另有 ${others.length} 件见其他卷` : ''}${p.live.length ? ' · 地图上以金色虚线连出行迹，序号与金圈一致' : ''}</span></h3>
     <div class="list">${(() => { let k = 0; return merged.map(x => {
       // 序号只给本卷在世时的事件，与地图上金圈的序号一致；他卷事件与身后事件不编号
       if (!x.e) return otherItem(x, n);

@@ -13,10 +13,12 @@ const rowOf = new Map(ROWS.map((j, k) => [j, k]));
 const COLS = EV_SORTED, colOf = new Map(COLS.map((e, k) => [e.i, k]));
 const COLW = 46, HEAD = 94, PADX = 24;
 const PCOL = ['#d1495b', '#2f7fbf', '#e09f1f', '#2a9d8f', '#8d6cab', '#e0602f', '#5aa83c', '#c2569b', '#7a6a4f', '#3fb6d6', '#a83232', '#6b7fd7'];
-const DEFAULT_SEL = (B.storyDefault || [...PEOPLE.values()].sort((a, b) => b.ev.length - a.ev.length).slice(0, 10).map(p => p.n)).filter(n => PEOPLE.has(n));
+// 交汇图只画在世事件不少于 2 件的人物（与顶栏人物按钮一致），默认人选和本地保存的人选都按此过滤
+const storyable = n => PEOPLE.has(n) && PEOPLE.get(n).live.length >= 2;
+const DEFAULT_SEL = (B.storyDefault || [...PEOPLE.values()].sort((a, b) => b.live.length - a.live.length).slice(0, 10).map(p => p.n)).filter(storyable);
 const STORE = `yutu-${B.id}-story`;
 let sel = DEFAULT_SEL.slice();
-try { const v = JSON.parse(localStorage.getItem(STORE)); if (Array.isArray(v) && v.every(n => PEOPLE.has(n))) sel = v; } catch (e) { /* 无本地存储时用默认 */ }
+try { const v = JSON.parse(localStorage.getItem(STORE)); if (Array.isArray(v) && v.every(n => PEOPLE.has(n))) sel = v.filter(storyable); } catch (e) { /* 无本地存储时用默认 */ }
 const saveSel = () => { try { localStorage.setItem(STORE, JSON.stringify(sel)); } catch (e) { /* ignore */ } };
 const pColor = n => PCOL[sel.indexOf(n) % PCOL.length];
 const shortT = t => { const s = t.split(' · ')[0]; return s.length > 6 ? s.slice(0, 6) : s; };
@@ -119,7 +121,7 @@ function renderStory() {
     const lo = os.length ? Math.min(...os) : 0, hi = os.length ? Math.max(...os) : 0;
     const g = nodes.append('g').attr('class', 'snode ' + e.k + (state.sel === e.i ? ' sel' : '')).attr('data-e', e.i);
     g.append('rect').attr('x', x - 6).attr('y', y + lo - 6).attr('width', 12).attr('height', hi - lo + 12).attr('rx', 6);
-    g.on('mousemove', ev => showTip(ev, `<b>${e.t}</b><div class="s">${fmtYear(e.y)} 年 · ${e.p}（${e.m}）· ${SEEDS[e.j].z}${SEEDS[e.j].n}</div><div>${e.who.map(w => sel.includes(w) ? `<span style="color:${pColor(w)}">●</span>${w}` : w).join('、')}</div>`))
+    g.on('mousemove', ev => showTip(ev, `<b>${e.t}</b><div class="s">${fmtYear(e.y)} 年 · ${e.p}（${e.m}）· ${SEEDS[e.j].z}${SEEDS[e.j].n}</div><div>${e.who.map(w => sel.includes(w) && !isPost(e, w) ? `<span style="color:${pColor(w)}">●</span>${w}` : w).join('、')}</div>`))
       .on('mouseleave', hideTip).on('click', () => openEvent(e.i));
   }
   storyCursor(false);
@@ -141,7 +143,7 @@ function storyCursor(scroll = true) {
 }
 function storyFocus(n) {
   if (story.hidden) return;
-  if (!sel.includes(n)) { sel = sel.concat(n); saveSel(); renderChips(); }
+  if (!sel.includes(n) && storyable(n)) { sel = sel.concat(n); saveSel(); renderChips(); }
   renderStory();
 }
 
