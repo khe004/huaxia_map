@@ -30,7 +30,8 @@ const rows = S.books.map((b, i) => {
     let fn = f; try { fn = FACTIONS[f].name(t).replace(/（[^）]*）/g, ''); } catch (err) {}
     const P = IDX.people[n] || (IDX.people[n] = [cm ? cm[0] : zi, cm ? cm[1] : life, plain(cm ? cm[2] : bio), []]);
     if (!cm && bio && !P[2]) P[2] = plain(bio);
-    P[3].push([i, fn, es.length]);
+    // [卷序, 势力名, 在世事件数, 首个在世事件的时间]：人物页签按首次出场先后排列
+    P[3].push([i, fn, es.length, es.length ? +t.toFixed(3) : null]);
   }
   // 与上一卷时间重叠（上卷末事件晚于本卷首事件）时，在年份后注明
   const es = EVENTS.slice().sort((u, v) => u.y - v.y || u.mo - v.mo), f = es[0], l = es[es.length - 1];
@@ -59,7 +60,60 @@ const fy = (y, k) => (B[k][2] != null && y < B[k][2] ? '约' : '') + (y < 0 ? '�
 const KN = { war: '战事', pol: '政事', dip: '外交' };
 const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, mo, t, p, m, kind, who, d, cal }));
 const PP = Object.entries(IDX.people).map(([n, [zi, life, bio, bk]]) => ({ n, zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
-const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), vols = $('#vols'), cnt = $('#cnt'), volSel = $('#vol');
+const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), cnt = $('#cnt'), volSel = $('#vol');
+// 页签：卷目 / 人物 / 事件 / 检索，当前页签与筛选记在地址的 # 后面
+const TABS = ['vols', 'people', 'events', 'search'], tabs = [...document.querySelectorAll('[role=tab]')];
+const pf = { v: '', x: false }, ef = { v: '', k: 'all' }, done = {};
+function setHash(tab) {
+  let h = tab === 'vols' ? '' : 'tab=' + tab;
+  if (tab === 'people') h += (pf.v !== '' ? '&v=' + pf.v : '') + (pf.x ? '&x=1' : '');
+  if (tab === 'events') h += (ef.v !== '' ? '&v=' + ef.v : '') + (ef.k !== 'all' ? '&k=' + ef.k : '');
+  try { history.replaceState(null, '', h ? '#' + h : location.pathname + location.search); } catch (err) {}
+}
+function show(tab, keep) {
+  tabs.forEach(b => { const on = b.dataset.tab === tab; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; $('#' + b.getAttribute('aria-controls')).hidden = !on; });
+  if (tab === 'people' && !done.p) { done.p = 1; renderP(); }
+  if (tab === 'events' && !done.e) { done.e = 1; renderE(); }
+  if (!keep) { if (tab === 'search') run(); else setHash(tab); }
+}
+$('#tabs').addEventListener('click', ev => { const b = ev.target.closest('[role=tab]'); if (b) show(b.dataset.tab); });
+$('#tabs').addEventListener('keydown', ev => { const i = tabs.indexOf(document.activeElement), d = ev.key === 'ArrowRight' ? 1 : ev.key === 'ArrowLeft' ? -1 : 0;
+  if (i < 0 || !d) return; ev.preventDefault(); const b = tabs[(i + d + tabs.length) % tabs.length]; b.focus(); show(b.dataset.tab); });
+const head = (k, n, unit) => '<h3><span class="hv">' + vol(k) + '</span>' + esc(B[k][1]) + '<small>' + n + ' ' + unit + '</small></h3>';
+function renderP() {
+  const v = pf.v === '' ? null : +pf.v, g = new Map();
+  for (const p of PP) {
+    if (pf.x && p.bk.length < 2) continue;
+    const b = v != null ? p.bk.find(b => b[0] === v) : p.bk[0]; if (!b) continue;
+    (g.get(b[0]) || g.set(b[0], []).get(b[0])).push([p, b]);
+  }
+  let n = 0, h = '';
+  for (const [k, arr] of [...g].sort((a, b) => a[0] - b[0])) {
+    arr.sort((a, b) => (a[1][3] ?? 1e9) - (b[1][3] ?? 1e9)); n += arr.length;
+    h += '<section class="grp">' + head(k, arr.length, '位') + '<div class="pg">' + arr.map(([p, b]) => {
+      const k0 = v != null ? v : p.bk.slice().sort((a, b) => b[2] - a[2])[0][0];
+      return '<a class="pc" href="' + pHref(p.n, k0) + '" title="' + esc((p.zi ? '字' + p.zi + '。' : '') + p.bio) + '"><b>' + esc(p.n) + '</b>' + (p.life ? '<span>' + esc(p.life) + '</span>' : '')
+        + (p.bk.length > 1 ? '<i title="出现在 ' + p.bk.map(b => vol(b[0])).join('、') + '">' + p.bk.length + ' 卷</i>' : '') + '</a>'; }).join('') + '</div></section>';
+  }
+  $('#pcnt').textContent = n + ' 位人物';
+  $('#plist').innerHTML = h || '<p class="empty">没有符合条件的人物。</p>';
+}
+function renderE() {
+  const v = ef.v === '' ? null : +ef.v, g = new Map();
+  for (const e of EV) if ((v == null || e.k === v) && (ef.k === 'all' || e.kind === ef.k)) (g.get(e.k) || g.set(e.k, []).get(e.k)).push(e);
+  let n = 0, h = '';
+  for (const [k, arr] of [...g].sort((a, b) => a[0] - b[0])) {
+    arr.sort((a, b) => a.y - b.y || a.mo - b.mo); n += arr.length;
+    h += '<section class="grp">' + head(k, arr.length, '个') + '<div class="el">' + arr.map(e => '<a class="er" href="' + evHref(e) + '"' + (e.cal ? ' title="' + esc(e.cal) + '"' : '') + '><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '" title="' + KN[e.kind] + '"></i>' + esc(e.t) + '</span><span class="pl">' + esc(e.p) + '</span></a>').join('') + '</div></section>';
+  }
+  $('#ecnt').textContent = n + ' 个事件';
+  $('#elist').innerHTML = h || '<p class="empty">没有符合条件的事件。</p>';
+}
+$('#pvol').addEventListener('change', ev => { pf.v = ev.target.value; renderP(); setHash('people'); });
+$('#pcross').addEventListener('click', ev => { pf.x = !pf.x; ev.currentTarget.setAttribute('aria-pressed', pf.x); renderP(); setHash('people'); });
+$('#evol').addEventListener('change', ev => { ef.v = ev.target.value; renderE(); setHash('events'); });
+$('#ekind').addEventListener('click', ev => { const b = ev.target.closest('button[data-k]'); if (!b) return; ef.k = b.dataset.k;
+  $('#ekind').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); renderE(); setHash('events'); });
 let filt = 'all', lim = { p: 12, e: 30 };
 const mk = (s, terms) => { let h = esc(s); for (const t of terms) h = h.split(esc(t)).join('\\u0002' + esc(t) + '\\u0003'); return h.replace(/\\u0002/g, '<mark>').replace(/\\u0003/g, '</mark>'); };
 const snip = (s, terms, n = 46) => { let i = -1; for (const t of terms) { const j = s.indexOf(t); if (j >= 0 && (i < 0 || j < i)) i = j; }
@@ -75,8 +129,8 @@ function scoreE(e, terms) { let s = 0; for (const t of terms) {
   else if (e.who.includes(t)) s += 15; else if (e.d.includes(t)) s += 5; else return 0; } return s; }
 function run() {
   const raw = q.value.trim(), terms = raw.split(/\\s+/).filter(Boolean), v = volSel.value === '' ? null : +volSel.value;
-  try { history.replaceState(null, '', raw ? '#q=' + encodeURIComponent(raw) + (v != null ? '&v=' + v : '') : location.pathname + location.search); } catch (err) {}
-  const on = terms.length > 0; res.hidden = opts.hidden = !on; vols.hidden = on; if (!on) return;
+  try { history.replaceState(null, '', raw ? '#q=' + encodeURIComponent(raw) + (v != null ? '&v=' + v : '') : '#tab=search'); } catch (err) {}
+  const on = terms.length > 0; res.hidden = opts.hidden = !on; $('#shint').hidden = on; if (!on) return;
   const psS = filt === 'e' ? [] : PP.filter(p => v == null || p.bk.some(b => b[0] === v)).map(p => [p, scoreP(p, terms)]).filter(x => x[1]).sort((a, b) => b[1] - a[1]), ps = psS.map(x => x[0]);
   const esS = filt === 'p' ? [] : EV.filter(e => v == null || e.k === v).map(e => [e, scoreE(e, terms)]).filter(x => x[1]).sort((a, b) => b[1] - a[1] || a[0].y - b[0].y || a[0].mo - b[0].mo), es = esS.map(x => x[0]);
   // 两类都有结果时，人物只先列 6 位；最佳匹配更好的一类排在前面
@@ -104,8 +158,12 @@ q.addEventListener('keydown', ev => { const hs = [...res.querySelectorAll('.hit'
   if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') { ev.preventDefault(); kb = Math.max(0, Math.min(hs.length - 1, kb + (ev.key === 'ArrowDown' ? 1 : -1))); hs.forEach((h, i) => h.classList.toggle('kb', i === kb)); hs[kb].scrollIntoView({ block: 'nearest' }); }
   if (ev.key === 'Enter') { const h = hs[kb >= 0 ? kb : 0]; location.href = h.dataset.href || h.href; }
   if (ev.key === 'Escape') { q.value = ''; run(); } });
-document.addEventListener('keydown', ev => { if (ev.key === '/' && document.activeElement !== q) { ev.preventDefault(); q.focus(); } });
-const hp = new URLSearchParams(location.hash.slice(1)); if (hp.get('q')) { q.value = hp.get('q'); if (hp.get('v') != null) volSel.value = hp.get('v'); run(); }
+document.addEventListener('keydown', ev => { if (ev.key === '/' && document.activeElement !== q && !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)) { ev.preventDefault(); show('search'); q.focus(); } });
+const hp = new URLSearchParams(location.hash.slice(1)), t0 = hp.get('q') ? 'search' : TABS.includes(hp.get('tab')) ? hp.get('tab') : 'vols';
+if (t0 === 'search' && hp.get('q')) { q.value = hp.get('q'); if (hp.get('v') != null) volSel.value = hp.get('v'); }
+if (t0 === 'people') { pf.v = $('#pvol').value = hp.get('v') ?? ''; pf.x = hp.get('x') === '1'; $('#pcross').setAttribute('aria-pressed', pf.x); }
+if (t0 === 'events') { ef.v = $('#evol').value = hp.get('v') ?? ''; const k = hp.get('k'); if (KN[k]) { ef.k = k; $('#ekind').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.k === k)); } }
+show(t0, true); if (t0 === 'search') run();
 })();`;
 const html = `<title>${esc(S.title)}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -149,7 +207,35 @@ li.era-start:not(:first-child) { margin-top: 14px; }
 .go { color: var(--muted); font-size: 22px; }
 .vol:hover .go { color: var(--seal); }
 .note { margin-top: 28px; color: var(--muted); font-size: 12.5px; line-height: 1.8; }
-.search { margin-top: 28px; }
+.tabs { display: flex; gap: 4px; margin-top: 28px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tabs button { font: inherit; font-family: var(--f-serif); font-weight: 700; font-size: 16px; letter-spacing: .1em; padding: 8px 16px 9px; margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); cursor: pointer; white-space: nowrap; }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-selected="true"] { color: var(--seal); border-bottom-color: var(--seal); }
+.panel { margin-top: 18px; }
+.panel[hidden] { display: none; }
+.vols ol { margin-top: 0; }
+.panel > .sopts:first-child { margin: 0 0 6px; }
+.seg { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.sopts .k { margin-right: 5px; }
+.grp { margin-top: 18px; }
+.grp h3 { margin: 0 0 8px; font-family: var(--f-serif); font-size: 16px; font-weight: 700; display: flex; align-items: baseline; gap: 8px; position: sticky; top: 0; background: var(--bg); padding: 6px 0; z-index: 1; }
+.grp h3 .hv { font-family: var(--f-sans); font-weight: 400; font-size: 12.5px; color: var(--seal); }
+.grp h3 small { margin-left: auto; font-family: var(--f-sans); font-weight: 400; font-size: 12px; color: var(--muted); }
+.pg { display: flex; flex-wrap: wrap; gap: 6px; }
+.pc { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; color: inherit; text-decoration: none; }
+.pc:hover { border-color: var(--seal); }
+.pc b { font-family: var(--f-serif); font-weight: 700; font-size: 15px; }
+.pc span { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.pc i { font-style: normal; font-size: 11px; color: var(--seal); border: 1px solid color-mix(in srgb, var(--seal) 40%, transparent); border-radius: 999px; padding: 0 5px; }
+.el { display: grid; }
+.er { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 6px 10px; margin-inline: -10px; border-radius: 6px; color: inherit; text-decoration: none; }
+.er:hover { background: var(--chip); }
+.er .y { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.er .t { font-family: var(--f-serif); font-weight: 500; font-size: 15px; }
+.er .pl { color: var(--muted); font-size: 12.5px; }
+.k { display: inline-block; width: 7px; height: 7px; margin-right: 8px; vertical-align: 2px; background: var(--ink); border-radius: 50%; }
+.k.war { background: var(--seal); border-radius: 0; transform: rotate(45deg); }
+.k.dip { background: var(--dip); border-radius: 0; }
 .sbox { position: relative; }
 .sbox input { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; padding: 11px 14px 11px 38px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); }
 .sbox input:focus { outline: none; border-color: var(--seal); box-shadow: 0 0 0 3px color-mix(in srgb, var(--seal) 18%, transparent); }
@@ -191,6 +277,9 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
   .yrs { grid-column: 1 / -1; }
   .hit { grid-template-columns: 1fr; }
   .hit .s, .hit .m { grid-column: 1; }
+  .tabs button { padding-inline: 12px; }
+  .er { grid-template-columns: 52px minmax(0, 1fr); gap: 2px 10px; }
+  .er .pl { grid-column: 2; }
 }
 @media (prefers-reduced-motion: reduce) { .vol { transition: none; } .vol:hover { transform: none; } }
 </style>
@@ -198,16 +287,28 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
   <h1>${esc(S.title)}<span class="seal">史</span></h1>
   <p class="sub">${esc(S.subtitle)}</p>
   <a class="start" href="${S.books[0].id}/index.html?at=start">从卷一读起 ›</a>
-  <section class="search" aria-label="检索">
+  <div class="tabs" id="tabs" role="tablist" aria-label="目录">
+    <button type="button" role="tab" id="t-vols" data-tab="vols" aria-controls="vols" aria-selected="true">卷目</button><button type="button" role="tab" id="t-people" data-tab="people" aria-controls="people" aria-selected="false" tabindex="-1">人物</button><button type="button" role="tab" id="t-events" data-tab="events" aria-controls="events" aria-selected="false" tabindex="-1">事件</button><button type="button" role="tab" id="t-search" data-tab="search" aria-controls="search" aria-selected="false" tabindex="-1">检索</button>
+  </div>
+  <section class="panel" id="people" role="tabpanel" aria-labelledby="t-people" hidden>
+    <div class="sopts"><select id="pvol" aria-label="限定卷"><option value="">全部卷（按首次出场分组）</option>${S.books.map((b, i) => `<option value="${i}">卷${cn(i + 1)} ${esc(IDX.books[i][1])}</option>`).join('')}</select><button type="button" id="pcross" aria-pressed="false">只看跨卷人物</button><span class="cnt" id="pcnt"></span></div>
+    <div id="plist"></div>
+  </section>
+  <section class="panel" id="events" role="tabpanel" aria-labelledby="t-events" hidden>
+    <div class="sopts"><span id="ekind" class="seg"><button type="button" data-k="all" aria-pressed="true">全部</button><button type="button" data-k="war" aria-pressed="false"><i class="k war"></i>战事</button><button type="button" data-k="pol" aria-pressed="false"><i class="k pol"></i>政事</button><button type="button" data-k="dip" aria-pressed="false"><i class="k dip"></i>外交</button></span><select id="evol" aria-label="限定卷"><option value="">全部卷</option>${S.books.map((b, i) => `<option value="${i}">卷${cn(i + 1)} ${esc(IDX.books[i][1])}</option>`).join('')}</select><span class="cnt" id="ecnt"></span></div>
+    <div id="elist"></div>
+  </section>
+  <section class="panel search" id="search" role="tabpanel" aria-labelledby="t-search" hidden>
     <div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="检索全部 ${IDX.events.length} 个事件、${Object.keys(IDX.people).length} 位人物：人名、字、地名、年号、事件……" autocomplete="off" aria-label="检索人物与事件"><kbd>/</kbd></div>
     <div class="sopts" id="sopts" hidden>
       <button type="button" data-f="all" aria-pressed="true">全部</button><button type="button" data-f="p" aria-pressed="false">人物</button><button type="button" data-f="e" aria-pressed="false">事件</button>
       <select id="vol" aria-label="限定卷"><option value="">全部卷</option>${S.books.map((b, i) => `<option value="${i}">卷${cn(i + 1)} ${esc(IDX.books[i][1])}</option>`).join('')}</select>
       <span class="cnt" id="cnt"></span>
     </div>
+    <p class="empty" id="shint">可以输入人名、字、古地名、今地名、年号或事件中的词，多个词用空格隔开。在其他页签按 / 也能跳到这里。</p>
     <div class="res" id="res" hidden></div>
   </section>
-  <div class="vols" id="vols">
+  <div class="panel vols" id="vols" role="tabpanel" aria-labelledby="t-vols">
   <ol>
 ${rows.join('\n')}
   </ol>
