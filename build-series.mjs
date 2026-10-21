@@ -146,6 +146,8 @@ const pHref = (n, k) => B[k][0] + '/index.html?p=' + encodeURIComponent(n);
 const yearOf = t => { const m = t.match(/^(公元)?(前)?(\\d{1,4})年?$/); return m ? (m[2] ? -m[3] : +m[3]) : null; };
 // 生卒年：形如 155–220、?–208?、前259–前210，取出生年与卒年
 const lifeYears = l => { const m = String(l || '').match(/^约?(前)?(\\d+)?\\??\\s*[–-]\\s*约?(前)?(\\d+)?/); return m ? [m[2] ? (m[1] ? -m[2] : +m[2]) : null, m[4] ? (m[3] ? -m[4] : +m[4]) : null] : []; };
+// 生卒年里与检索年份相同的年份加高亮（检索词写作“公元前210年”“155年”时也按年份比对，不按字面）
+const lifeHtml = (l, ys) => esc(l || '').replace(/(前)?(\\d+)/g, (m, q, d) => (ys.includes(q ? -d : +d) ? '<mark>' + m + '</mark>' : m));
 function scoreP(p, terms) { let s = 0; for (const t of terms) {
   const yr = yearOf(t);
   if (p.n === t) s += 100; else if (p.n.startsWith(t)) s += 60; else if (p.n.includes(t)) s += 40; else if (yr != null && lifeYears(p.life).includes(yr)) s += 40;
@@ -165,7 +167,7 @@ function run() {
   cnt.textContent = (filt !== 'e' ? ps.length + ' 位人物' : '') + (filt === 'all' ? ' · ' : '') + (filt !== 'p' ? es.length + ' 个事件' : '');
   let hp = '', he = '';
   if (ps.length) hp = '<div><h2><span>人物</span></h2><div class="rl">' + ps.slice(0, lp).map(p => { const k0 = (v != null ? p.bk.find(b => b[0] === v) : p.bk.slice().sort((a, b) => b[2] - a[2])[0])[0];
-    return '<div class="hit" data-href="' + pHref(p.n, k0) + '"><span class="y">' + mk(p.life || '', terms.filter(t => yearOf(t) != null && lifeYears(p.life).includes(yearOf(t)))) + '</span><a class="t" href="' + pHref(p.n, k0) + '">' + mk(p.n, terms) + (p.zi ? '<small>字' + mk(p.zi, terms) + '</small>' : '') + '</a>'
+    return '<div class="hit" data-href="' + pHref(p.n, k0) + '"><span class="y">' + lifeHtml(p.life, terms.map(yearOf).filter(y => y != null)) + '</span><a class="t" href="' + pHref(p.n, k0) + '">' + mk(p.n, terms) + (p.zi ? '<small>字' + mk(p.zi, terms) + '</small>' : '') + '</a>'
       + '<span class="s">' + mk(snip(p.bio, terms), terms) + '</span><span class="m">' + p.bk.map(b => { const [k, f] = b; return '<a class="vb" href="' + pHref(p.n, k) + '" title="' + esc(B[k][1]) + ' · ' + esc(f) + ' · ' + evCnt(b) + '">' + vol(k) + ' ' + esc(B[k][1]) + '</a>'; }).join('') + '</span></div>'; }).join('')
     + '</div>' + (ps.length > lp ? '<button class="more" data-more="p">显示全部 ' + ps.length + ' 位 ›</button>' : '') + '</div>';
   if (es.length) he = '<div><h2><span>事件</span></h2><div class="rl">' + es.slice(0, lim.e).map(e => '<a class="hit" href="' + evHref(e) + '"><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '"></i>' + mk(e.t, terms) + '</span>'
