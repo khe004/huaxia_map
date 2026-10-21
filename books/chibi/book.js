@@ -73,7 +73,7 @@ const FACTIONS = {
   cao:        { color: '#3d63a8', name: t => (t < 213.4 ? '曹操' : t < 216.4 ? '曹操（魏公）' : t < 220.08 ? '曹操（魏王）' : t < 220.83 ? '曹丕（魏王）' : '魏（曹丕）'), mapName: t => (t < 213.4 ? '曹操' : '魏') },
   yuanshao:   { color: '#8e2a5b', name: t => (t < 202.41 ? '袁绍' : '袁尚'), mapName: t => (t < 202.41 ? '袁绍' : '袁尚') },
   yuantan:    { color: '#c07a9c', name: () => '袁谭', mapName: () => '袁谭' },
-  liu:        { color: '#3c8a52', name: t => (t < 209 ? '刘备（刘琦）' : t < 219.55 ? '刘备' : '刘备（汉中王）'), mapName: () => '刘备' },
+  liu:        { color: '#3c8a52', name: t => (t < 209.25 ? '刘备（刘琦）' : t < 219.55 ? '刘备' : '刘备（汉中王）'), mapName: () => '刘备' },
   sun:        { color: '#c4433a', name: () => '孙权', mapName: () => '孙权' },
   liubiao:    { color: '#93c47d', name: () => '刘表（荆州）', mapName: () => '刘表' },
   liuzhang:   { color: '#7b4a2e', name: () => '刘璋（益州）', mapName: () => '刘璋' },
@@ -81,13 +81,13 @@ const FACTIONS = {
   ma:         { color: '#8a5f8f', name: t => (t < 211 ? '马腾、韩遂' : '马超、韩遂'), mapName: () => '马韩' },
   gongsundu:  { color: '#9a8ae0', name: t => (t < 204 ? '公孙度（辽东）' : '公孙康（辽东）'), mapName: t => (t < 204 ? '公孙度' : '公孙康') },
   shixie:     { color: '#d6702a', name: t => (t < 210.5 ? '士燮（交趾）' : '士燮（附孙权）'), mapName: () => '士燮' },
-  heishan:    { color: '#4f5b66', name: () => '黑山（张燕）', mapName: () => '黑山' },
+  heishan:    { color: '#794956', name: () => '黑山（张燕）', mapName: () => '黑山' },
   nanxiongnu: { color: '#6b6e78', name: t => (t < 216.41 ? '南匈奴' : '南匈奴（分为五部）'), mapName: () => '南匈奴' },
-  wuhuan:     { color: '#c4a46a', name: () => '乌桓（蹋顿）', mapName: () => '乌桓' },
+  wuhuan:     { color: '#ccd369', name: () => '乌桓（蹋顿）', mapName: () => '乌桓' },
   xianbei:    { color: '#7a6446', name: t => (t < 207.66 ? '鲜卑中部（檀石槐后裔诸部）' : '鲜卑轲比能部'), mapName: t => (t < 207.66 ? '鲜卑' : '轲比能') },
   xiyu:       { color: '#d8b26e', name: () => '西域诸国', mapName: () => '西域' },
   mobei:      { color: '#e2eef6', name: () => '塞外诸部（无统一政权）', mapName: () => '塞外诸部', hideLabel: () => true },
-  budugen:    { color: '#b07a9a', name: () => '鲜卑步度根部', mapName: () => '步度根' },
+  budugen:    { color: '#dd88aa', name: () => '鲜卑步度根部', mapName: () => '步度根' },
   dongbu:     { color: '#8c9a6a', name: () => '东部鲜卑（素利、弥加、厥机）', mapName: () => '东部鲜卑' },
   dingling:   { color: '#7d8a99', name: () => '丁零 · 坚昆' },
   wusun:      { color: '#5f9e88', name: () => '乌孙' },
@@ -96,7 +96,7 @@ const FACTIONS = {
   yuezhi:     { color: '#c9a0dc', name: () => '贵霜（大月氏）', mapName: () => '贵霜' },
   qiang:      { color: '#c4917a', name: () => '羌' },
   gouli:      { color: '#9c7f9e', name: () => '高句丽 · 濊貊', mapName: () => '高句丽' },
-  fuyu:       { color: '#6f8fa0', name: () => '夫余' },
+  fuyu:       { color: '#88ddd7', name: () => '夫余' },
   sanhan:     { color: '#9fbf8a', name: () => '三韩' },
   yue:        { color: '#b8c8a0', name: () => '珠厓', mapName: () => '珠厓' },
 };
@@ -169,7 +169,7 @@ const SNAPSHOTS = [
   // 步骘为交州刺史，士燮归附
   [210, 7, [['sun', '南海 苍梧 郁林']]],
   // 孙权借南郡与刘备
-  [210, 12, [['liu', '南郡 宜都']]],
+  [211, 1, [['liu', '南郡 宜都']]],
   // 潼关之战，关中平
   [211, 9, [['cao', '京兆 冯翊 扶风']]],
   [211, 9, [['cao', '安定 北地']]],

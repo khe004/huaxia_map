@@ -89,7 +89,7 @@ const FACTIONS = {
   yuezhi:     { color: '#c9a0dc', name: () => '贵霜（大月氏）', mapName: () => '贵霜' },
   qiang:      { color: '#c4917a', name: () => '羌' },
   gouli:      { color: '#9c7f9e', name: () => '高句丽 · 濊貊', mapName: () => '高句丽' },
-  fuyu:       { color: '#6f8fa0', name: () => '夫余' },
+  fuyu:       { color: '#88ddd7', name: () => '夫余' },
   sanhan:     { color: '#9fbf8a', name: () => '三韩' },
   yue:        { color: '#b8c8a0', name: () => '珠厓', mapName: () => '珠厓' },
 };

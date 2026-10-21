@@ -74,7 +74,7 @@ const FACTIONS = {
   beixiongnu: { color: '#3a3d44', name: () => '北匈奴（呼衍王等）', mapName: () => '北匈奴' },
   nanxiongnu: { color: '#6b6e78', name: t => ((t > 109.8 && t < 110.3) || (t > 140.4 && t < 143.9) ? '南匈奴（部众叛乱）' : '南匈奴'), mapName: () => '南匈奴',
     realm: t => ((t > 109.8 && t < 110.3) || (t > 140.4 && t < 143.9) ? null : 'fan') },
-  wuhuan:     { color: '#c4a46a', name: () => '乌桓（内附）', mapName: () => '乌桓', realm: 'fan' },
+  wuhuan:     { color: '#ccd369', name: () => '乌桓（内附）', mapName: () => '乌桓', realm: 'fan' },
   xianbei:    { color: '#7a6446', name: t => (t < 156.4 ? '鲜卑诸部（据匈奴故地）' : '鲜卑（檀石槐联盟）'), mapName: () => '鲜卑' },
   dingling:   { color: '#7d8a99', name: () => '丁零 · 坚昆' },
   wusun:      { color: '#5f9e88', name: () => '乌孙' },
@@ -83,7 +83,7 @@ const FACTIONS = {
   yuezhi:     { color: '#c9a0dc', name: () => '贵霜（大月氏）', mapName: () => '贵霜' },
   qiang:      { color: '#c4917a', name: () => '羌' },
   gouli:      { color: '#9c7f9e', name: t => (t < 121.916 ? '高句丽 · 濊貊' : '高句丽'), mapName: () => '高句丽' },
-  fuyu:       { color: '#6f8fa0', name: () => '夫余' },
+  fuyu:       { color: '#88ddd7', name: () => '夫余' },
   sanhan:     { color: '#9fbf8a', name: () => '三韩' },
   yue:        { color: '#b8c8a0', name: () => '珠厓', mapName: () => '珠厓' },
 };

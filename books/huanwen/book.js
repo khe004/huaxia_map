@@ -83,7 +83,7 @@ const FACTIONS = {
   murong:     { color: '#b5654a', realm: 'hu', mapName: t => (t < 337.91 ? '慕容' : '前燕'),
     name: t => (t < 333.41 ? '鲜卑慕容部（慕容廆）' : t < 337.91 ? '鲜卑慕容部（慕容皝）' : t < 348.75 ? '前燕（慕容皝）' : t < 360.08 ? '前燕（慕容儁）' : '前燕（慕容暐）') },
   liang:      { color: '#4f86b0', name: () => '前凉（凉州张氏）', mapName: () => '前凉' },
-  duan:       { color: '#9c8fb0', name: t => (t < 338.16 ? '鲜卑段部（段辽）' : '段龛（青州 · 齐公）'), mapName: t => (t < 338.16 ? '段部' : '段龛') },
+  duan:       { color: '#79495c', name: t => (t < 338.16 ? '鲜卑段部（段辽）' : '段龛（青州 · 齐公）'), mapName: t => (t < 338.16 ? '段部' : '段龛') },
   xiyu:       { color: '#d8b26e', name: () => '西域诸国', mapName: () => '西域' },
   mobei:      { color: '#e2eef6', name: () => '塞外诸部（无统一政权）', mapName: () => '塞外诸部', hideLabel: () => true },
   tuoba:      { color: '#7a6446', name: () => '代（拓跋部）', mapName: () => '代' },
@@ -95,7 +95,7 @@ const FACTIONS = {
   yuezhi:     { color: '#c9a0dc', name: () => '贵霜（大月氏）', mapName: () => '贵霜' },
   qiang:      { color: '#c4917a', name: () => '羌' },
   gouli:      { color: '#9c7f9e', name: () => '高句丽 · 濊貊', mapName: () => '高句丽' },
-  fuyu:       { color: '#6f8fa0', name: () => '夫余' },
+  fuyu:       { color: '#88ddd7', name: () => '夫余' },
   sanhan:     { color: '#9fbf8a', name: () => '三韩' },
   yue:        { color: '#b8c8a0', name: () => '珠厓', mapName: () => '珠厓' },
 };

@@ -74,7 +74,7 @@ const BOOK = {
 const FACTIONS = {
   han:      { color: '#c4433a', name: () => '朝廷直辖', mapName: () => '汉', realm: 'han' },
   zhuhou:   { color: '#d9a7c0', name: () => '诸侯王国', mapName: () => '诸王国', realm: 'han' },
-  xiongnu:  { color: '#3a3d44', mapName: () => '匈奴', realm: t => (t < -51 ? 'xn' : 'fan'),
+  xiongnu:  { color: '#3a3d44', mapName: () => '匈奴', realm: t => (t < -50.917 ? 'xn' : 'fan'),
     name: t => (t < -85 ? '匈奴（狐鹿姑单于）' : t < -68 ? '匈奴（壶衍鞮单于）' : t < -60 ? '匈奴（虚闾权渠单于）' : t < -58 ? '匈奴（握衍朐鞮单于）'
       : t < -31 ? '匈奴（呼韩邪单于）' : t < -20 ? '匈奴（复株累若鞮单于）' : t < -12 ? '匈奴（搜谐、车牙单于）' : '匈奴（乌珠留若鞮单于）') },
   zhizhi:   { color: '#6b5a4a', name: () => '匈奴（郅支单于）', mapName: () => '郅支', realm: 'xn' },

@@ -69,7 +69,7 @@ const FACTIONS = {
   xiyu:       { color: '#d8b26e', name: t => (t < 61.5 ? '西域诸国（莎车称雄）' : '西域诸国（役属北匈奴）'), mapName: () => '西域' },
   beixiongnu: { color: '#3a3d44', name: t => (t < 91.16 ? '北匈奴' : '北匈奴余部'), mapName: () => '北匈奴' },
   nanxiongnu: { color: '#6b6e78', name: () => '南匈奴', realm: 'fan' },
-  wuhuan:     { color: '#c4a46a', name: () => '乌桓（内附）', mapName: () => '乌桓', realm: 'fan' },
+  wuhuan:     { color: '#ccd369', name: () => '乌桓（内附）', mapName: () => '乌桓', realm: 'fan' },
   xianbei:    { color: '#7a6446', name: t => (t < 91.16 ? '鲜卑' : '鲜卑诸部（据匈奴故地）'), mapName: () => '鲜卑' },
   dingling:   { color: '#7d8a99', name: () => '丁零 · 坚昆' },
   wusun:      { color: '#5f9e88', name: () => '乌孙' },
@@ -78,7 +78,7 @@ const FACTIONS = {
   yuezhi:     { color: '#c9a0dc', name: () => '贵霜（大月氏）', mapName: () => '贵霜' },
   qiang:      { color: '#c4917a', name: t => (t < 77.5 ? '羌' : '羌（烧当等种）'), mapName: () => '羌' },
   gouli:      { color: '#9c7f9e', name: () => '高句丽 · 濊貊', mapName: () => '高句丽' },
-  fuyu:       { color: '#6f8fa0', name: () => '夫余' },
+  fuyu:       { color: '#88ddd7', name: () => '夫余' },
   sanhan:     { color: '#9fbf8a', name: () => '三韩' },
   xinan:      { color: '#8fb0c0', name: () => '哀牢', mapName: () => '哀牢' },
   yue:        { color: '#b8c8a0', name: () => '珠厓', mapName: () => '珠厓' },
@@ -148,7 +148,7 @@ const SNAPSHOTS = [
   [90, 6, [['xiyuhan', '伊吾 车师']]],
   // 金微山之战，北单于西逃，鲜卑转徙据其地
   [91, 3, [['xianbei', '单于庭 姑衍 弓卢水'], ['beixiongnu', '右地 阿尔泰 塔城']]],
-  [91, 12, [['xiyuhan', '龟兹 金满']]],
+  [92, 1, [['xiyuhan', '龟兹 金满']]],
   // 班超平焉耆，西域五十余国皆纳质内属
   [94, 8, [['xiyuhan', '焉耆 捐毒 休循']]],
 ];

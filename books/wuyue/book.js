@@ -84,7 +84,7 @@ const FACTIONS = {
   weiguo:  { color: '#e57fb0', name: () => '卫' },
   chen:    { color: '#9a8ae0', name: () => '陈' },
   cai:     { color: '#1f6fb2', name: () => '蔡' },
-  cao:     { color: '#c9a227', name: () => '曹' },
+  cao:     { color: '#96812c', name: () => '曹' },
   xiao:    { color: '#9c6644', name: () => '诸小国' },
   yan:     { color: '#7fb3e6', name: () => '燕' },
   wu:      { color: '#0f7c6b', name: () => '吴' },
@@ -97,7 +97,7 @@ const FACTIONS = {
   yong:    { color: '#8e2a5b', name: () => '庸' },
   ba:      { color: '#5b7fd6', name: () => '巴' },
   shu:     { color: '#7b4a2e', name: () => '蜀' },
-  xny:     { color: '#b9c49a', name: () => '西南夷' },
+  xny:     { color: '#86b699', name: () => '西南夷' },
   man:     { color: '#d2a679', name: () => '群蛮' },
   baiyue:  { color: '#a6bd3a', name: () => '百越' },
 };

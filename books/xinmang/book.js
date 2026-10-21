@@ -78,7 +78,7 @@ const FACTIONS = {
   wanglang: { color: '#6d8f7a', name: () => '王郎（邯郸）', mapName: () => '王郎', realm: 'zhu' },
   weixiao:  { color: '#4f8f6a', name: () => '隗嚣（陇右）', mapName: () => '隗嚣', realm: 'zhu' },
   gongsun:  { color: '#d1b04a', name: t => (t < 25.33 ? '公孙述（蜀王）' : '成家（公孙述）'), mapName: () => '公孙述', realm: 'zhu' },
-  dourong:  { color: '#86b6cf', name: () => '窦融（河西）', mapName: () => '窦融', realm: 'zhu' },
+  dourong:  { color: '#3568b6', name: () => '窦融（河西）', mapName: () => '窦融', realm: 'zhu' },
   liuyong:  { color: '#8a6fb0', name: () => '刘永（梁）', mapName: () => '刘永', realm: 'zhu' },
   difang:   { color: '#d3cdbf', name: t => (t < 25 ? '各郡（名义上奉更始）' : '各郡自守'), mapName: () => '各郡', realm: 'zhu' },
   zhangbu:  { color: '#3f8f8a', name: () => '张步（齐）', mapName: () => '张步', realm: 'zhu' },

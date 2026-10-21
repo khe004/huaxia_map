@@ -99,7 +99,7 @@ const FACTIONS = {
   fang:      { color: '#8fa3b8', name: () => '诸方国' },
   // 三代
   xia:       { color: '#2aa3a3', name: () => '夏' },
-  shang:     { color: '#4b2e83', name: t => (t >= -1045.917 ? '武庚（殷遗民）' : t >= -1300 ? '商（殷）' : '商') },
+  shang:     { color: '#4b2e83', name: t => (t >= -1045.917 ? '武庚（殷遗民）' : t >= -1299.584 ? '商（殷）' : '商') },
   zhou:      { color: '#d4b44a', name: t => (t < -1045.917 ? '周（先周）' : '周') },
   // 西周诸侯
   jin:       { color: '#3c8a52', name: () => '晋' },
@@ -110,10 +110,10 @@ const FACTIONS = {
   yan:       { color: '#7fb3e6', name: () => '燕' },
   chen:      { color: '#9a8ae0', name: () => '陈' },
   cai:       { color: '#1f6fb2', name: () => '蔡' },
-  cao:       { color: '#c9a227', name: () => '曹' },
+  cao:       { color: '#96812c', name: () => '曹' },
   xiao:      { color: '#9c6644', name: () => '诸小国' },
   yong:      { color: '#8e2a5b', name: () => '庸' },
-  xny:       { color: '#b9c49a', name: () => '西南夷' },
+  xny:       { color: '#86b699', name: () => '西南夷' },
   chu:       { color: '#c4433a', name: () => '楚' },
   qin:       { color: '#3a3d44', name: () => '秦' },
   wu:        { color: '#0f7c6b', name: () => '吴' },

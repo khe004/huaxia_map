@@ -106,7 +106,7 @@ const FACTIONS = {
   qiang:    { color: '#c4917a', name: () => '羌' },
   nanyue:   { color: '#a6bd3a', name: t => (t >= -182.8 && t < -178.59 ? '南越（赵佗称帝）' : '南越') },
   minyue:   { color: '#b07d4f', name: () => '闽越' },
-  dongou:   { color: '#e0c070', name: () => '东瓯' },
+  dongou:   { color: '#999e4c', name: () => '东瓯' },
   chaoxian: { color: '#9a8fb8', name: t => (t < -193.584 ? '朝鲜（箕氏）' : '卫氏朝鲜') },
   xinan:    { color: '#8fb0c0', name: () => '西南夷' },
   yue:      { color: '#b8c8a0', name: () => '骆越与其他', hideLabel: () => true },

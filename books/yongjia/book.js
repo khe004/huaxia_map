@@ -89,7 +89,7 @@ const FACTIONS = {
   chenan:     { color: '#c27ba0', realm: 'pan', name: () => '陈安（秦州）', mapName: () => '陈安' },
   wangdun:    { color: '#d9714e', realm: 'pan', name: () => '王敦（荆、江）', mapName: () => '王敦' },
   sujun:      { color: '#c75b7a', realm: 'pan', name: () => '苏峻、祖约（历阳）', mapName: () => '苏峻' },
-  duan:       { color: '#9c8fb0', name: () => '鲜卑段部', mapName: () => '段部' },
+  duan:       { color: '#79495c', name: () => '鲜卑段部', mapName: () => '段部' },
   xiyu:       { color: '#d8b26e', name: () => '西域诸国', mapName: () => '西域' },
   mobei:      { color: '#e2eef6', name: () => '塞外诸部（无统一政权）', mapName: () => '塞外诸部', hideLabel: () => true },
   tuoba:      { color: '#7a6446', name: t => (t < 315.16 ? '鲜卑拓跋部（猗卢）' : '代（拓跋部）'), mapName: t => (t < 315.16 ? '拓跋' : '代') },
@@ -102,7 +102,7 @@ const FACTIONS = {
   yuezhi:     { color: '#c9a0dc', name: () => '贵霜（大月氏）', mapName: () => '贵霜' },
   qiang:      { color: '#c4917a', name: () => '羌' },
   gouli:      { color: '#9c7f9e', name: () => '高句丽 · 濊貊', mapName: () => '高句丽' },
-  fuyu:       { color: '#6f8fa0', name: () => '夫余' },
+  fuyu:       { color: '#88ddd7', name: () => '夫余' },
   sanhan:     { color: '#9fbf8a', name: () => '三韩' },
   yue:        { color: '#b8c8a0', name: () => '珠厓', mapName: () => '珠厓' },
 };

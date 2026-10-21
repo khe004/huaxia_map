@@ -88,14 +88,14 @@ const FACTIONS = {
   lvbu:       { color: '#2aa3a3', name: () => '吕布', mapName: () => '吕布' },
   zhangyang:  { color: '#5b3e8f', name: () => '张杨（河内）', mapName: () => '张杨' },
   zhangxiu:   { color: '#6f8f7a', name: () => '张绣（宛）', mapName: () => '张绣' },
-  liuyao:     { color: '#e0a090', name: () => '刘繇（扬州）', mapName: () => '刘繇' },
+  liuyao:     { color: '#dd889f', name: () => '刘繇（扬州）', mapName: () => '刘繇' },
   gongsundu:  { color: '#9a8ae0', name: () => '公孙度（辽东）', mapName: () => '公孙度' },
   shixie:     { color: '#d6702a', name: () => '士燮（交趾）', mapName: () => '士燮' },
   huangjin:   { color: '#e0b631', name: () => '黄巾余部（青州、汝南）', mapName: () => '黄巾' },
-  heishan:    { color: '#4f5b66', name: () => '黑山（张燕）', mapName: () => '黑山' },
+  heishan:    { color: '#794956', name: () => '黑山（张燕）', mapName: () => '黑山' },
   baibo:      { color: '#a06b4f', name: () => '白波', mapName: () => '白波' },
   nanxiongnu: { color: '#6b6e78', name: () => '南匈奴', mapName: () => '南匈奴' },
-  wuhuan:     { color: '#c4a46a', name: () => '乌桓（蹋顿）', mapName: () => '乌桓' },
+  wuhuan:     { color: '#ccd369', name: () => '乌桓（蹋顿）', mapName: () => '乌桓' },
   xianbei:    { color: '#7a6446', name: () => '鲜卑中部（檀石槐后裔诸部）', mapName: () => '鲜卑' },
   xiyu:       { color: '#d8b26e', name: () => '西域诸国', mapName: () => '西域' },
   mobei:      { color: '#e2eef6', name: () => '塞外诸部（无统一政权）', mapName: () => '塞外诸部', hideLabel: () => true },
@@ -107,7 +107,7 @@ const FACTIONS = {
   yuezhi:     { color: '#c9a0dc', name: () => '贵霜（大月氏）', mapName: () => '贵霜' },
   qiang:      { color: '#c4917a', name: () => '羌' },
   gouli:      { color: '#9c7f9e', name: () => '高句丽 · 濊貊', mapName: () => '高句丽' },
-  fuyu:       { color: '#6f8fa0', name: () => '夫余' },
+  fuyu:       { color: '#88ddd7', name: () => '夫余' },
   sanhan:     { color: '#9fbf8a', name: () => '三韩' },
   yue:        { color: '#b8c8a0', name: () => '珠厓', mapName: () => '珠厓' },
 };
@@ -196,7 +196,7 @@ const SNAPSHOTS = [
   // 迁都许
   [196, 9, [['cao', '#hanshi 弘农 梁国']]],
   // 张绣屯宛
-  [196, 11, [['zhangxiu', '南阳']]],
+  [197, 2, [['zhangxiu', '南阳']]],
   // 曹操擒吕布于下邳
   [199, 1, [['cao', '#lvbu 沛国 鲁国']]],
   // 公孙瓒败亡于易京；袁绍兼并州（上郡、五原、朔方羌胡杂居，名义属并州）
