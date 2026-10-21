@@ -1,11 +1,12 @@
 // 用法：node tools/adjcolor.js [书 …] [--th=20]
-// 检查地图上相邻色块的颜色是否相近：在构建好的合集页（dist/series/<书>/index.html，先跑 build-series.mjs）里
+// 检查地图上相邻色块的颜色是否相近：在构建好的页面（合集各卷 dist/series/<书>/index.html，独立书 dist/<书>/index.html）里
 // 按页面实际的拼块归属求出相邻的种子点，逐个时间步列出接壤的势力对，计算两色的 CIELAB ΔE。
 // ΔE 低于阈值（默认 20）的标 ✗。需要本机的 Chrome（无头模式）。
 const fs = require('fs'), path = require('path'), os = require('os'), { execFileSync } = require('child_process');
 const R = path.join(__dirname, '..');
 const args = process.argv.slice(2), th = +((args.find(a => a.startsWith('--th=')) || '--th=20').slice(5));
-const ids = args.filter(a => !a.startsWith('--')).length ? args.filter(a => !a.startsWith('--')) : JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
+const ids = args.filter(a => !a.startsWith('--')).length ? args.filter(a => !a.startsWith('--')) : require('./books.js')();
+const inSeries = JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const probe = `
 ;(() => {
@@ -26,7 +27,9 @@ const probe = `
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'adj-'));
 let bad = 0;
 for (const id of ids) {
-  const src = path.join(R, 'dist/series', id, 'index.html');
+  // 合集各卷在 dist/series/<书>/（build-series.mjs），独立成书的在 dist/<书>/（node build.mjs <书>）
+  const src = path.join(R, inSeries.includes(id) ? 'dist/series' : 'dist', id, 'index.html');
+  if (!fs.existsSync(src)) { console.log(`== ${id}：没有找到 ${path.relative(R, src)}，先构建`); continue; }
   let html = fs.readFileSync(src, 'utf8'); const k = html.lastIndexOf('})();');
   html = html.slice(0, k) + probe + html.slice(k + 5);
   fs.mkdirSync(path.join(tmp, id), { recursive: true }); fs.writeFileSync(path.join(tmp, id, 'index.html'), html);

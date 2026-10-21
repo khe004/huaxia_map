@@ -667,11 +667,14 @@ function renderPerson(n) {
   const a = lm && lm[2] ? (lm[1] ? -lm[2] : +lm[2]) : null, b = lm ? (lm[3] ? -lm[4] : +lm[4]) : null;
   const liveEvs = evs.filter(e => !isPost(e, n)), fy = liveEvs.length ? liveEvs[liveEvs.length - 1].y : evs.length ? evs[0].y : state.year;
   const pad = Math.max(10, (Y1 - Y0) * .3), lo = Y0 - pad, hi = Y1 + pad * .5, sc = v => (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * 100;
-  // 夏历十二月去世折成公历次年一二月，事件年份可能比卒年晚一年，寿命条画到最后一个在世事件为止（最多延长一年）
-  const lastLive = p.live.length ? Math.max(...p.live.map(i => EVENTS[i].y)) : null, b2 = b != null && lastLive != null && lastLive > b ? Math.min(lastLive, b + 1) : b;
+  // 夏历十二月去世折成公历次年一二月，事件年份可能比卒年晚一年，寿命条画到最后一个在世事件为止（最多延长一年；演义等虚构情节不计）
+  const hist = p.live.filter(i => !EVENTS[i].src), lastLive = hist.length ? Math.max(...hist.map(i => EVENTS[i].y)) : null, b2 = b != null && lastLive != null && lastLive > b ? Math.min(lastLive, b + 1) : b;
+  // 演义等虚构情节若落在生卒之外（如华佗卒后的刮骨疗毒），刻度画成虚线，并在提示里注明
   // 生年不详时左端默认按活 40 岁算，若有更早的在世事件则延伸到该事件
-  const firstLive = p.live.length ? Math.min(...p.live.map(i => EVENTS[i].y)) : null, a2 = a != null ? a : b != null ? Math.min(b - 40, firstLive ?? b - 40) : null;
-  const life = b ? `<div class="lifebar" title="生卒年"><div style="left:${sc(a2)}%;width:${sc(b2) - sc(a2)}%;background:${fColor(p.f)};${a ? '' : 'opacity:.45'}"></div>${evs.filter(e => !isPost(e, n)).map(e => `<div style="left:${sc(e.y)}%;width:2px;background:var(--ink)"></div>`).join('')}</div>` : '';
+  const firstLive = hist.length ? Math.min(...hist.map(i => EVENTS[i].y)) : null, a2 = a != null ? a : b != null ? Math.min(b - 40, firstLive ?? b - 40) : null;
+  const life = b ? `<div class="lifebar" title="生卒年"><div style="left:${sc(a2)}%;width:${sc(b2) - sc(a2)}%;background:${fColor(p.f)};${a ? '' : 'opacity:.45'}"></div>${evs.filter(e => !isPost(e, n)).map(e => (e.src && (e.y > b2 || e.y < a2)
+    ? `<div class="fic" style="left:${sc(e.y)}%" title="${tagOf(e)}：${e.t}（${fmtYearFull(e.y)}，与史实生卒不合）"></div>`
+    : `<div style="left:${sc(e.y)}%;width:2px;background:var(--ink)"></div>`)).join('')}</div>` : '';
   pbody.innerHTML = `
     <button class="back">‹ 返回</button>
     <h2>${n}${p.zi ? `<small>字${p.zi}</small>` : ''}</h2>

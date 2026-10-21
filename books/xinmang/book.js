@@ -72,7 +72,7 @@ const BOOK = {
 
 const FACTIONS = {
   xin:      { color: '#9c5b3f', name: () => '新朝', mapName: () => '新', realm: 'xin' },
-  gengshi:  { color: '#c4433a', name: t => (t < 23.1 ? '绿林军' : t < 25.7 ? '更始政权（刘玄）' : '更始余部'), mapName: t => (t < 23.1 ? '绿林' : '更始'), realm: 'zhu' },
+  gengshi:  { color: '#c4433a', name: t => (t < 23.16 ? '绿林军' : t < 25.7 ? '更始政权（刘玄）' : '更始余部'), mapName: t => (t < 23.16 ? '绿林' : '更始'), realm: 'zhu' },
   chimei:   { color: '#8f2f5a', name: t => (t < 25.45 ? '赤眉军（樊崇）' : '赤眉（立刘盆子）'), mapName: () => '赤眉', realm: 'zhu' },
   liuxiu:   { color: '#e2873a', name: t => (t < 24.6 ? '刘秀（更始大司马）' : t < 25.45 ? '刘秀（萧王）' : '东汉（光武帝）'), mapName: t => (t < 25.45 ? '刘秀' : '东汉'), realm: 'zhu' },
   wanglang: { color: '#6d8f7a', name: () => '王郎（邯郸）', mapName: () => '王郎', realm: 'zhu' },

@@ -18,10 +18,16 @@ const rows = S.books.map((b, i) => {
   const c = {}; vm.createContext(c);
   vm.runInContext(r(`./books/${b.id}/book.js`) + '\n;this.__ = { BOOK, EVENTS, PEOPLE_RAW, FACTIONS };', c);
   const { BOOK, EVENTS, PEOPLE_RAW, FACTIONS } = c.__;
+  // 王年、年号纪年：与引擎 eras() 同一算法（BOOK.calendar.label 或 eras/spans），事件没写 cal 时也能按纪年检索
+  const CAL = BOOK.calendar || {}, cnY = n => (n === 1 ? '元' : cn(n));
+  const eraOf = y => { if (CAL.label) return (CAL.label(y) || []).map(e => (e.d && !e.s.startsWith(e.d) ? e.d + e.s : e.s)).join(' ');
+    const out = []; for (const k of Object.keys(CAL.eras || {})) { const sp = (CAL.spans || {})[k]; if (sp && (y < sp[0] || y > sp[1])) continue;
+      let e = null; for (const it of CAL.eras[k]) if (it[0] <= y) e = it; if (e) out.push(k + ' ' + e[1] + cnY(y - e[0] + 1 - (e[0] < 0 && y > 0 ? 1 : 0)) + '年'); }
+    return out.join(' '); };
   IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
   const evOf = new Map();
   for (const e of EVENTS) {
-    IDX.events.push([i, e.y, e.mo, e.t, e.p, e.m, e.k, e.who.join('、'), plain(e.d), e.cal || '']);
+    IDX.events.push([i, e.y, e.mo, e.t, e.p, e.m, e.k, e.who.join('、'), plain(e.d), e.cal || '', eraOf(e.y)]);
     // 人物的各卷事件数只计在世时的事件（post 身后出场不算）
     for (const n of e.who) if (!(e.post || []).includes(n)) evOf.set(n, (evOf.get(n) || []).concat(e));
   }
@@ -52,13 +58,15 @@ const rows = S.books.map((b, i) => {
   </a>
 </li>`;
 });
+// 人物所在各卷只保留有在世事件的卷：只在身后被提及的卷（如马援之于卷十四）不算跨卷；一件在世事件都没有的人保留原样
+for (const P of Object.values(IDX.people)) if (P[3].some(b => b[2])) P[3] = P[3].filter(b => b[2]);
 const searchJs = `(() => {
 const CN = n => { const D = '〇一二三四五六七八九', t = Math.floor(n / 10), o = n % 10; return n < 10 ? D[n] : (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const B = IDX.books, vol = k => '卷' + CN(k + 1);
 const fy = (y, k) => (B[k][2] != null && y < B[k][2] ? '约' : '') + (y < 0 ? '前' + -y : y);
 const KN = { war: '战事', pol: '政事', dip: '外交' };
-const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, mo, t, p, m, kind, who, d, cal }));
+const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal, era]) => ({ k, y, mo, t, p, m, kind, who, d, cal, era }));
 const PP = Object.entries(IDX.people).map(([n, [zi, life, bio, bk]]) => ({ n, zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
 const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), cnt = $('#cnt'), volSel = $('#vol');
 // 页签：卷目 / 人物 / 事件 / 检索，当前页签与筛选记在地址的 # 后面
@@ -104,7 +112,7 @@ function renderE() {
   let n = 0, h = '';
   for (const [k, arr] of [...g].sort((a, b) => a[0] - b[0])) {
     arr.sort((a, b) => a.y - b.y || a.mo - b.mo); n += arr.length;
-    h += '<section class="grp">' + head(k, arr.length, '个') + '<div class="el">' + arr.map(e => '<a class="er" href="' + evHref(e) + '"' + (e.cal ? ' title="' + esc(e.cal) + '"' : '') + '><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '" title="' + KN[e.kind] + '"></i>' + esc(e.t) + '</span><span class="pl">' + esc(e.p) + '</span></a>').join('') + '</div></section>';
+    h += '<section class="grp">' + head(k, arr.length, '个') + '<div class="el">' + arr.map(e => '<a class="er" href="' + evHref(e) + '"' + (e.cal || e.era ? ' title="' + esc(e.cal || e.era) + '"' : '') + '><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '" title="' + KN[e.kind] + '"></i>' + esc(e.t) + '</span><span class="pl">' + esc(e.p) + '</span></a>').join('') + '</div></section>';
   }
   $('#ecnt').textContent = n + ' 个事件';
   $('#elist').innerHTML = h || '<p class="empty">没有符合条件的事件。</p>';
@@ -124,11 +132,14 @@ const pHref = (n, k) => B[k][0] + '/index.html?p=' + encodeURIComponent(n);
 function scoreP(p, terms) { let s = 0; for (const t of terms) {
   if (p.n === t) s += 100; else if (p.n.startsWith(t)) s += 60; else if (p.n.includes(t)) s += 40; else if (p.zi && p.zi.includes(t)) s += 30;
   else if (p.bio.includes(t) || p.bk.some(b => b[1].includes(t))) s += 5; else return 0; } return s + Math.min(p.ne, 20) / 10; }
+// 公元年份：208、208年、公元208年、前209、公元前209年
+const yearOf = t => { const m = t.match(/^(公元)?(前)?(\\d{1,4})年?$/); return m ? (m[2] ? -m[3] : +m[3]) : null; };
 function scoreE(e, terms) { let s = 0; for (const t of terms) {
-  if (e.t.includes(t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (e.p.includes(t) || e.m.includes(t) || e.cal.includes(t)) s += 20;
+  const yr = yearOf(t);
+  if (yr != null && e.y === yr) s += 40; else if (e.t.includes(t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (e.p.includes(t) || e.m.includes(t) || e.cal.includes(t) || e.era.includes(t)) s += 20;
   else if (e.who.includes(t)) s += 15; else if (e.d.includes(t)) s += 5; else return 0; } return s; }
 function run() {
-  const raw = q.value.trim(), terms = raw.split(/\\s+/).filter(Boolean), v = volSel.value === '' ? null : +volSel.value;
+  const raw = q.value.trim(), terms = raw.replace(/(前)\\s+(?=\\d)/g, '$1').replace(/(\\d)\\s+年/g, '$1年').split(/\\s+/).filter(Boolean), v = volSel.value === '' ? null : +volSel.value;
   try { history.replaceState(null, '', raw ? '#q=' + encodeURIComponent(raw) + (v != null ? '&v=' + v : '') : '#tab=search'); } catch (err) {}
   const on = terms.length > 0; res.hidden = opts.hidden = !on; $('#shint').hidden = on; if (!on) return;
   const psS = filt === 'e' ? [] : PP.filter(p => v == null || p.bk.some(b => b[0] === v)).map(p => [p, scoreP(p, terms)]).filter(x => x[1]).sort((a, b) => b[1] - a[1]), ps = psS.map(x => x[0]);
@@ -142,7 +153,7 @@ function run() {
       + '<span class="s">' + mk(snip(p.bio, terms), terms) + '</span><span class="m">' + p.bk.map(([k, f, n]) => '<a class="vb" href="' + pHref(p.n, k) + '" title="' + esc(B[k][1]) + ' · ' + esc(f) + ' · ' + n + ' 个事件">' + vol(k) + ' ' + esc(B[k][1]) + '</a>').join('') + '</span></div>'; }).join('')
     + '</div>' + (ps.length > lp ? '<button class="more" data-more="p">显示全部 ' + ps.length + ' 位 ›</button>' : '') + '</div>';
   if (es.length) he = '<div><h2><span>事件</span></h2><div class="rl">' + es.slice(0, lim.e).map(e => '<a class="hit" href="' + evHref(e) + '"><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '"></i>' + mk(e.t, terms) + '</span>'
-      + '<span class="s">' + mk(snip(e.d, terms), terms) + '</span><span class="m"><span>' + vol(e.k) + '《' + esc(B[e.k][1]) + '》</span><span>' + mk(e.p + '（' + e.m + '）', terms) + '</span><span>' + KN[e.kind] + '</span>' + (e.who ? '<span>' + mk(e.who.length > 40 ? e.who.slice(0, 40) + '…' : e.who, terms) + '</span>' : '') + '</span></a>').join('')
+      + '<span class="s">' + mk(snip(e.d, terms), terms) + '</span><span class="m"><span>' + vol(e.k) + '《' + esc(B[e.k][1]) + '》</span><span>' + mk(e.p + '（' + e.m + '）', terms) + '</span>' + (e.cal || e.era ? '<span>' + mk(e.cal || e.era, terms) + '</span>' : '') + '<span>' + KN[e.kind] + '</span>' + (e.who ? '<span>' + mk(e.who.length > 40 ? e.who.slice(0, 40) + '…' : e.who, terms) + '</span>' : '') + '</span></a>').join('')
     + '</div>' + (es.length > lim.e ? '<button class="more" data-more="e">显示全部 ' + es.length + ' 个 ›</button>' : '') + '</div>';
   const h = evFirst ? he + hp : hp + he;
   res.innerHTML = h || '<p class="empty">没有找到“' + esc(raw) + '”。可以换个写法，如人名、字、古地名、今地名或年号。</p>';
@@ -154,10 +165,11 @@ volSel.addEventListener('change', run);
 opts.addEventListener('click', ev => { const b = ev.target.closest('button[data-f]'); if (!b) return; filt = b.dataset.f; opts.querySelectorAll('button[data-f]').forEach(x => x.setAttribute('aria-pressed', x === b)); run(); });
 res.addEventListener('click', ev => { const b = ev.target.closest('[data-more]'); if (b) { lim[b.dataset.more] = 1e9; run(); return; }
   const h = ev.target.closest('div.hit'); if (h && !ev.target.closest('a')) location.href = h.dataset.href; });
-q.addEventListener('keydown', ev => { const hs = [...res.querySelectorAll('.hit')]; if (!hs.length) return;
+q.addEventListener('keydown', ev => { if (ev.key === 'Escape') { ev.preventDefault(); q.value = ''; run(); return; }
+  const hs = [...res.querySelectorAll('.hit')]; if (!hs.length) return;
   if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') { ev.preventDefault(); kb = Math.max(0, Math.min(hs.length - 1, kb + (ev.key === 'ArrowDown' ? 1 : -1))); hs.forEach((h, i) => h.classList.toggle('kb', i === kb)); hs[kb].scrollIntoView({ block: 'nearest' }); }
   if (ev.key === 'Enter') { const h = hs[kb >= 0 ? kb : 0]; location.href = h.dataset.href || h.href; }
-  if (ev.key === 'Escape') { q.value = ''; run(); } });
+});
 document.addEventListener('keydown', ev => { if (ev.key === '/' && document.activeElement !== q && !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)) { ev.preventDefault(); show('search'); q.focus(); } });
 const hp = new URLSearchParams(location.hash.slice(1)), t0 = hp.get('q') ? 'search' : TABS.includes(hp.get('tab')) ? hp.get('tab') : 'vols';
 if (t0 === 'search' && hp.get('q')) { q.value = hp.get('q'); if (hp.get('v') != null) volSel.value = hp.get('v'); }
@@ -305,7 +317,7 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
       <select id="vol" aria-label="限定卷"><option value="">全部卷</option>${S.books.map((b, i) => `<option value="${i}">卷${cn(i + 1)} ${esc(IDX.books[i][1])}</option>`).join('')}</select>
       <span class="cnt" id="cnt"></span>
     </div>
-    <p class="empty" id="shint">可以输入人名、字、古地名、今地名、年号或事件中的词，多个词用空格隔开。在其他页签按 / 也能跳到这里。</p>
+    <p class="empty" id="shint">可以输入人名、字、古地名、今地名、公元年份（如 208、前 209）、王年或年号（如 周显王、建安十三年）或事件中的词，多个词用空格隔开。在其他页签按 / 也能跳到这里。</p>
     <div class="res" id="res" hidden></div>
   </section>
   <div class="panel vols" id="vols" role="tabpanel" aria-labelledby="t-vols">
