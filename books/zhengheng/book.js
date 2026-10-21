@@ -84,7 +84,7 @@ const FACTIONS = {
   budugen:    { color: '#b07a9a', name: () => '鲜卑步度根部', mapName: () => '步度根' },
   tuoba:      { color: '#5e4a33', name: () => '鲜卑拓跋部（力微）', mapName: () => '拓跋' },
   yuwen:      { color: '#8c9a6a', name: () => '鲜卑宇文部', mapName: () => '宇文' },
-  murong:     { color: '#c9a35a', name: () => '鲜卑慕容部', mapName: () => '慕容' },
+  murong:     { color: '#b5654a', name: () => '鲜卑慕容部', mapName: () => '慕容' },
   dongbu:     { color: '#8c9a6a', name: () => '东部鲜卑（素利、弥加、厥机）', mapName: () => '东部鲜卑' },
   dingling:   { color: '#7d8a99', name: () => '丁零 · 坚昆' },
   wusun:      { color: '#5f9e88', name: () => '乌孙' },

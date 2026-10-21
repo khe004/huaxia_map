@@ -81,7 +81,7 @@ const FACTIONS = {
   mobei:      { color: '#e2eef6', name: () => '塞外诸部（无统一政权）', mapName: () => '塞外诸部', hideLabel: () => true },
   tuoba:      { color: '#7a6446', name: () => '鲜卑拓跋部（力微）', mapName: () => '拓跋' },
   yuwen:      { color: '#8c9a6a', name: () => '鲜卑宇文部', mapName: () => '宇文' },
-  murong:     { color: '#c9a35a', name: () => '鲜卑慕容部', mapName: () => '慕容' },
+  murong:     { color: '#b5654a', name: () => '鲜卑慕容部', mapName: () => '慕容' },
   dingling:   { color: '#7d8a99', name: () => '丁零 · 坚昆' },
   wusun:      { color: '#5f9e88', name: () => '乌孙' },
   dayuan:     { color: '#9aa860', name: () => '大宛' },
