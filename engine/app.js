@@ -93,7 +93,9 @@ function eras(y) {
 // 干支：按天文纪年（公元前 1 年 = 0 年）推算
 function ganzhi(y) { if (APPROX(y)) return ''; const a = y < 0 ? y + 1 : y; const i = ((a - 4) % 60 + 60) % 60; return '甲乙丙丁戊己庚辛壬癸'[i % 10] + '子丑寅卯辰巳午未申酉戌亥'[i % 12]; }
 function phaseOf(y) { return PHASES.find(p => y >= p[0] && y <= p[1]) || [y, y, '']; }
-function eraLine(y, sep = ' · ') { const es = eras(y); return !es.length ? '' : es.length === 1 ? es[0].s : es.map(e => `${e.d} ${e.s}`).join(sep); }
+// 纪年写法：只有一家时不加前缀（建元元年），多家并列时加国号（鲁庄公十年 · 周庄王十三年），s 已以国号开头的不重复
+const eraFmt = x => (x.d && !x.s.startsWith(x.d) ? x.d : '') + x.s;
+function eraLine(y, sep = ' · ') { const es = eras(y); return !es.length ? '' : es.length === 1 ? es[0].s : es.map(eraFmt).join(sep); }
 // 事件的纪年：先列原书纪年 cal，再补 cal 没写到的纪年（如春秋卷 cal 用鲁历，另补周王纪年）
 function calLine(e) {
   if (!e.cal) return eraLine(e.y);
@@ -101,7 +103,7 @@ function calLine(e) {
   const es = eras(e.y), hit = es.filter(x => e.cal.includes(x.s));
   if (!hit.length) return e.cal;
   // 年号多在年中改元、年中亡国，补出的“元年”或某家最后一年未必覆盖事件所在月份，不补；春秋王年踰年改元，不受此限
-  return [e.cal, ...es.filter(x => !hit.some(h => h.d === x.d) && ((B.calendar || {}).label || !x.s.includes('元年') && ((B.calendar.spans || {})[x.d] || [])[1] !== e.y)).map(x => (x.d && !x.s.startsWith(x.d) ? x.d : '') + x.s)].join(' · ');
+  return [e.cal, ...es.filter(x => !hit.some(h => h.d === x.d) && ((B.calendar || {}).label || !x.s.includes('元年') && ((B.calendar.spans || {})[x.d] || [])[1] !== e.y)).map(eraFmt)].join(' · ');
 }
 const yearLine = (y, sep = ' · ') => [ganzhi(y) && ganzhi(y) + '年', eraLine(y, sep)].filter(Boolean).join(sep);
 const fName = (f, y) => FACTIONS[f].name(y);

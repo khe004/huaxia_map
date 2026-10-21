@@ -24,9 +24,10 @@ const rows = S.books.map((b, i) => {
     const out = []; for (const k of Object.keys(CAL.eras || {})) { const sp = (CAL.spans || {})[k]; if (sp && (y < sp[0] || y > sp[1])) continue;
       let e = null; for (const it of CAL.eras[k]) if (it[0] <= y) e = it; if (e) out.push({ d: k, s: e[1] + cnY(y - e[0] + 1 - (e[0] < 0 && y > 0 ? 1 : 0)) + '年' }); }
     return out; };
+  // 写法与引擎 eraLine 一致：只有一家时不加前缀，多家并列时加国号
   const fmtEra = x => (x.d && !x.s.startsWith(x.d) ? x.d : '') + x.s;
   // 与引擎 calLine 相同：先列 cal，再补 cal 没写到的纪年（春秋卷 cal 是鲁历，补周王纪年）
-  const calOf = e => { const es = erasOf(e.y); if (!e.cal) return es.map(fmtEra).join(' · ');
+  const calOf = e => { const es = erasOf(e.y); if (!e.cal) return es.length === 1 ? es[0].s : es.map(fmtEra).join(' · ');
     const hit = es.filter(x => e.cal.includes(x.s)); if (!hit.length) return e.cal;
     return [e.cal, ...es.filter(x => !hit.some(h => h.d === x.d) && (CAL.label || !x.s.includes('元年') && ((CAL.spans || {})[x.d] || [])[1] !== e.y)).map(fmtEra)].join(' · '); };
   IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
