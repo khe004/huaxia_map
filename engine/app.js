@@ -50,14 +50,17 @@ EVENTS.forEach((e, i) => { e.i = i; e.who.forEach(n => { const p = PEOPLE.get(n)
 // 时间轴步进：每年一个“年初”步，其后是当年各事件（按月份）。疆域按步计算，同一年内可多次变化。
 const STEPS = [], YEAR_STEP = {}, EV_STEP = [];
 for (const y of YEARS) {
-  YEAR_STEP[y] = STEPS.length; STEPS.push({ y, t: tOf(y, 1), ev: null });
+  // 年初一步排在当年正月事件之前：当年有正月事件时 t 取略早于 y，否则写成 t < y 的改名阈值、(y, 1) 的疆域快照会在年初一步就生效，比正月的那个事件早一步
+  YEAR_STEP[y] = STEPS.length; STEPS.push({ y, t: tOf(y, 1) - (EVENTS.some(e => e.y === y && e.mo <= 1) ? 1e-6 : 0), ev: null });
   EVENTS.filter(e => e.y === y).sort((a, b) => a.mo - b.mo || a.i - b.i)
     .forEach(e => { EV_STEP[e.i] = STEPS.length; STEPS.push({ y, t: tOf(y, e.mo), ev: e.i }); });
 }
 const STATES = [];
 {
   let cur = SEEDS.map(s => (s.z === 'x' ? 'x' : B.baseFaction));
-  let si = 0;
+  // 第一条快照是开局形势：不论写的是几月，都从卷首第一步起生效（否则卷首年初一步全图退回 baseFaction 底色）
+  if (SNAPSHOTS.length) for (const [f, tok] of SNAPSHOTS[0][2]) resolve(tok, cur).forEach(i => { cur[i] = f; });
+  let si = SNAPSHOTS.length ? 1 : 0;
   for (const st of STEPS) {
     while (si < SNAPSHOTS.length && tOf(SNAPSHOTS[si][0], SNAPSHOTS[si][1]) <= st.t + 1e-9) {
       for (const [f, tok] of SNAPSHOTS[si][2]) resolve(tok, cur).forEach(i => { cur[i] = f; });

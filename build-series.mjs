@@ -37,7 +37,9 @@ const rows = S.books.map((b, i) => {
   for (const [n, f, zi, life, bio] of PEOPLE_RAW) {
     const cm = pcx.PC[n], es = (evOf.get(n) || []).sort((u, v) => u.y - v.y || u.mo - v.mo), t = es.length ? es[0].y + (es[0].mo - 1) / 12 : BOOK.range[0];
     let fn = f; try { fn = FACTIONS[f].name(t).replace(/（[^）]*）/g, ''); } catch (err) {}
-    const P = IDX.people[n] || (IDX.people[n] = [cm ? cm[0] : zi, cm ? cm[1] : life, plain(cm ? cm[2] : bio), []]);
+    // 跨卷合并只认 books/_people.js 登记的人物；未登记的同名者（如西晋刘毅与东晋刘毅）按生卒分作两人
+    const key = cm ? n : n + '\u0001' + life;
+    const P = IDX.people[key] || (IDX.people[key] = [cm ? cm[0] : zi, cm ? cm[1] : life, plain(cm ? cm[2] : bio), []]);
     if (!cm && bio && !P[2]) P[2] = plain(bio);
     // [卷序, 势力名, 在世事件数, 首个在世事件的时间, 身后被提及的事件数]：人物页签按首次出场先后排列
     P[3].push([i, fn, es.length, es.length ? +t.toFixed(3) : null, postOf.get(n) || 0]);
@@ -70,7 +72,7 @@ const B = IDX.books, vol = k => '卷' + CN(k + 1);
 const fy = (y, k) => (B[k][2] != null && y < B[k][2] ? '约' : '') + (y < 0 ? '前' + -y : y);
 const KN = { war: '战事', pol: '政事', dip: '外交' };
 const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, mo, t, p, m, kind, who, d, cal }));
-const PP = Object.entries(IDX.people).map(([n, [zi, life, bio, bk]]) => ({ n, zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
+const PP = Object.entries(IDX.people).map(([k, [zi, life, bio, bk]]) => ({ n: k.split('\\u0001')[0], zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
 const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), cnt = $('#cnt'), volSel = $('#vol');
 // 页签：卷目 / 人物 / 事件 / 检索，当前页签与筛选记在地址的 # 后面
 const TABS = ['vols', 'people', 'events', 'search'], tabs = [...document.querySelectorAll('[role=tab]')];

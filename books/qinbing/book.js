@@ -71,8 +71,8 @@ function cnNumY(n) {
 
 // 势力：颜色经 tools/palette.js 检查。name(t) 的 t = 年 + (月 − 1) / 12，公元前为负数
 const FACTIONS = {
-  qin:    { color: '#3a3d44', name: t => (t < -221 ? '秦' : '秦帝国') },
-  zhao:   { color: '#3c8a52', name: t => (t < -228.2 ? '赵' : '代（赵公子嘉）') },
+  qin:    { color: '#3a3d44', name: t => (t < -220.834 ? '秦' : '秦帝国') },
+  zhao:   { color: '#3c8a52', name: t => (t < -227.25 ? '赵' : '代（赵公子嘉）') },
   wei:    { color: '#9a8ae0', name: () => '魏' },
   hanguo: { color: '#e57fb0', name: () => '韩' },
   chu:    { color: '#c4433a', name: () => '楚' },
