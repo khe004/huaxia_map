@@ -62,7 +62,7 @@ const html = r('./engine/page.html')
   .replace('/*GEO*/null', () => r(bm + 'geo.json').trim())
   .replace('/*UNITS*/null', () => r(bm + 'units.topo.json').trim())
   .replace('/*DATA*/', () => dataSrc)
-  .replace('/*APP*/', () => r('./engine/app.js').replace('/*STORY*/', () => r('./engine/story.js')).replace('/*MUSIC*/', () => r('./engine/music.js')));
+  .replace('/*APP*/', () => r('./engine/app.js').replace('/*STORY*/', () => r('./engine/story.js')).replace('/*CAL*/', () => r('./engine/cal.js')).replace('/*MUSIC*/', () => r('./engine/music.js')));
 const out = new URL(SERIES_MODE ? `./dist/series/${id}/` : `./dist/${id}/`, import.meta.url);
 mkdirSync(out, { recursive: true });
 // 合集里的分卷是独立网页，要自带文档头

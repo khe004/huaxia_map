@@ -9,6 +9,7 @@ yutu/
 │  ├─ page.html           页面模板（{{title}} 等占位符由 build 填入）
 │  ├─ app.js              地图、时间轴、面板
 │  ├─ story.js            人物交汇图
+│  ├─ cal.js              事件纪年的写法（引擎与目录页检索共用）
 │  └─ music.js            背景音（原创合成，或播放本地音频）
 ├─ basemaps/china/        底图包：投影、地形、现代行政区
 │  ├─ basemap.json        投影参数、地形图层范围、国名标注

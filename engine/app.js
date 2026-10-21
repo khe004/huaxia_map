@@ -93,26 +93,9 @@ function eras(y) {
 // 干支：按天文纪年（公元前 1 年 = 0 年）推算
 function ganzhi(y) { if (APPROX(y)) return ''; const a = y < 0 ? y + 1 : y; const i = ((a - 4) % 60 + 60) % 60; return '甲乙丙丁戊己庚辛壬癸'[i % 10] + '子丑寅卯辰巳午未申酉戌亥'[i % 12]; }
 function phaseOf(y) { return PHASES.find(p => y >= p[0] && y <= p[1]) || [y, y, '']; }
-// 纪年写法：只有一家时不加前缀（建元元年），多家并列时加国号（鲁庄公十年 · 周庄王十三年），s 已以国号开头的不重复
-const eraFmt = x => (x.d && !x.s.startsWith(x.d) ? x.d : '') + x.s;
+/*CAL*/
 function eraLine(y, sep = ' · ') { const es = eras(y); return !es.length ? '' : es.length === 1 ? es[0].s : es.map(eraFmt).join(sep); }
-// 事件的纪年：先列原书纪年 cal，再补 cal 没写到的纪年（如春秋卷 cal 用鲁历，另补周王纪年）
-function calLine(e) {
-  if (!e.cal) return eraLine(e.y);
-  // 只在 cal 对上了某一家纪年时，补其他各家（同一家年中改元时公历年推出的年号可能与 cal 不同，不补）
-  const C = B.calendar || {}, es = eras(e.y), hit = es.filter(x => e.cal.includes(x.s));
-  // cal 属于哪一家：按年号名（去掉“N年”）比对本年与上一年的纪年（夏历十二月折成公历次年一月），
-  // 多家并列时据此加国号，如吴“建兴元年十二月”与蜀建兴区分开
-  const nm = x => x.s.replace(/[〇一二三四五六七八九十元]+年.*$/, '');
-  const own = [...new Set([...es, ...eras(e.y - 1)].filter(x => x.d && nm(x) && e.cal.startsWith(nm(x))).map(x => x.d))];
-  const head = es.length > 1 && own.length === 1 && !e.cal.startsWith(own[0]) ? own[0] + e.cal : e.cal;
-  if (!hit.length) return head;
-  // 年号多在年中改元、年中亡国，补出的“元年”或某家纪年的最后一年未必覆盖事件所在月份，不补；
-  // 纪年写到卷末只是本卷止于此年，不算亡国。春秋王年踰年改元，不受此限
-  const ends = x => { const sp = (C.spans || {})[x.d]; return sp && sp[1] === e.y && sp[1] < B.range[1]; };
-  const more = es.filter(x => !hit.some(h => h.d === x.d) && (C.label || !x.s.includes('元年') && !ends(x)));
-  return [head, ...more.map(eraFmt)].join(' · ');
-}
+const calLine = e => calText(e, B.calendar || {}, B.range, eras);
 const yearLine = (y, sep = ' · ') => [ganzhi(y) && ganzhi(y) + '年', eraLine(y, sep)].filter(Boolean).join(sep);
 const fName = (f, y) => FACTIONS[f].name(y);
 // 所属：FACTIONS[f].realm（字符串或 t => 字符串）。同一所属的势力之间只画细边界，图例和面板按 BOOK.realms 分组

@@ -13,6 +13,8 @@ let prevLast = null;
 const pcx = {}; vm.createContext(pcx); vm.runInContext(r('./books/_people.js') + ';this.PC = PEOPLE_COMMON;', pcx);
 const plain = s => String(s).replace(/\*\*(?:[^|*]{1,6}\|)?([^*]*)\*\*/g, '“$1”').replace(/““/g, '“').replace(/””/g, '”');
 const IDX = { books: [], events: [], people: {} };
+// 事件纪年的写法与引擎共用 engine/cal.js
+const CALTEXT = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./engine/cal.js') + ';this.f = calText;', c); return c.f; })();
 const rows = S.books.map((b, i) => {
   execFileSync('node', [new URL('./build.mjs', import.meta.url).pathname, b.id, '--series'], { stdio: 'inherit' });
   const c = {}; vm.createContext(c);
@@ -24,18 +26,7 @@ const rows = S.books.map((b, i) => {
     const out = []; for (const k of Object.keys(CAL.eras || {})) { const sp = (CAL.spans || {})[k]; if (sp && (y < sp[0] || y > sp[1])) continue;
       let e = null; for (const it of CAL.eras[k]) if (it[0] <= y) e = it; if (e) out.push({ d: k, s: e[1] + cnY(y - e[0] + 1 - (e[0] < 0 && y > 0 ? 1 : 0)) + '年' }); }
     return out; };
-  // 写法与引擎 eraLine 一致：只有一家时不加前缀，多家并列时加国号
-  const fmtEra = x => (x.d && !x.s.startsWith(x.d) ? x.d : '') + x.s;
-  // 与引擎 calLine 相同：先列 cal，再补 cal 没写到的纪年（春秋卷 cal 是鲁历，补周王纪年）
-  const calOf = e => { const es = erasOf(e.y); if (!e.cal) return es.length === 1 ? es[0].s : es.map(fmtEra).join(' · ');
-    // 多家并列时 cal 加所属国号：按年号名比对本年与上一年的纪年（与引擎 calLine 相同）
-    const nm = x => x.s.replace(/[〇一二三四五六七八九十元]+年.*$/, '');
-    const own = [...new Set([...es, ...erasOf(e.y - 1)].filter(x => x.d && nm(x) && e.cal.startsWith(nm(x))).map(x => x.d))];
-    const head = es.length > 1 && own.length === 1 && !e.cal.startsWith(own[0]) ? own[0] + e.cal : e.cal;
-    const hit = es.filter(x => e.cal.includes(x.s)); if (!hit.length) return head;
-    const ends = x => { const sp = (CAL.spans || {})[x.d]; return sp && sp[1] === e.y && sp[1] < BOOK.range[1]; };
-    const more = es.filter(x => !hit.some(h => h.d === x.d) && (CAL.label || !x.s.includes('元年') && !ends(x)));
-    return [head, ...more.map(fmtEra)].join(' · '); };
+  const calOf = e => CALTEXT(e, CAL, BOOK.range, erasOf);
   IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
   const evOf = new Map(), postOf = new Map();
   for (const e of EVENTS) {
