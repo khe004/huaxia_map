@@ -129,22 +129,30 @@ $('#evol').addEventListener('change', ev => { ef.v = ev.target.value; renderE();
 $('#ekind').addEventListener('click', ev => { const b = ev.target.closest('button[data-k]'); if (!b) return; ef.k = b.dataset.k;
   $('#ekind').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); renderE(); setHash('events'); });
 let filt = 'all', lim = { p: 12, e: 30 };
-const mk = (s, terms) => { let h = esc(s); for (const t of terms) h = h.split(esc(t)).join('\\u0002' + esc(t) + '\\u0003'); return h.replace(/\\u0002/g, '<mark>').replace(/\\u0003/g, '</mark>'); };
-const snip = (s, terms, n = 46) => { let i = -1; for (const t of terms) { const j = s.indexOf(t); if (j >= 0 && (i < 0 || j < i)) i = j; }
+// 检索词里数字与文字之间的空格可有可无：“前209年”能匹配正文的“前 209 年”，反之亦然
+const RX = new Map(), rx = t => { let r = RX.get(t);
+  if (!r) RX.set(t, r = new RegExp(t.replace(/[.*+?^$(){}|[\\]\\\\]/g, '\\\\$&').replace(/(\\d)(?=[^\\d])|([^\\d\\s])(?=\\d)/g, '$1$2\\\\s*'), 'g'));
+  r.lastIndex = 0; return r; };
+const has = (s, t) => !!s && rx(t).test(s);
+const mk = (s, terms) => { let h = esc(s); for (const t of terms) h = h.replace(rx(esc(t)), '\\u0002$&\\u0003'); return h.replace(/\\u0002/g, '<mark>').replace(/\\u0003/g, '</mark>'); };
+const snip = (s, terms, n = 46) => { let i = -1; for (const t of terms) { const m = rx(t).exec(s), j = m ? m.index : -1; if (j >= 0 && (i < 0 || j < i)) i = j; }
   if (i < 0) return s.length > n * 2 ? s.slice(0, n * 2) + '…' : s; const a = Math.max(0, i - n), b = Math.min(s.length, i + n);
   return (a ? '…' : '') + s.slice(a, b) + (b < s.length ? '…' : ''); };
 const evHref = e => B[e.k][0] + '/index.html?ev=' + encodeURIComponent(e.t);
 const evCnt = b => (b[2] ? b[2] + ' 个事件' : b[4] ? '仅身后提及 ' + b[4] + ' 次' : '无事件');
 const pHref = (n, k) => B[k][0] + '/index.html?p=' + encodeURIComponent(n);
-function scoreP(p, terms) { let s = 0; for (const t of terms) {
-  if (p.n === t) s += 100; else if (p.n.startsWith(t)) s += 60; else if (p.n.includes(t)) s += 40; else if (p.zi && p.zi.includes(t)) s += 30;
-  else if (p.bio.includes(t) || p.bk.some(b => b[1].includes(t))) s += 5; else return 0; } return s + Math.min(p.ne, 20) / 10; }
 // 公元年份：208、208年、公元208年、前209、公元前209年
 const yearOf = t => { const m = t.match(/^(公元)?(前)?(\\d{1,4})年?$/); return m ? (m[2] ? -m[3] : +m[3]) : null; };
+// 生卒年：形如 155–220、?–208?、前259–前210，取出生年与卒年
+const lifeYears = l => { const m = String(l || '').match(/^约?(前)?(\\d+)?\\??\\s*[–-]\\s*约?(前)?(\\d+)?/); return m ? [m[2] ? (m[1] ? -m[2] : +m[2]) : null, m[4] ? (m[3] ? -m[4] : +m[4]) : null] : []; };
+function scoreP(p, terms) { let s = 0; for (const t of terms) {
+  const yr = yearOf(t);
+  if (p.n === t) s += 100; else if (p.n.startsWith(t)) s += 60; else if (p.n.includes(t)) s += 40; else if (yr != null && lifeYears(p.life).includes(yr)) s += 40;
+  else if (p.zi && p.zi.includes(t)) s += 30; else if (has(p.bio, t) || p.bk.some(b => b[1].includes(t))) s += 5; else return 0; } return s + Math.min(p.ne, 20) / 10; }
 function scoreE(e, terms) { let s = 0; for (const t of terms) {
   const yr = yearOf(t);
-  if (yr != null && e.y === yr) s += 40; else if (e.t.includes(t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (e.p.includes(t) || e.m.includes(t) || e.cal.includes(t)) s += 20;
-  else if (e.who.includes(t)) s += 15; else if (e.d.includes(t)) s += 5; else return 0; } return s; }
+  if (yr != null && e.y === yr) s += 40; else if (has(e.t, t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (has(e.p, t) || has(e.m, t) || has(e.cal, t)) s += 20;
+  else if (e.who.includes(t)) s += 15; else if (has(e.d, t)) s += 5; else return 0; } return s; }
 function run() {
   const raw = q.value.trim(), terms = raw.replace(/(前)\\s+(?=\\d)/g, '$1').replace(/(\\d)\\s+年/g, '$1年').split(/\\s+/).filter(Boolean), v = volSel.value === '' ? null : +volSel.value;
   try { history.replaceState(null, '', raw ? '#q=' + encodeURIComponent(raw) + (v != null ? '&v=' + v : '') : '#tab=search'); } catch (err) {}
@@ -156,7 +164,7 @@ function run() {
   cnt.textContent = (filt !== 'e' ? ps.length + ' 位人物' : '') + (filt === 'all' ? ' · ' : '') + (filt !== 'p' ? es.length + ' 个事件' : '');
   let hp = '', he = '';
   if (ps.length) hp = '<div><h2><span>人物</span></h2><div class="rl">' + ps.slice(0, lp).map(p => { const k0 = (v != null ? p.bk.find(b => b[0] === v) : p.bk.slice().sort((a, b) => b[2] - a[2])[0])[0];
-    return '<div class="hit" data-href="' + pHref(p.n, k0) + '"><span class="y">' + esc(p.life || '') + '</span><a class="t" href="' + pHref(p.n, k0) + '">' + mk(p.n, terms) + (p.zi ? '<small>字' + mk(p.zi, terms) + '</small>' : '') + '</a>'
+    return '<div class="hit" data-href="' + pHref(p.n, k0) + '"><span class="y">' + mk(p.life || '', terms.filter(t => yearOf(t) != null && lifeYears(p.life).includes(yearOf(t)))) + '</span><a class="t" href="' + pHref(p.n, k0) + '">' + mk(p.n, terms) + (p.zi ? '<small>字' + mk(p.zi, terms) + '</small>' : '') + '</a>'
       + '<span class="s">' + mk(snip(p.bio, terms), terms) + '</span><span class="m">' + p.bk.map(b => { const [k, f] = b; return '<a class="vb" href="' + pHref(p.n, k) + '" title="' + esc(B[k][1]) + ' · ' + esc(f) + ' · ' + evCnt(b) + '">' + vol(k) + ' ' + esc(B[k][1]) + '</a>'; }).join('') + '</span></div>'; }).join('')
     + '</div>' + (ps.length > lp ? '<button class="more" data-more="p">显示全部 ' + ps.length + ' 位 ›</button>' : '') + '</div>';
   if (es.length) he = '<div><h2><span>事件</span></h2><div class="rl">' + es.slice(0, lim.e).map(e => '<a class="hit" href="' + evHref(e) + '"><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '"></i>' + mk(e.t, terms) + '</span>'
