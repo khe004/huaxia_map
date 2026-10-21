@@ -94,6 +94,15 @@ function eras(y) {
 function ganzhi(y) { if (APPROX(y)) return ''; const a = y < 0 ? y + 1 : y; const i = ((a - 4) % 60 + 60) % 60; return '甲乙丙丁戊己庚辛壬癸'[i % 10] + '子丑寅卯辰巳午未申酉戌亥'[i % 12]; }
 function phaseOf(y) { return PHASES.find(p => y >= p[0] && y <= p[1]) || [y, y, '']; }
 function eraLine(y, sep = ' · ') { const es = eras(y); return !es.length ? '' : es.length === 1 ? es[0].s : es.map(e => `${e.d} ${e.s}`).join(sep); }
+// 事件的纪年：先列原书纪年 cal，再补 cal 没写到的纪年（如春秋卷 cal 用鲁历，另补周王纪年）
+function calLine(e) {
+  if (!e.cal) return eraLine(e.y);
+  // 只在 cal 对上了某一家纪年时，补其他各家（同一家年中改元时公历年推出的年号可能与 cal 不同，不补）
+  const es = eras(e.y), hit = es.filter(x => e.cal.includes(x.s));
+  if (!hit.length) return e.cal;
+  // 年号多在年中改元、年中亡国，补出的“元年”或某家最后一年未必覆盖事件所在月份，不补；春秋王年踰年改元，不受此限
+  return [e.cal, ...es.filter(x => !hit.some(h => h.d === x.d) && ((B.calendar || {}).label || !x.s.includes('元年') && ((B.calendar.spans || {})[x.d] || [])[1] !== e.y)).map(x => (x.d && !x.s.startsWith(x.d) ? x.d : '') + x.s)].join(' · ');
+}
 const yearLine = (y, sep = ' · ') => [ganzhi(y) && ganzhi(y) + '年', eraLine(y, sep)].filter(Boolean).join(sep);
 const fName = (f, y) => FACTIONS[f].name(y);
 // 所属：FACTIONS[f].realm（字符串或 t => 字符串）。同一所属的势力之间只画细边界，图例和面板按 BOOK.realms 分组
@@ -639,7 +648,7 @@ function renderEvent(i) {
   if (k >= 0) { pv = order[k - 1]; nx = order[k + 1]; } else { pv = [...order].reverse().find(j => EV_STEP[j] < EV_STEP[i]); nx = order.find(j => EV_STEP[j] > EV_STEP[i]); }
   pbody.innerHTML = `
     <button class="back">${backLabel}</button>
-    <div class="kicker">${[fmtYearFull(e.y), ganzhi(e.y), e.cal || eraLine(e.y)].filter(Boolean).join(' · ')}</div>
+    <div class="kicker">${[fmtYearFull(e.y), ganzhi(e.y), calLine(e)].filter(Boolean).join(' · ')}</div>
     <h2>${e.t}</h2>
     <div class="meta"><span>${e.p}（${e.m}）</span><span class="tag">${KIND[e.k] || '政事'}</span>${e.src ? `<span class="tag yy">${tagOf(e)}</span>` : ''}</div>
     <p>${rich(e.d)}</p>

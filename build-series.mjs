@@ -20,14 +20,19 @@ const rows = S.books.map((b, i) => {
   const { BOOK, EVENTS, PEOPLE_RAW, FACTIONS } = c.__;
   // 王年、年号纪年：与引擎 eras() 同一算法（BOOK.calendar.label 或 eras/spans），事件没写 cal 时也能按纪年检索
   const CAL = BOOK.calendar || {}, cnY = n => (n === 1 ? '元' : cn(n));
-  const eraOf = y => { if (CAL.label) return (CAL.label(y) || []).map(e => (e.d && !e.s.startsWith(e.d) ? e.d + e.s : e.s)).join(' ');
+  const erasOf = y => { if (CAL.label) return CAL.label(y) || [];
     const out = []; for (const k of Object.keys(CAL.eras || {})) { const sp = (CAL.spans || {})[k]; if (sp && (y < sp[0] || y > sp[1])) continue;
-      let e = null; for (const it of CAL.eras[k]) if (it[0] <= y) e = it; if (e) out.push(k + ' ' + e[1] + cnY(y - e[0] + 1 - (e[0] < 0 && y > 0 ? 1 : 0)) + '年'); }
-    return out.join(' '); };
+      let e = null; for (const it of CAL.eras[k]) if (it[0] <= y) e = it; if (e) out.push({ d: k, s: e[1] + cnY(y - e[0] + 1 - (e[0] < 0 && y > 0 ? 1 : 0)) + '年' }); }
+    return out; };
+  const fmtEra = x => (x.d && !x.s.startsWith(x.d) ? x.d : '') + x.s;
+  // 与引擎 calLine 相同：先列 cal，再补 cal 没写到的纪年（春秋卷 cal 是鲁历，补周王纪年）
+  const calOf = e => { const es = erasOf(e.y); if (!e.cal) return es.map(fmtEra).join(' · ');
+    const hit = es.filter(x => e.cal.includes(x.s)); if (!hit.length) return e.cal;
+    return [e.cal, ...es.filter(x => !hit.some(h => h.d === x.d) && (CAL.label || !x.s.includes('元年') && ((CAL.spans || {})[x.d] || [])[1] !== e.y)).map(fmtEra)].join(' · '); };
   IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
   const evOf = new Map(), postOf = new Map();
   for (const e of EVENTS) {
-    IDX.events.push([i, e.y, e.mo, e.t, e.p, e.m, e.k, e.who.join('、'), plain(e.d), e.cal || '', eraOf(e.y)]);
+    IDX.events.push([i, e.y, e.mo, e.t, e.p, e.m, e.k, e.who.join('、'), plain(e.d), calOf(e)]);
     // 人物的各卷事件数只计在世时的事件（post 身后出场不算）
     for (const n of e.who) if (!(e.post || []).includes(n)) evOf.set(n, (evOf.get(n) || []).concat(e)); else postOf.set(n, (postOf.get(n) || 0) + 1);
   }
@@ -66,7 +71,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 const B = IDX.books, vol = k => '卷' + CN(k + 1);
 const fy = (y, k) => (B[k][2] != null && y < B[k][2] ? '约' : '') + (y < 0 ? '前' + -y : y);
 const KN = { war: '战事', pol: '政事', dip: '外交' };
-const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal, era]) => ({ k, y, mo, t, p, m, kind, who, d, cal, era }));
+const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, mo, t, p, m, kind, who, d, cal }));
 const PP = Object.entries(IDX.people).map(([n, [zi, life, bio, bk]]) => ({ n, zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
 const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), cnt = $('#cnt'), volSel = $('#vol');
 // 页签：卷目 / 人物 / 事件 / 检索，当前页签与筛选记在地址的 # 后面
@@ -113,7 +118,7 @@ function renderE() {
   let n = 0, h = '';
   for (const [k, arr] of [...g].sort((a, b) => a[0] - b[0])) {
     arr.sort((a, b) => a.y - b.y || a.mo - b.mo); n += arr.length;
-    h += '<section class="grp">' + head(k, arr.length, '个') + '<div class="el">' + arr.map(e => '<a class="er" href="' + evHref(e) + '"' + (e.cal || e.era ? ' title="' + esc(e.cal || e.era) + '"' : '') + '><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '" title="' + KN[e.kind] + '"></i>' + esc(e.t) + '</span><span class="pl">' + esc(e.p) + '</span></a>').join('') + '</div></section>';
+    h += '<section class="grp">' + head(k, arr.length, '个') + '<div class="el">' + arr.map(e => '<a class="er" href="' + evHref(e) + '"' + (e.cal ? ' title="' + esc(e.cal) + '"' : '') + '><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '" title="' + KN[e.kind] + '"></i>' + esc(e.t) + '</span><span class="pl">' + esc(e.p) + '</span></a>').join('') + '</div></section>';
   }
   $('#ecnt').textContent = n + ' 个事件';
   $('#elist').innerHTML = h || '<p class="empty">没有符合条件的事件。</p>';
@@ -138,7 +143,7 @@ function scoreP(p, terms) { let s = 0; for (const t of terms) {
 const yearOf = t => { const m = t.match(/^(公元)?(前)?(\\d{1,4})年?$/); return m ? (m[2] ? -m[3] : +m[3]) : null; };
 function scoreE(e, terms) { let s = 0; for (const t of terms) {
   const yr = yearOf(t);
-  if (yr != null && e.y === yr) s += 40; else if (e.t.includes(t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (e.p.includes(t) || e.m.includes(t) || e.cal.includes(t) || e.era.includes(t)) s += 20;
+  if (yr != null && e.y === yr) s += 40; else if (e.t.includes(t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (e.p.includes(t) || e.m.includes(t) || e.cal.includes(t)) s += 20;
   else if (e.who.includes(t)) s += 15; else if (e.d.includes(t)) s += 5; else return 0; } return s; }
 function run() {
   const raw = q.value.trim(), terms = raw.replace(/(前)\\s+(?=\\d)/g, '$1').replace(/(\\d)\\s+年/g, '$1年').split(/\\s+/).filter(Boolean), v = volSel.value === '' ? null : +volSel.value;
@@ -155,7 +160,7 @@ function run() {
       + '<span class="s">' + mk(snip(p.bio, terms), terms) + '</span><span class="m">' + p.bk.map(b => { const [k, f] = b; return '<a class="vb" href="' + pHref(p.n, k) + '" title="' + esc(B[k][1]) + ' · ' + esc(f) + ' · ' + evCnt(b) + '">' + vol(k) + ' ' + esc(B[k][1]) + '</a>'; }).join('') + '</span></div>'; }).join('')
     + '</div>' + (ps.length > lp ? '<button class="more" data-more="p">显示全部 ' + ps.length + ' 位 ›</button>' : '') + '</div>';
   if (es.length) he = '<div><h2><span>事件</span></h2><div class="rl">' + es.slice(0, lim.e).map(e => '<a class="hit" href="' + evHref(e) + '"><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '"></i>' + mk(e.t, terms) + '</span>'
-      + '<span class="s">' + mk(snip(e.d, terms), terms) + '</span><span class="m"><span>' + vol(e.k) + '《' + esc(B[e.k][1]) + '》</span><span>' + mk(e.p + '（' + e.m + '）', terms) + '</span>' + (e.cal || e.era ? '<span>' + mk(e.cal || e.era, terms) + '</span>' : '') + '<span>' + KN[e.kind] + '</span>' + (e.who ? '<span>' + mk(e.who.length > 40 ? e.who.slice(0, 40) + '…' : e.who, terms) + '</span>' : '') + '</span></a>').join('')
+      + '<span class="s">' + mk(snip(e.d, terms), terms) + '</span><span class="m"><span>' + vol(e.k) + '《' + esc(B[e.k][1]) + '》</span><span>' + mk(e.p + '（' + e.m + '）', terms) + '</span>' + (e.cal ? '<span>' + mk(e.cal, terms) + '</span>' : '') + '<span>' + KN[e.kind] + '</span>' + (e.who ? '<span>' + mk(e.who.length > 40 ? e.who.slice(0, 40) + '…' : e.who, terms) + '</span>' : '') + '</span></a>').join('')
     + '</div>' + (es.length > lim.e ? '<button class="more" data-more="e">显示全部 ' + es.length + ' 个 ›</button>' : '') + '</div>';
   const h = evFirst ? he + hp : hp + he;
   res.innerHTML = h || '<p class="empty">没有找到“' + esc(raw) + '”。可以换个写法，如人名、字、古地名、今地名或年号。</p>';
