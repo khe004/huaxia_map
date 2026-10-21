@@ -28,8 +28,14 @@ const rows = S.books.map((b, i) => {
   const fmtEra = x => (x.d && !x.s.startsWith(x.d) ? x.d : '') + x.s;
   // 与引擎 calLine 相同：先列 cal，再补 cal 没写到的纪年（春秋卷 cal 是鲁历，补周王纪年）
   const calOf = e => { const es = erasOf(e.y); if (!e.cal) return es.length === 1 ? es[0].s : es.map(fmtEra).join(' · ');
-    const hit = es.filter(x => e.cal.includes(x.s)); if (!hit.length) return e.cal;
-    return [e.cal, ...es.filter(x => !hit.some(h => h.d === x.d) && (CAL.label || !x.s.includes('元年') && ((CAL.spans || {})[x.d] || [])[1] !== e.y)).map(fmtEra)].join(' · '); };
+    // 多家并列时 cal 加所属国号：按年号名比对本年与上一年的纪年（与引擎 calLine 相同）
+    const nm = x => x.s.replace(/[〇一二三四五六七八九十元]+年.*$/, '');
+    const own = [...new Set([...es, ...erasOf(e.y - 1)].filter(x => x.d && nm(x) && e.cal.startsWith(nm(x))).map(x => x.d))];
+    const head = es.length > 1 && own.length === 1 && !e.cal.startsWith(own[0]) ? own[0] + e.cal : e.cal;
+    const hit = es.filter(x => e.cal.includes(x.s)); if (!hit.length) return head;
+    const ends = x => { const sp = (CAL.spans || {})[x.d]; return sp && sp[1] === e.y && sp[1] < BOOK.range[1]; };
+    const more = es.filter(x => !hit.some(h => h.d === x.d) && (CAL.label || !x.s.includes('元年') && !ends(x)));
+    return [head, ...more.map(fmtEra)].join(' · '); };
   IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
   const evOf = new Map(), postOf = new Map();
   for (const e of EVENTS) {
