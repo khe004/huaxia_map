@@ -25,19 +25,19 @@ const rows = S.books.map((b, i) => {
       let e = null; for (const it of CAL.eras[k]) if (it[0] <= y) e = it; if (e) out.push(k + ' ' + e[1] + cnY(y - e[0] + 1 - (e[0] < 0 && y > 0 ? 1 : 0)) + '年'); }
     return out.join(' '); };
   IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
-  const evOf = new Map();
+  const evOf = new Map(), postOf = new Map();
   for (const e of EVENTS) {
     IDX.events.push([i, e.y, e.mo, e.t, e.p, e.m, e.k, e.who.join('、'), plain(e.d), e.cal || '', eraOf(e.y)]);
     // 人物的各卷事件数只计在世时的事件（post 身后出场不算）
-    for (const n of e.who) if (!(e.post || []).includes(n)) evOf.set(n, (evOf.get(n) || []).concat(e));
+    for (const n of e.who) if (!(e.post || []).includes(n)) evOf.set(n, (evOf.get(n) || []).concat(e)); else postOf.set(n, (postOf.get(n) || 0) + 1);
   }
   for (const [n, f, zi, life, bio] of PEOPLE_RAW) {
     const cm = pcx.PC[n], es = (evOf.get(n) || []).sort((u, v) => u.y - v.y || u.mo - v.mo), t = es.length ? es[0].y + (es[0].mo - 1) / 12 : BOOK.range[0];
     let fn = f; try { fn = FACTIONS[f].name(t).replace(/（[^）]*）/g, ''); } catch (err) {}
     const P = IDX.people[n] || (IDX.people[n] = [cm ? cm[0] : zi, cm ? cm[1] : life, plain(cm ? cm[2] : bio), []]);
     if (!cm && bio && !P[2]) P[2] = plain(bio);
-    // [卷序, 势力名, 在世事件数, 首个在世事件的时间]：人物页签按首次出场先后排列
-    P[3].push([i, fn, es.length, es.length ? +t.toFixed(3) : null]);
+    // [卷序, 势力名, 在世事件数, 首个在世事件的时间, 身后被提及的事件数]：人物页签按首次出场先后排列
+    P[3].push([i, fn, es.length, es.length ? +t.toFixed(3) : null, postOf.get(n) || 0]);
   }
   // 与上一卷时间重叠（上卷末事件晚于本卷首事件）时，在年份后注明
   const es = EVENTS.slice().sort((u, v) => u.y - v.y || u.mo - v.mo), f = es[0], l = es[es.length - 1];
@@ -101,6 +101,7 @@ function renderP() {
     h += '<section class="grp">' + head(k, arr.length, '位') + '<div class="pg">' + arr.map(([p, b]) => {
       const k0 = v != null ? v : p.bk.slice().sort((a, b) => b[2] - a[2])[0][0];
       return '<a class="pc" href="' + pHref(p.n, k0) + '" title="' + esc((p.zi ? '字' + p.zi + '。' : '') + p.bio) + '"><b>' + esc(p.n) + '</b>' + (p.life ? '<span>' + esc(p.life) + '</span>' : '')
+        + (p.ne ? '' : '<i class="po" title="' + p.bk.map(b => vol(b[0]) + evCnt(b)).join('，') + '">身后</i>')
         + (p.bk.length > 1 ? '<i title="出现在 ' + p.bk.map(b => vol(b[0])).join('、') + '">' + p.bk.length + ' 卷</i>' : '') + '</a>'; }).join('') + '</div></section>';
   }
   $('#pcnt').textContent = n + ' 位人物';
@@ -128,6 +129,7 @@ const snip = (s, terms, n = 46) => { let i = -1; for (const t of terms) { const 
   if (i < 0) return s.length > n * 2 ? s.slice(0, n * 2) + '…' : s; const a = Math.max(0, i - n), b = Math.min(s.length, i + n);
   return (a ? '…' : '') + s.slice(a, b) + (b < s.length ? '…' : ''); };
 const evHref = e => B[e.k][0] + '/index.html?ev=' + encodeURIComponent(e.t);
+const evCnt = b => (b[2] ? b[2] + ' 个事件' : b[4] ? '仅身后提及 ' + b[4] + ' 次' : '无事件');
 const pHref = (n, k) => B[k][0] + '/index.html?p=' + encodeURIComponent(n);
 function scoreP(p, terms) { let s = 0; for (const t of terms) {
   if (p.n === t) s += 100; else if (p.n.startsWith(t)) s += 60; else if (p.n.includes(t)) s += 40; else if (p.zi && p.zi.includes(t)) s += 30;
@@ -150,7 +152,7 @@ function run() {
   let hp = '', he = '';
   if (ps.length) hp = '<div><h2><span>人物</span></h2><div class="rl">' + ps.slice(0, lp).map(p => { const k0 = (v != null ? p.bk.find(b => b[0] === v) : p.bk.slice().sort((a, b) => b[2] - a[2])[0])[0];
     return '<div class="hit" data-href="' + pHref(p.n, k0) + '"><span class="y">' + esc(p.life || '') + '</span><a class="t" href="' + pHref(p.n, k0) + '">' + mk(p.n, terms) + (p.zi ? '<small>字' + mk(p.zi, terms) + '</small>' : '') + '</a>'
-      + '<span class="s">' + mk(snip(p.bio, terms), terms) + '</span><span class="m">' + p.bk.map(([k, f, n]) => '<a class="vb" href="' + pHref(p.n, k) + '" title="' + esc(B[k][1]) + ' · ' + esc(f) + ' · ' + n + ' 个事件">' + vol(k) + ' ' + esc(B[k][1]) + '</a>').join('') + '</span></div>'; }).join('')
+      + '<span class="s">' + mk(snip(p.bio, terms), terms) + '</span><span class="m">' + p.bk.map(b => { const [k, f] = b; return '<a class="vb" href="' + pHref(p.n, k) + '" title="' + esc(B[k][1]) + ' · ' + esc(f) + ' · ' + evCnt(b) + '">' + vol(k) + ' ' + esc(B[k][1]) + '</a>'; }).join('') + '</span></div>'; }).join('')
     + '</div>' + (ps.length > lp ? '<button class="more" data-more="p">显示全部 ' + ps.length + ' 位 ›</button>' : '') + '</div>';
   if (es.length) he = '<div><h2><span>事件</span></h2><div class="rl">' + es.slice(0, lim.e).map(e => '<a class="hit" href="' + evHref(e) + '"><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '"></i>' + mk(e.t, terms) + '</span>'
       + '<span class="s">' + mk(snip(e.d, terms), terms) + '</span><span class="m"><span>' + vol(e.k) + '《' + esc(B[e.k][1]) + '》</span><span>' + mk(e.p + '（' + e.m + '）', terms) + '</span>' + (e.cal || e.era ? '<span>' + mk(e.cal || e.era, terms) + '</span>' : '') + '<span>' + KN[e.kind] + '</span>' + (e.who ? '<span>' + mk(e.who.length > 40 ? e.who.slice(0, 40) + '…' : e.who, terms) + '</span>' : '') + '</span></a>').join('')
@@ -239,6 +241,7 @@ li.era-start:not(:first-child) { margin-top: 14px; }
 .pc b { font-family: var(--f-serif); font-weight: 700; font-size: 15px; }
 .pc span { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
 .pc i { font-style: normal; font-size: 11px; color: var(--seal); border: 1px solid color-mix(in srgb, var(--seal) 40%, transparent); border-radius: 999px; padding: 0 5px; }
+.pc i.po { color: var(--muted); border-color: var(--line); border-style: dashed; }
 .el { display: grid; }
 .er { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 6px 10px; margin-inline: -10px; border-radius: 6px; color: inherit; text-decoration: none; }
 .er:hover { background: var(--chip); }
