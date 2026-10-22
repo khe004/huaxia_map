@@ -78,7 +78,7 @@ const FACTIONS = {
   zhuhou:   { color: '#d9a7c0', name: () => '诸侯王国', mapName: () => '诸王国', realm: 'han' },
   huainan:  { color: '#5ec4cf', name: () => '淮南 · 衡山（刘安、刘赐）', mapName: () => '淮南', realm: 'han' },
   xiongnu:  { color: '#3a3d44', realm: 'xn', mapName: () => '匈奴',
-    name: t => (t < -125.584 ? '匈奴（军臣单于）' : t < -114 ? '匈奴（伊稚斜单于）' : t < -105 ? '匈奴（乌维单于）' : t < -101 ? '匈奴（儿单于、呴犁湖）' : t < -96 ? '匈奴（且鞮侯单于）' : '匈奴（狐鹿姑单于）') },
+    name: t => (t < -125.584 ? '匈奴（军臣单于）' : t < -114.001 ? '匈奴（伊稚斜单于）' : t < -105 ? '匈奴（乌维单于）' : t < -101 ? '匈奴（儿单于、呴犁湖）' : t < -96 ? '匈奴（且鞮侯单于）' : '匈奴（狐鹿姑单于）') },
   dingling: { color: '#7d8a99', name: () => '丁零 · 坚昆', realm: 'xn' },
   donghu:   { color: '#a3906e', name: t => (t < -119.4 ? '乌桓 · 鲜卑' : '乌桓（内附） · 鲜卑'), mapName: () => '乌桓', realm: t => (t < -119.4 ? 'xn' : null) },
   kong:     { color: '#cfc6a8', name: () => '幕南（匈奴远遁，无王庭）', mapName: () => '幕南' },

@@ -3,6 +3,7 @@
 // 2. 人物出现在出生年之前的事件中
 // 3. 事件的 cal（原书纪年）里的月份与 mo 的换算关系和本卷多数事件不一致（小数月份为同月排序而设，不比较）
 // 4. 同年同月的几个事件，排在后面的事件简介里写着前一个事件的人“死后”等字样（按数组顺序排先后，可能颠倒）
+// 5. 两个事件的年、月完全相同：两步的时刻 t 相同，后一事件的疆域快照、势力或城邑改名会提前落在前一事件上，应给其一个小数月份（如 9.5）
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
@@ -37,6 +38,8 @@ for (const id of ids) {
     for (const n of b.who) if (a.d.includes(n + '死后') || a.d.includes(n + '死前')) {} 
     for (const n of a.who) if (b.d.includes(n + '死后') && !dead.has(n)) {}
     for (const n of new Set([...a.who, ...b.who])) if (a.d.includes(n + '死后') && b.t.includes(n) && DEATH.test(b.t)) out.push(`  ? 同月「${a.t}」写着“${n}死后”，却排在「${b.t}」之前`); }
+  // 5
+  E.forEach((e, k) => { if (k && e.y === E[k - 1].y && e.mo === E[k - 1].mo) out.push(`  ✗ 「${E[k - 1].t}」与「${e.t}」同为 ${e.y}/${e.mo}，时刻相同`); });
   if (out.length) { console.log(`== ${id}`); [...new Set(out)].forEach(l => console.log(l)); total += new Set(out).size; }
 }
 console.log(`共 ${total} 条`);

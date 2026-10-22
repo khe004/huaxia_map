@@ -4,8 +4,6 @@
 //   推迟：生效那一步之前一年内已有提到该城的事件——点到事件时城名还没变，应改到不大于事件的 t（不是对应事件的写进 OK）。
 // 判定“提到该城”：事件标题、地点、正文中出现新名或旧名（两字以上；单字名只看标题和地点）。
 // 已核对、确无对应事件的写进 OK：'书:新名或旧名:阈值'
-const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const OK = new Set([
   'wuyue:姑苏:-514',    // 阖闾即位后才筑大城，专诸刺王僚一事只提到吴
@@ -14,18 +12,7 @@ const OK = new Set([
 ]);
 let n = 0;
 for (const id of ids) {
-  const c = {}; vm.createContext(c);
-  vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`, 'utf8') + ';this.X={BOOK,SNAPSHOTS,EVENTS,PHASES,CITIES:typeof CITIES==="undefined"?[]:CITIES}', c);
-  const { BOOK: B, SNAPSHOTS, EVENTS, PHASES, CITIES } = c.X, [Y0, Y1] = B.range, tOf = (y, m) => y + (m - 1) / 12;
-  let YEARS = [];
-  if (B.yearStride) {
-    const keep = new Set([Y0, Y1, ...EVENTS.map(e => e.y), ...SNAPSHOTS.map(s => s[0]), ...PHASES.flatMap(p => [p[0], p[1]])]);
-    B.yearStride.forEach(([a, k], j) => { const b = (B.yearStride[j + 1] || [Y1 + 1])[0]; for (let y = a; y < b; y += k) keep.add(y); });
-    YEARS = [...keep].filter(y => y >= Y0 && y <= Y1 && y !== 0).sort((a, b) => a - b);
-  } else for (let y = Y0; y <= Y1; y++) if (y !== 0) YEARS.push(y);
-  const steps = [];
-  for (const y of YEARS) { steps.push({ y, t: tOf(y, 1) - (EVENTS.some(e => e.y === y && e.mo <= 1) ? 1e-6 : 0), e: null });
-    EVENTS.filter(e => e.y === y).sort((a, b) => a.mo - b.mo).forEach(e => steps.push({ y, t: tOf(y, e.mo), e })); }
+  const { X: { BOOK: B, CITIES }, steps } = require('./steps.js').load(id), [Y0] = B.range;
   const evs = steps.filter(s => s.e);
   const says = (e, w) => w.length >= 2 ? (e.t + (e.p || '') + e.d).includes(w) : (e.t + (e.p || '')).includes(w);
   const out = [];
@@ -40,6 +27,8 @@ for (const id of ids) {
     if (!steps[k].e || !words.some(w => says(steps[k].e, w))) {
       const hit = evs.find(s => s.t > steps[k].t && s.y === steps[k].y && words.some(w => says(s.e, w)));
       if (hit) out.push(`  提前：${label} 生效于 ${steps[k].e ? `「${steps[k].e.t}」` : steps[k].y + ' 年初'}；对应事件「${hit.e.t}」${hit.y}/${hit.e.mo}（t=${hit.t.toFixed(3)}）`);
+      // 整数年份碰上当年的正月事件（年初一步取 y − 1e-6），本意是年初却挂到了无关的正月事件上：写成 y − 0.001
+      else if (steps[k].e && Number.isInteger(X)) out.push(`  错挂：${label} 本意是 ${X} 年初，却落在无关的正月事件「${steps[k].e.t}」上，应写 ${X - 0.001}`);
     }
     // 推迟：生效那一步之前一年内已有提到该城的事件（含阈值落在年中却无事件、拖到次年年初才生效的）
     const near = steps[k].e && words.some(w => says(steps[k].e, w)) ? null : evs.filter(s => s.t < steps[k].t - 1e-9 && steps[k].t - s.t < 1 && words.some(w => says(s.e, w))).pop();

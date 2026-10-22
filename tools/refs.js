@@ -1,4 +1,4 @@
-// 用法：node tools/refs.js [书 …]：列出事件 refs 中不在 BOOK.source.titles 里的篇名
+// 用法：node tools/refs.js [书 …]：列出事件 refs 中不在 BOOK.source.titles 里的篇名，以及 titles 中没有任何事件引用的冗余篇目
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
@@ -9,6 +9,8 @@ for (const id of ids) {
   const S = c.X.BOOK.source; if (!S || S.type !== 'sections') continue;
   const keys = new Set(Object.keys(S.titles || {})), miss = new Map();
   c.X.EVENTS.forEach(e => (e.refs || []).forEach(r => { if (!keys.has(r)) miss.set(r, [...(miss.get(r) || []), e.t]); }));
+  const used = new Set(c.X.EVENTS.flatMap(e => e.refs || [])), extra = [...keys].filter(k => !used.has(k));
+  if (extra.length) { console.log(`== ${id} 未被引用的篇目：${extra.join('、')}`); n += extra.length; }
   if (miss.size) { console.log(`== ${id}`); miss.forEach((ts, r) => console.log(`  ${r}  ← ${ts.slice(0, 3).join('；')}${ts.length > 3 ? ' …' : ''}`)); n += [...miss.values()].reduce((a, v) => a + v.length, 0); }
 }
-console.log(`共 ${n} 处引用不在篇目表中`);
+console.log(`共 ${n} 处（引用不在篇目表中、或篇目未被引用）`);

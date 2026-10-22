@@ -3,23 +3,10 @@
 // 或夏历十二月的快照没像事件那样折成次年公历一月（在事件前一步的年初就提前变了）。
 // 也报出快照所在月份没有事件、顺延到同年稍后某个事件上才生效的（那个事件多半与之无关）。
 // 列出生效步之前、之后最近的事件，把快照的 [年, 月] 改成对应事件的年月；确无对应事件的改成正月（有意在年初渐变）。
-const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 let n = 0;
 for (const id of ids) {
-  const c = {}; vm.createContext(c);
-  vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`, 'utf8') + ';this.X={BOOK,SNAPSHOTS,EVENTS,PHASES}', c);
-  const { BOOK: B, SNAPSHOTS, EVENTS, PHASES } = c.X, [Y0, Y1] = B.range, tOf = (y, m) => y + (m - 1) / 12;
-  let YEARS = [];
-  if (B.yearStride) {
-    const keep = new Set([Y0, Y1, ...EVENTS.map(e => e.y), ...SNAPSHOTS.map(s => s[0]), ...PHASES.flatMap(p => [p[0], p[1]])]);
-    B.yearStride.forEach(([a, k], j) => { const b = (B.yearStride[j + 1] || [Y1 + 1])[0]; for (let y = a; y < b; y += k) keep.add(y); });
-    YEARS = [...keep].filter(y => y >= Y0 && y <= Y1 && y !== 0).sort((a, b) => a - b);
-  } else for (let y = Y0; y <= Y1; y++) if (y !== 0) YEARS.push(y);
-  const steps = [];
-  for (const y of YEARS) { steps.push({ y, t: tOf(y, 1) - (EVENTS.some(e => e.y === y && e.mo <= 1) ? 1e-6 : 0), e: null });
-    EVENTS.filter(e => e.y === y).sort((a, b) => a.mo - b.mo).forEach(e => steps.push({ y, t: tOf(y, e.mo), e })); }
+  const { X: { SNAPSHOTS }, steps, tOf } = require('./steps.js').load(id);
   const out = [];
   // 引擎按顺序扫描 SNAPSHOTS，乱序的快照会推迟到前一条之后才生效
   SNAPSHOTS.forEach(([y, m], i) => { if (i && tOf(y, m) < tOf(...SNAPSHOTS[i - 1]) - 1e-9) out.push(`  [${y}, ${m}] 排在 [${SNAPSHOTS[i - 1][0]}, ${SNAPSHOTS[i - 1][1]}] 之后，顺序颠倒`); });

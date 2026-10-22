@@ -1,8 +1,7 @@
 // 用法：node tools/legendname.js [书 …]：按引擎的时间步逐步计算各势力的图例名称、地图标签与所属分组（realm），
 // 名称在“年初”一步（没有事件）就变了、而此后一年内有对应事件的列出来——阈值写得比对应事件早（如整数年份、或按上一个月写的小数），
 // 点到改名的那个事件之前，图例已经换了新名。应把阈值改到不大于对应事件的 t = 年 + (月 − 1) / 12（与 thresholds.js 相配：也不能晚于它）。
-const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const path = require('path');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 // 已核对、确无对应事件的（关键词只是碰巧出现在别的事件里）：'书:势力:年'
 const OK = new Set([
@@ -10,27 +9,23 @@ const OK = new Set([
   'shanggu:haidai:-2600', // 大汶口→山东龙山是文化分期，同年的涿鹿之战与之无关
   'zhengheng:gongsun:238', // 公孙渊 237 年称燕王，本卷无此事件；238 年 9 月的事件是其败亡
   'sanguo:sun:222',     // 孙权 221 年称吴王，书中无此事件；222 年夷陵之战与之无关
+  'chuhan:zhao:-206', 'chuhan:qi:-206', 'chuhan:han:-206', // 常山、代、三齐、汉王都是项羽分封十八王所立，落在“分封十八王”正对
+  'wuyue:yue:-494',     // 以下几处正落在对应的正月事件上，只是新标签的字样正文未写：夫椒之战后越臣服于吴
+  'hanchu:chu:-201',    // 擒韩信后分楚为二，刘交为楚王
+  'mingzhang:xiyuhan:92', // 班超为都护
+  'bawang:jin:304',     // 长沙王乂死后成都王颖遥执朝政
+  'jinsong:tuoba:399',  // 拓跋珪称帝
+  'sanguo:han:190',     // 关东联军讨董，东汉瓦解为各地割据
+  'bawang:jin:303',     // 长沙王乂杀齐王冏后执政，正落在该事件上（标签里的“执政”二字正文未写）
 ]);
 let n = 0;
 for (const id of ids) {
-  const c = {}; vm.createContext(c);
-  vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`, 'utf8') + ';this.X={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS,EVENTS,PHASES,PEOPLE_RAW}', c);
-  const { BOOK: B, FACTIONS: F, SEEDS_RAW, SNAPSHOTS, EVENTS, PHASES, PEOPLE_RAW } = c.X;
-  const [Y0, Y1] = B.range, tOf = (y, m) => y + (m - 1) / 12;
-  let YEARS = [];
-  if (B.yearStride) {
-    const keep = new Set([Y0, Y1, ...EVENTS.map(e => e.y), ...SNAPSHOTS.map(s => s[0]), ...PHASES.flatMap(p => [p[0], p[1]])]);
-    B.yearStride.forEach(([a, k], j) => { const b = (B.yearStride[j + 1] || [Y1 + 1])[0]; for (let y = a; y < b; y += k) keep.add(y); });
-    YEARS = [...keep].filter(y => y >= Y0 && y <= Y1 && y !== 0).sort((a, b) => a - b);
-  } else for (let y = Y0; y <= Y1; y++) if (y !== 0) YEARS.push(y);
+  const { X: { BOOK: B, FACTIONS: F, SEEDS_RAW, SNAPSHOTS, EVENTS, PEOPLE_RAW }, steps, tOf } = require('./steps.js').load(id);
   const seeds = SEEDS_RAW.split(/\s{2,}|\n+/).map(s => s.trim()).filter(Boolean).map(s => { const [z, n] = s.split('|'); return { z, n }; });
   const by = new Map(); seeds.forEach((s, i) => s.z !== 'x' && by.set(s.n, i));
   const resolve = (tok, cur) => { const out = []; for (const t of tok.split(/\s+/).filter(Boolean)) {
     if (t === '*') seeds.forEach((s, i) => s.z !== 'x' && out.push(i)); else if (t[0] === '@') seeds.forEach((s, i) => s.z === t.slice(1) && out.push(i));
     else if (t[0] === '#') cur.forEach((f, i) => f === t.slice(1) && out.push(i)); else if (by.has(t)) out.push(by.get(t)); } return out; };
-  const steps = [];
-  for (const y of YEARS) { steps.push({ y, t: tOf(y, 1) - (EVENTS.some(e => e.y === y && e.mo <= 1) ? 1e-6 : 0), e: null });
-    EVENTS.filter(e => e.y === y).sort((a, b) => a.mo - b.mo).forEach(e => steps.push({ y, t: tOf(y, e.mo), e })); }
   let cur = seeds.map(s => (s.z === 'x' ? 'x' : B.baseFaction)), si = 0;
   if (SNAPSHOTS.length) { for (const [f, tok] of SNAPSHOTS[0][2]) resolve(tok, cur).forEach(i => { cur[i] = f; }); si = 1; }
   const out = []; let prev = null;
@@ -44,15 +39,24 @@ for (const id of ids) {
     while (si < SNAPSHOTS.length && tOf(SNAPSHOTS[si][0], SNAPSHOTS[si][1]) <= st.t + 1e-9) { for (const [f, tok] of SNAPSHOTS[si][2]) resolve(tok, cur).forEach(i => { cur[i] = f; }); si++; }
     const shown = new Set(cur.filter(f => f !== 'x' && F[f]));
     const now = {}; for (const f of shown) now[f] = labels(f, st.t);
-    if (prev && !st.e) for (const f of shown) if (prev[f]) for (const kind of Object.keys(now[f])) {
+    if (prev) for (const f of shown) if (prev[f]) for (const kind of Object.keys(now[f])) {
       const a = prev[f][kind], b = now[f][kind]; if (a == null || b == null || a === b) continue;
-      // 只报有对应事件的：同年稍后有事件，且新标签里新出现的词（含单字、去掉括号后的主名）见于标题或正文，或事件人物属于此势力。
+      // 只报有对应事件的：同年稍后有事件，且新标签里新出现的词（含单字、去掉括号后的主名）见于标题或正文（年初一步还认事件人物属于此势力的）。
+      // 切换落在某个事件上、而新词见于该事件的，就是落对了；落在无关事件上（如整数阈值碰上正月事件、或同月稍后的事件）而同年稍后有对应事件的，报出。
       // 没有对应事件的改名（如匈奴单于更替、上古文化分期）本就只能在年初切换，不报
-      const toks = [...new Set([...b.split(/[（）·、\s]+/), base(b)])].filter(w => w && !a.includes(w));
+      const words = x => [...new Set([...x.split(/[（）·、\s]+/), base(x)])];
+      // 新标签里新出现的词；没有时（如“孝武帝 · 谢安辅政”→“孝武帝”）取旧标签里消失的词，去掉“辅政”等尾巴
+      let toks = words(b).filter(w => w && !a.includes(w));
+      if (!toks.length) toks = words(a).filter(w => w && !b.includes(w)).map(w => w.replace(/(辅政|专政|专权|执政)$/, '')).filter(w => w.length >= 2);
+      const says = e => toks.some(w => (w.length >= 2 ? e.t + e.d : e.t).includes(w));
+      if (st.e && says(st.e)) continue;
       const later = steps.slice(k + 1).filter(s => s.e && s.y === st.y);
-      const hit = later.find(s => toks.some(w => (w.length >= 2 ? s.e.t + s.e.d : s.e.t).includes(w)))
-        || later.find(s => s.e.who.some(w => ppl.get(w) === f));
-      if (hit && !OK.has(`${id}:${f}:${st.y}`)) out.push(`  ${st.y} 年初：${f} ${kind}「${a}」→「${b}」，对应事件「${hit.e.t}」${hit.y}/${hit.e.mo}（t=${hit.t.toFixed(3)}）`);
+      const hit = later.find(s => says(s.e)) || (!st.e && later.find(s => s.e.who.some(w => ppl.get(w) === f)));
+      const at = st.e ? `「${st.e.t}」${st.y}/${st.e.mo}` : `${st.y} 年初`;
+      if (OK.has(`${id}:${f}:${st.y}`)) continue;
+      if (hit) out.push(`  ${at}：${f} ${kind}「${a}」→「${b}」，对应事件「${hit.e.t}」${hit.y}/${hit.e.mo}（t=${hit.t.toFixed(3)}）`);
+      // 没有对应事件、却挂在当年无关的正月事件上（整数阈值，年初一步取 y − 1e-6）：本意是年初，应写 y − 0.001
+      else if (st.e && st.e.mo <= 1) out.push(`  ${at}：${f} ${kind}「${a}」→「${b}」，本意是年初却挂在无关的正月事件上，阈值应写 ${st.y - 0.001}`);
     }
     prev = now;
   });

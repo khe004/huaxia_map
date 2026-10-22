@@ -14,10 +14,15 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 const APPROX = y => B.approxBefore != null && y < B.approxBefore;
 const fmtYear = y => (APPROX(y) ? '约' : '') + (y < 0 ? `前${-y}` : `${y}`);
 const fmtYearFull = y => (APPROX(y) ? '约' : '') + (y < 0 ? `公元前 ${-y} 年` : `公元 ${y} 年`);
-// 时间轴的年份。B.yearStride = [[起年, 间隔], …] 时按段抽稀（如史前每百年一格），事件、疆域变化与阶段的年份总会保留
+// 时间轴的年份。B.yearStride = [[起年, 间隔], …] 时按段抽稀（如史前每百年一格），事件、疆域变化、阶段、城邑增删改名与势力改名的年份总会保留
 const YEARS = [];
 if (B.yearStride) {
-  const keep = new Set([Y0, Y1, ...EVENTS.map(e => e.y), ...SNAPSHOTS.map(s => s[0]), ...PHASES.flatMap(p => [p[0], p[1]])]);
+  const keep = new Set([Y0, Y1, ...EVENTS.map(e => e.y), ...SNAPSHOTS.map(s => s[0]), ...PHASES.flatMap(p => [p[0], p[1]]),
+    ...(typeof CITIES === 'undefined' ? [] : CITIES).flatMap(c => c.n.map(([yy]) => Math.floor(yy)))]);
+  // 势力的名称、地图标签、分组按 t 切换：逐月比较，变化所在的年份保留
+  const lab = (f, t) => { const F0 = FACTIONS[f]; return [F0.name(t), F0.mapName ? F0.mapName(t) : '', typeof F0.realm === 'function' ? F0.realm(t) : F0.realm].join('|'); };
+  for (const f of Object.keys(FACTIONS)) { let a = lab(f, Y0);
+    for (let k = 1; k <= (Y1 - Y0 + 1) * 12; k++) { const t = Y0 + k / 12, b = lab(f, t); if (b !== a) keep.add(Math.floor(t + 1e-9)); a = b; } }
   B.yearStride.forEach(([a, k], j) => { const b = (B.yearStride[j + 1] || [Y1 + 1])[0]; for (let y = a; y < b; y += k) keep.add(y); });
   YEARS.push(...[...keep].filter(y => y >= Y0 && y <= Y1 && y !== 0).sort((a, b) => a - b));
 } else for (let y = Y0; y <= Y1; y++) if (y !== 0) YEARS.push(y);
@@ -250,8 +255,9 @@ cityInner.append('circle').attr('r', d => (d.cap ? 3.2 : 2.6));
 const cityText = cityInner.append('text').attr('class', 'lbl').attr('x', 5).attr('y', -4);
 cityG.on('mousemove', (ev, d) => showTip(ev, `<b>${cityName(d, curT())}</b><div class="s">${d.m}</div>`)).on('mouseleave', hideTip);
 // 城邑名随时间变化，按当前一步的时刻 t（年 + (月 − 1) / 12，与 FACTIONS 的阈值同一口径）判断，阈值写成对应事件的 t 即落在该事件上；
-// 整数年份从该年年初一步起生效（当年有正月事件时，年初一步取 y − 1e-6，则落在正月事件上）。第一个阈值之前、或名字写作空串时不显示该城
-const cityName = (d, t) => { let n = ''; for (const [yy, nn] of d.n) if (yy <= t + 1e-9) n = nn; return n; };
+// 整数年份从该年年初一步起生效（当年有正月事件时，年初一步取 y − 1e-6，则落在正月事件上）；不晚于卷首 Y0 的从第一步起就显示（与开局快照一致）。
+// 第一个阈值之前、或名字写作空串时不显示该城
+const cityName = (d, t) => { let n = ''; for (const [yy, nn] of d.n) if (yy <= t + 1e-9 || yy <= Y0) n = nn; return n; };
 
 const gFac = root.append('g');
 const gPath = root.append('g');
