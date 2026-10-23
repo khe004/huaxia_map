@@ -84,7 +84,7 @@ function cnNum(n) {
   const t = Math.floor(n / 10), o = n % 10;
   return (t === 1 ? '' : DIG[t]) + '十' + (o ? DIG[o] : '');
 }
-// 年号：BOOK.calendar.eras / spans；也可以直接给 BOOK.calendar.label(y) 返回 [{d, s}]
+// 年号：BOOK.calendar.eras / spans（[起年, 年号, 起年记作第几年]，第三项缺省为 1，用于不立年号、以帝号接续纪年的“明帝二年”）；也可以直接给 BOOK.calendar.label(y) 返回 [{d, s}]
 function eras(y) {
   const cal = B.calendar || {};
   if (cal.label) return cal.label(y) || [];
@@ -93,7 +93,7 @@ function eras(y) {
     const span = (cal.spans || {})[k]; if (span && (y < span[0] || y > span[1])) continue;
     let e = null; for (const it of cal.eras[k]) if (it[0] <= y) e = it;
     if (!e) continue;
-    const n = y - e[0] + 1 - (e[0] < 0 && y > 0 ? 1 : 0);
+    const n = y - e[0] + (e[2] || 1) - (e[0] < 0 && y > 0 ? 1 : 0);
     out.push({ d: k, s: `${e[1]}${cnNum(n)}年` });
   }
   return out;
@@ -248,16 +248,18 @@ gLabels.append('g').selectAll('text').data(BASEMAP.countryLabels || []).join('te
   .attr('class', 'lbl country-lbl').attr('text-anchor', 'middle').attr('transform', d => `translate(${proj([d[1], d[2]])})`).text(d => d[0]);
 
 const gCity = root.append('g');
-const cityG = gCity.selectAll('g').data(CITIES).join('g').attr('class', d => 'city' + (d.cap ? ' cap' : ''))
+const cityG = gCity.selectAll('g').data(CITIES).join('g').attr('class', 'city')
   .attr('transform', d => `translate(${proj(d.ll)})`);
 const cityInner = cityG.append('g').attr('class', 'sc');
-cityInner.append('circle').attr('r', d => (d.cap ? 3.2 : 2.6));
+const cityDot = cityInner.append('circle');
 const cityText = cityInner.append('text').attr('class', 'lbl').attr('x', 5).attr('y', -4);
 cityG.on('mousemove', (ev, d) => showTip(ev, `<b>${cityName(d, curT())}</b><div class="s">${d.m}</div>`)).on('mouseleave', hideTip);
 // 城邑名随时间变化，按当前一步的时刻 t（年 + (月 − 1) / 12，与 FACTIONS 的阈值同一口径）判断，阈值写成对应事件的 t 即落在该事件上；
 // 整数年份从该年年初一步起生效（当年有正月事件时，年初一步取 y − 1e-6，则落在正月事件上）；不晚于卷首 Y0 的从第一步起就显示（与开局快照一致）。
 // 第一个阈值之前、或名字写作空串时不显示该城
 const cityName = (d, t) => { let n = ''; for (const [yy, nn] of d.n) if (yy <= t + 1e-9 || yy <= Y0) n = nn; return n; };
+// 都城：cap: 1 全卷为都；迁都的写成 [[阈值, 1 或 0], …]，与城名同一口径
+const cityCap = (d, t) => { if (!Array.isArray(d.cap)) return !!d.cap; let c = 0; for (const [yy, v] of d.cap) if (yy <= t + 1e-9 || yy <= Y0) c = v; return !!c; };
 
 const gFac = root.append('g');
 const gPath = root.append('g');
@@ -350,7 +352,8 @@ function renderTerritory() {
   $('#legend').innerHTML = groupByRealm(counts, T).map(([rn, , fs]) => (rn ? `<span class="rg">${rn}</span>` : '') + fs.map(([f]) => `<span><i style="background:${fColor(f)}"></i>${fName(f, T)}</span>`).join('')).join('') +
     (B.regions?.legendNote ? `<span class="note">· ${B.regions.legendNote}</span>` : '');
   cityText.text(d => cityName(d, T));
-  cityG.style('display', d => (cityName(d, T) ? null : 'none'));
+  cityG.style('display', d => (cityName(d, T) ? null : 'none')).classed('cap', d => cityCap(d, T));
+  cityDot.attr('r', d => (cityCap(d, T) ? 3.2 : 2.6));
 }
 
 // ---------- render: events ----------

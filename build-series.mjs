@@ -10,7 +10,7 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 const fy = y => (y < 0 ? `前 ${-y}` : `${y}`);
 let prevLast = null;
 // 目录页检索用的索引：全部事件与人物（跨卷人物合为一条，列出所在各卷）
-const pcx = {}; vm.createContext(pcx); vm.runInContext(r('./books/_people.js') + ';this.PC = PEOPLE_COMMON;', pcx);
+const pcx = {}; vm.createContext(pcx); vm.runInContext(r('./books/_people.js') + ';this.PC = commonOf;', pcx);
 const plain = s => String(s).replace(/\*\*(?:[^|*]{1,6}\|)?([^*]*)\*\*/g, '“$1”').replace(/““/g, '“').replace(/””/g, '”');
 const IDX = { books: [], events: [], people: {} };
 // 事件纪年的写法与引擎共用 engine/cal.js
@@ -24,7 +24,7 @@ const rows = S.books.map((b, i) => {
   const CAL = BOOK.calendar || {}, cnY = n => (n === 1 ? '元' : cn(n));
   const erasOf = y => { if (CAL.label) return CAL.label(y) || [];
     const out = []; for (const k of Object.keys(CAL.eras || {})) { const sp = (CAL.spans || {})[k]; if (sp && (y < sp[0] || y > sp[1])) continue;
-      let e = null; for (const it of CAL.eras[k]) if (it[0] <= y) e = it; if (e) out.push({ d: k, s: e[1] + cnY(y - e[0] + 1 - (e[0] < 0 && y > 0 ? 1 : 0)) + '年' }); }
+      let e = null; for (const it of CAL.eras[k]) if (it[0] <= y) e = it; if (e) out.push({ d: k, s: e[1] + cnY(y - e[0] + (e[2] || 1) - (e[0] < 0 && y > 0 ? 1 : 0)) + '年' }); }
     return out; };
   const calOf = e => CALTEXT(e, CAL, BOOK.range, erasOf);
   IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
@@ -35,10 +35,10 @@ const rows = S.books.map((b, i) => {
     for (const n of e.who) if (!(e.post || []).includes(n)) evOf.set(n, (evOf.get(n) || []).concat(e)); else postOf.set(n, (postOf.get(n) || 0) + 1);
   }
   for (const [n, f, zi, life, bio] of PEOPLE_RAW) {
-    const cm = pcx.PC[n], es = (evOf.get(n) || []).sort((u, v) => u.y - v.y || u.mo - v.mo), t = es.length ? es[0].y + (es[0].mo - 1) / 12 : BOOK.range[0];
+    const cm = pcx.PC(n, b.id), es = (evOf.get(n) || []).sort((u, v) => u.y - v.y || u.mo - v.mo), t = es.length ? es[0].y + (es[0].mo - 1) / 12 : BOOK.range[0];
     let fn = f; try { fn = FACTIONS[f].name(t).replace(/（[^）]*）/g, ''); } catch (err) {}
     // 跨卷合并只认 books/_people.js 登记的人物；未登记的同名者（如西晋刘毅与东晋刘毅）按生卒分作两人
-    const key = cm ? n : n + '\u0001' + life;
+    const key = cm ? (cm[3] ? n + '\u0001' + cm[1] : n) : n + '\u0001' + life;
     const P = IDX.people[key] || (IDX.people[key] = [cm ? cm[0] : zi, cm ? cm[1] : life, plain(cm ? cm[2] : bio), []]);
     if (!cm && bio && !P[2]) P[2] = plain(bio);
     // [卷序, 势力名, 在世事件数, 首个在世事件的时间, 身后被提及的事件数]：人物页签按首次出场先后排列

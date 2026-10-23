@@ -16,11 +16,11 @@ function calText(e, C, range, eras) {
   const num = s => (s === '元' ? 1 : s.includes('十') ? (d1(s.split('十')[0]) || 1) * 10 + d1(s.split('十')[1]) : d1(s));
   let own = null, yr = e.y, best = 0;
   // cal 可以带国号（“魏正始十年”“后赵建武四年”）：去掉与该家国号相同的前缀再匹配年号名
-  for (const d of Object.keys(C.eras || {})) for (const [st, name] of C.eras[d]) {
+  for (const d of Object.keys(C.eras || {})) for (const [st, name, n0 = 1] of C.eras[d]) {
     const body = e.cal.startsWith(d + name) ? e.cal.slice(d.length) : e.cal;
     if (name.length <= best || !body.startsWith(name)) continue;
     const m = body.slice(name.length).match(/^(元|[〇一二三四五六七八九十]+)年/); if (!m) continue;
-    let y = st + num(m[1]) - 1; if (st < 0 && y >= 0) y++;
+    let y = st + num(m[1]) - n0; if (st < 0 && y >= 0) y++;
     if (y === e.y || y === e.y - 1) { own = d; yr = y; best = name.length; }
   }
   if (!own) {

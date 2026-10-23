@@ -7,7 +7,7 @@
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
-const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.PC=PEOPLE_COMMON', pc);
+const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.PC=commonOf', pc);
 const yr = (q, n) => (n ? (q ? -n : +n) : null);
 const lifeOf = s => { const m = (s || '').match(/^(前)?(\d+)?\??\s*[–-]\s*(前)?(\d+)?/); return m ? [yr(m[1], m[2]), yr(m[3], m[4])] : [null, null]; };
 const DEATH = /(之死|卒|崩|自杀|被杀|遇刺|遇害|自刎|自刭|自缢|自经|饿死|被醢|弃市|腰斩|被弑|饮酖|败亡|伏诛|之诛|族诛|死于)/;
@@ -18,7 +18,7 @@ for (const id of ids) {
   vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`, 'utf8') + ';this.X={EVENTS,PEOPLE_RAW}', c);
   const E = c.X.EVENTS.map((e, i) => ({ ...e, i })).sort((a, b) => a.y + (a.mo - 1) / 12 - (b.y + (b.mo - 1) / 12) || a.i - b.i);
   E.forEach((e, k) => { e.k = k; });
-  const life = new Map(c.X.PEOPLE_RAW.map(p => [p[0], lifeOf((pc.PC[p[0]] || [])[1] || p[3])]));
+  const life = new Map(c.X.PEOPLE_RAW.map(p => [p[0], lifeOf((pc.PC(p[0], id) || [])[1] || p[3])]));
   const out = [], post = (e, n) => (e.post || []).includes(n);
   // 1
   const dead = new Map();

@@ -35,13 +35,13 @@ const liveN = n => EVENTS.filter(e => e.who.includes(n) && !(e.post || []).inclu
 PHASES.forEach((ph, i) => { if (i && ph[0] <= PHASES[i - 1][1]) problems.push(`阶段「${PHASES[i - 1][2]}」与「${ph[2]}」在 ${ph[0]} 年重叠`); });
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
 // 跨卷人物的统一简介（books/_people.js）：覆盖本书同名人物的字、生卒、简介；引文出处与本书默认出处相同的去掉前缀
-const common = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_people.js') + '\n;this.p = PEOPLE_COMMON;', c); return c.p; })();
+const common = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_people.js') + '\n;this.p = commonOf;', c); return c.p; })();
 const defSrc = ((BOOK.quoteLabel || '').match(/《(.+?)》/) || [])[1];
 const commonSub = {};
-for (const [n] of PEOPLE_RAW) if (common[n]) commonSub[n] = common[n].map(v => (defSrc ? v.split(`**${defSrc}|`).join('**') : v));
+for (const [n] of PEOPLE_RAW) if (common(n, id)) commonSub[n] = common(n, id).slice(0, 3).map(v => (defSrc ? v.split(`**${defSrc}|`).join('**') : v));
 // 卒年晚于本卷第一个事件、本卷却没有一件在世事件的人物（只在身后被提及），多半是漏标了他生前参与的事件
 { const t0 = Math.min(...EVENTS.map(e => e.y));
-  for (const [n, , , life0] of PEOPLE_RAW) { const life = common[n] ? common[n][1] : life0, m = String(life || '').match(/[–-]\s*(前)?(\d+)/);
+  for (const [n, , , life0] of PEOPLE_RAW) { const life = common(n, id) ? common(n, id)[1] : life0, m = String(life || '').match(/[–-]\s*(前)?(\d+)/);
     if (m && (m[1] ? -m[2] : +m[2]) > t0 && liveN(n) === 0) problems.push(`人物「${n}」（${life}）卒于本卷首个事件之后，却没有在世事件`); } }
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
 const dataSrc = bookSrc + `\n// 跨卷人物的统一简介（构建时由 books/_people.js 注入）\nconst PEOPLE_COMMON = ${JSON.stringify(commonSub)};\nPEOPLE_RAW.forEach(p => { const c = PEOPLE_COMMON[p[0]]; if (c) [p[2], p[3], p[4]] = c; });\n`;
@@ -61,12 +61,13 @@ if (SERIES_MODE) {
     // 首末事件 [年, 月, 标题]：相邻两卷时间重叠时，页面据此提示重叠的年份
     const es = c.e.slice().sort((u, v) => u.y - v.y || u.mo - v.mo), f = es[0], l = es[es.length - 1];
     b.first = [f.y, f.mo, f.t]; b.last = [l.y, l.mo, l.t];
-    for (const [n] of c.p) (seen[n] = seen[n] || []).push(k);
-    for (const e of c.e) for (const n of e.who) (seen['\0' + n] = seen['\0' + n] || []).push([k, e.y, e.mo, e.t, e.post && e.post.includes(n) ? 1 : 0]);
+    // 同名异人只计其条目适用的卷
+    for (const [n] of c.p) if (common(n, b.id)) (seen[n] = seen[n] || []).push(k);
+    for (const e of c.e) for (const n of e.who) if (common(n, b.id)) (seen['\0' + n] = seen['\0' + n] || []).push([k, e.y, e.mo, e.t, e.post && e.post.includes(n) ? 1 : 0]);
   });
   SERIES.people = {};
   // 只有 books/_people.js 登记的才算同一人；未登记的同名者（如西晋刘毅与东晋刘毅）各归各卷，不互相补全经历
-  for (const n of Object.keys(seen)) if (n[0] !== '\0' && common[n] && new Set(seen[n]).size > 1) SERIES.people[n] = seen['\0' + n] || [];
+  for (const n of Object.keys(seen)) if (n[0] !== '\0' && common(n, id) && new Set(seen[n]).size > 1) SERIES.people[n] = seen['\0' + n] || [];
   BASEMAP.terrain = BASEMAP.terrain.map(t => ({ ...t, href: '../' + t.href }));
 }
 const escAttr = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');

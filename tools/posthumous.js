@@ -5,13 +5,13 @@
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = path.join(__dirname, '..');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
-const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.PC=PEOPLE_COMMON', pc);
+const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.PC=commonOf', pc);
 const death = s => { const m = (s || '').match(/[–-]\s*(前)?(\d+)\??\s*$/); return m ? (m[1] ? -m[2] : +m[2]) : null; };
 let n = 0;
 for (const id of ids) {
   const c = {}; vm.createContext(c);
   vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`, 'utf8') + ';this.X={EVENTS,PEOPLE_RAW}', c);
-  const life = new Map(c.X.PEOPLE_RAW.map(p => [p[0], (pc.PC[p[0]] || [])[1] || p[3]])), out = [];
+  const life = new Map(c.X.PEOPLE_RAW.map(p => [p[0], (pc.PC(p[0], id) || [])[1] || p[3]])), out = [];
   for (const e of c.X.EVENTS) for (const w of e.who) {
     const d = death(life.get(w)), post = (e.post || []).includes(w);
     if (d == null) continue;
