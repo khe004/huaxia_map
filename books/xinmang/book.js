@@ -72,9 +72,9 @@ const BOOK = {
 
 const FACTIONS = {
   xin:      { color: '#9c5b3f', name: () => '新朝', mapName: () => '新', realm: 'xin' },
-  gengshi:  { color: '#c4433a', name: t => (t < 23.16 ? '绿林军' : t < 25.7 ? '更始政权（刘玄）' : '更始余部'), mapName: t => (t < 23.16 ? '绿林' : '更始'), realm: 'zhu' },
+  gengshi:  { color: '#c4433a', name: t => (t < 23.16 ? '绿林军' : t < 25.75 ? '更始政权（刘玄）' : '更始余部'), mapName: t => (t < 23.16 ? '绿林' : '更始'), realm: 'zhu' },
   chimei:   { color: '#8f2f5a', name: t => (t < 25.524 ? '赤眉军（樊崇）' : '赤眉（立刘盆子）'), mapName: () => '赤眉', realm: 'zhu' },
-  liuxiu:   { color: '#e2873a', name: t => (t < 24.6 ? '刘秀（更始大司马）' : t < 25.45 ? '刘秀（萧王）' : '东汉（光武帝）'), mapName: t => (t < 25.45 ? '刘秀' : '东汉'), realm: 'zhu' },
+  liuxiu:   { color: '#e2873a', name: t => (t < 24.666 ? '刘秀（更始大司马）' : t < 25.5 ? '刘秀（萧王）' : '东汉（光武帝）'), mapName: t => (t < 25.5 ? '刘秀' : '东汉'), realm: 'zhu' },
   wanglang: { color: '#6d8f7a', name: () => '王郎（邯郸）', mapName: () => '王郎', realm: 'zhu' },
   weixiao:  { color: '#4f8f6a', name: () => '隗嚣（陇右）', mapName: () => '隗嚣', realm: 'zhu' },
   gongsun:  { color: '#d1b04a', name: t => (t < 25.33 ? '公孙述（蜀王）' : '成家（公孙述）'), mapName: () => '公孙述', realm: 'zhu' },
@@ -86,7 +86,7 @@ const FACTIONS = {
     name: t => (t < 13 ? '匈奴（乌珠留若鞮单于）' : t < 18 ? '匈奴（乌累若鞮单于）' : '匈奴（呼都而尸道皋若鞮单于）') },
   dingling: { color: '#7d8a99', name: () => '丁零 · 坚昆' },
   donghu:   { color: '#a3906e', name: () => '乌桓 · 鲜卑', mapName: () => '乌桓' },
-  xiyu:     { color: '#d8b26e', name: t => (t < 13.6 ? '西域都护府' : '西域诸国（叛离）'), mapName: () => '西域', realm: t => (t < 13.6 ? 'xin' : null) },
+  xiyu:     { color: '#d8b26e', name: t => (t < 13.666 ? '西域都护府' : '西域诸国（叛离）'), mapName: () => '西域', realm: t => (t < 13.666 ? 'xin' : null) },
   wusun:    { color: '#5f9e88', name: () => '乌孙' },
   dayuan:   { color: '#e0915a', name: () => '大宛' },
   kangju:   { color: '#7f9cc7', name: () => '康居' },

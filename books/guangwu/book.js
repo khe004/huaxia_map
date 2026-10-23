@@ -76,7 +76,7 @@ const FACTIONS = {
   lufang:    { color: '#a86a4f', name: () => '卢芳（匈奴所立）', mapName: () => '卢芳', realm: 'zhu' },
   qunxiong:  { color: '#d3cdbf', name: () => '各地割据 · 自守', mapName: () => '各郡', realm: 'zhu' },
   zhengce:   { color: '#7a9a3a', name: () => '征侧、征贰', mapName: () => '征侧', realm: 'zhu' },
-  xiongnu:   { color: '#3a3d44', name: t => (t < 46.5 ? '匈奴（呼都而尸道皋若鞮单于）' : t < 48.8 ? '匈奴（蒲奴单于）' : '北匈奴（蒲奴单于）'), mapName: t => (t < 48.8 ? '匈奴' : '北匈奴') },
+  xiongnu:   { color: '#3a3d44', name: t => (t < 46 ? '匈奴（呼都而尸道皋若鞮单于）' : t < 48.8 ? '匈奴（蒲奴单于）' : '北匈奴（蒲奴单于）'), mapName: t => (t < 48.8 ? '匈奴' : '北匈奴') },
   nanxiongnu:{ color: '#6b6e78', name: () => '南匈奴（醢落尸逐鞮单于）', mapName: () => '南匈奴', realm: 'fan' },
   dingling:  { color: '#7d8a99', name: () => '丁零 · 坚昆' },
   donghu:    { color: '#a3906e', name: t => (t < 49.08 ? '乌桓 · 鲜卑' : '乌桓 · 鲜卑（通使内附）'), mapName: () => '乌桓鲜卑', realm: t => (t < 49.05 ? null : 'fan') },

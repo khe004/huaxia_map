@@ -17,6 +17,8 @@ const { BOOK, FACTIONS, EVENTS, PEOPLE_RAW, PHASES } = ctx.__;
 const people = new Set(PEOPLE_RAW.map(p => p[0])), problems = [];
 EVENTS.forEach(e => {
   e.who.forEach(w => people.has(w) || problems.push(`事件「${e.t}」的人物「${w}」不在人物表中`));
+  // 稀疏数组（如 [, '某']）或空名：length 比实际人数多，详情的人数与悬浮提示的顿号都会错
+  for (const k of ['who', 'post']) { const a = e[k] || []; if (Object.keys(a).length !== a.length || a.some(w => !w)) problems.push(`事件「${e.t}」的 ${k} 有空位或空名：${JSON.stringify(a)}`); }
   (e.post || []).forEach(w => e.who.includes(w) || problems.push(`事件「${e.t}」的身后人物「${w}」不在 who 中`));
   if (e.y === 0) problems.push(`事件「${e.t}」的年份为 0（没有公元 0 年）`);
   if (e.y < BOOK.range[0] || e.y > BOOK.range[1]) problems.push(`事件「${e.t}」的年份 ${e.y} 超出时间轴范围`);

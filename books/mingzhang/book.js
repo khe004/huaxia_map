@@ -64,9 +64,9 @@ const BOOK = {
 };
 
 const FACTIONS = {
-  han:        { color: '#c4433a', name: t => (t < 75.6 ? '东汉（明帝）' : t < 88.1 ? '东汉（章帝）' : '东汉（和帝）'), mapName: () => '汉', realm: 'han' },
+  han:        { color: '#c4433a', name: t => (t < 75.666 ? '东汉（明帝）' : t < 88.166 ? '东汉（章帝）' : '东汉（和帝）'), mapName: () => '汉', realm: 'han' },
   xiyuhan:    { color: '#e07a5f', name: t => (t < 75.666 ? '西域都护府' : t < 92 ? '西域（班超所领诸国）' : '西域都护府（班超）'), mapName: () => '西域', realm: 'han' },
-  xiyu:       { color: '#d8b26e', name: t => (t < 61.5 ? '西域诸国（莎车称雄）' : '西域诸国（役属北匈奴）'), mapName: () => '西域' },
+  xiyu:       { color: '#d8b26e', name: t => (t < 61 ? '西域诸国（莎车称雄）' : '西域诸国（役属北匈奴）'), mapName: () => '西域' },
   beixiongnu: { color: '#3a3d44', name: t => (t < 91.16 ? '北匈奴' : '北匈奴余部'), mapName: () => '北匈奴' },
   nanxiongnu: { color: '#6b6e78', name: () => '南匈奴', realm: 'fan' },
   wuhuan:     { color: '#ccd369', name: () => '乌桓（内附）', mapName: () => '乌桓', realm: 'fan' },
