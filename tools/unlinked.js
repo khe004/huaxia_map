@@ -12,7 +12,7 @@ let total = 0;
 for (const id of ids) {
   const X = load(id), mine = new Set(X.PEOPLE_RAW.map(p => p[0])), out = [];
   for (const e of X.EVENTS) {
-    let d = e.d.replace(/\*\*[^*]*\*\*/g, m => m); const hit = [];
+    let d = e.d.replace(/\*\*[^*]*\*\*/g, m => ' '.repeat(m.length)); const hit = []; // 剔除原书引文：引文里的古人名多是被提及而非参与
     for (const n of list) if (d.includes(n)) { hit.push(n); d = d.split(n).join('□'.repeat(n.length)); }
     const miss = hit.filter(n => !e.who.includes(n));
     if (miss.length) out.push(`  ${e.y} ${e.t}：${miss.map(n => (mine.has(n) ? '' : '＋') + n).join('、')}`);

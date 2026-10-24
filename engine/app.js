@@ -330,7 +330,7 @@ function renderTerritory() {
 
   // faction labels at the medoid of each faction's commanderies
   const evPts = EVENTS.filter(e => e.y === y && EV_STEP[e.i] <= state.step).map(e => proj(e.ll));
-  const groups = d3.group(st.map((f, i) => [f, i]).filter(([f, i]) => HAS_LAND.has(i) && !(FACTIONS[f].hideLabel && FACTIONS[f].hideLabel(T))), d => d[0]);
+  const groups = d3.group(st.map((f, i) => [f, i]).filter(([f, i]) => HAS_LAND.has(i) && !(typeof FACTIONS[f].hideLabel === 'function' ? FACTIONS[f].hideLabel(T) : FACTIONS[f].hideLabel)), d => d[0]);
   const labels = [];
   for (const [f, arr] of groups) {
     const idx = arr.map(d => d[1]);
@@ -452,10 +452,10 @@ $('#phases').innerHTML = PHASES.map(([a, b, n]) => `<div data-a="${a}" style="le
   $('#axis').innerHTML = ticks.map(y => `<span style="left:${at(YEAR_STEP[y])}">${fmtYear(y)}</span>`).join('');
 }
 $('#ticks').innerHTML = EVENTS.map(e => `<button data-ev="${e.i}" class="${e.k === 'pol' ? '' : e.k}" style="left:${at(EV_STEP[e.i])};width:7px;height:7px;top:3.5px" title="${fmtYear(e.y)}：${esc(e.t)}" aria-label="${fmtYear(e.y)} ${esc(e.t)}"></button>`).join('');
-$('#ticks').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { stop(); setStep(EV_STEP[+b.dataset.ev], true); } });
+$('#ticks').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { stop(); setStep(EV_STEP[+b.dataset.ev], state.view.t !== 'event'); } });
 range.addEventListener('input', () => { setStep(+range.value); });
-$('#prevEv').onclick = () => { stop(); const e = [...EV_SORTED].reverse().find(e => EV_STEP[e.i] < state.step); if (e) setStep(EV_STEP[e.i], true); };
-$('#nextEv').onclick = () => { stop(); const e = EV_SORTED.find(e => EV_STEP[e.i] > state.step); if (e) setStep(EV_STEP[e.i], true); };
+$('#prevEv').onclick = () => { stop(); const e = [...EV_SORTED].reverse().find(e => EV_STEP[e.i] < state.step); if (e) setStep(EV_STEP[e.i], state.view.t !== 'event'); };
+$('#nextEv').onclick = () => { stop(); const e = EV_SORTED.find(e => EV_STEP[e.i] > state.step); if (e) setStep(EV_STEP[e.i], state.view.t !== 'event'); };
 let timer = null;
 function stop() { clearInterval(timer); timer = null; $('#play').textContent = '▶ 播放'; }
 $('#play').onclick = () => {
@@ -504,13 +504,16 @@ function setStep(k, toYearView) {
   state.step = k; state.year = STEPS[k].y; range.value = k;
   if (STEPS[k].ev != null || state.view.t === 'year' || state.view.t === 'events') state.sel = STEPS[k].ev;
   if (toYearView && (state.view.t === 'event' || state.view.t === 'person')) { state.person = null; state.sel = null; state.stack = []; state.view = { t: state.tab === 'people' ? 'people' : state.tab === 'events' ? 'events' : 'year' }; }
+  // 事件详情页中翻到、拖到另一个事件：就地换成该事件的详情（不压入返回栈）
+  const swap = state.view.t === 'event' && STEPS[k].ev != null && STEPS[k].ev !== state.view.i;
+  if (swap) state.view = { t: 'event', i: STEPS[k].ev };
   renderStamp();
   if (changed || toYearView) { renderTerritory(); }
   renderEvents();
   markTimeline();
   storyCursor();
   markBookEnd();
-  if (state.view.t === 'year' || state.view.t === 'events') renderPanel();
+  if (state.view.t === 'year' || state.view.t === 'events' || swap) renderPanel();
 }
 function markTimeline() {
   const y = state.year, ev = STEPS[state.step].ev;

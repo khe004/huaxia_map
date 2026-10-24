@@ -1,5 +1,5 @@
 // 用法：node tools/evorder.js [书 …]：检查事件的时间先后是否自相矛盾
-// 1. 人物在自己的死亡事件（标题含其名与“死、卒、崩、杀”等）之后又出现在其他事件中（标了 post 的除外）
+// 1. 人物在自己的死亡事件（标题含其名与“死、卒、崩、被杀”等，或“斩、杀、诛、鸩、弑”紧接其名）之后又出现在其他事件中（标了 post 的除外）
 // 2. 人物出现在出生年之前的事件中
 // 3. 事件的 cal（原书纪年）里的月份与 mo 的换算关系和本卷多数事件不一致（小数月份为同月排序而设，不比较）
 // 4. 同年同月的几个事件，排在后面的事件简介里写着前一个事件的人“死后”等字样（按数组顺序排先后，可能颠倒）
@@ -22,7 +22,10 @@ for (const id of ids) {
   const out = [], post = (e, n) => (e.post || []).includes(n);
   // 1
   const dead = new Map();
-  for (const e of E) for (const n of e.who) if (e.t.includes(n) && DEATH.test(e.t.split(' · ').find(s => s.includes(n)) || '')) dead.has(n) || dead.set(n, e);
+  // “斩、杀、诛、鸩、弑”只算紧跟其后的人名（“马援斩征侧”是征侧死，不是马援死）
+  const slain = (s, n) => new RegExp('(斩|杀|诛|鸩|弑)' + n).test(s);
+  for (const e of E) for (const n of e.who) { const seg = e.t.split(' · ').find(s => s.includes(n)) || '';
+    if (e.t.includes(n) && (DEATH.test(seg.replace(new RegExp('(斩|杀|诛|鸩|弑)[^ ·]*'), m => (m.includes(n) ? m : ''))) || slain(seg, n))) dead.has(n) || dead.set(n, e); }
   for (const e of E) for (const n of e.who) { const d = dead.get(n); if (d && e.k > d.k && !post(e, n)) out.push(`  ✗ ${n} 死于「${d.t}」(${d.y}/${d.mo})，之后又出现在「${e.t}」(${e.y}/${e.mo})`); }
   // 2
   for (const e of E) for (const n of e.who) { const [b] = life.get(n) || []; if (b != null && e.y < b) out.push(`  ✗ ${n} 生于 ${b}，却出现在「${e.t}」(${e.y})`); }

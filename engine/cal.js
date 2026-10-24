@@ -14,6 +14,8 @@ function calText(e, C, range, eras) {
   // 夏历十二月折成公历次年（建兴六年十二月）时，这一年与事件的公历年不同；同名年号（蜀、吴都有建兴）按年份区分
   const N = '〇一二三四五六七八九', d1 = c => Math.max(0, N.indexOf(c || '〇'));
   const num = s => (s === '元' ? 1 : s.includes('十') ? (d1(s.split('十')[0]) || 1) * 10 + d1(s.split('十')[1]) : d1(s));
+  // 上一年：公历无 0 年，公元 1 年的上一年是前 1 年（-1）
+  const prevY = e.y === 1 ? -1 : e.y - 1;
   let own = null, yr = e.y, best = 0;
   // cal 可以带国号（“魏正始十年”“后赵建武四年”）：去掉与该家国号相同的前缀再匹配年号名
   for (const d of Object.keys(C.eras || {})) for (const [st, name, n0 = 1] of C.eras[d]) {
@@ -21,12 +23,12 @@ function calText(e, C, range, eras) {
     if (name.length <= best || !body.startsWith(name)) continue;
     const m = body.slice(name.length).match(/^(元|[〇一二三四五六七八九十]+)年/); if (!m) continue;
     let y = st + num(m[1]) - n0; if (st < 0 && y >= 0) y++;
-    if (y === e.y || y === e.y - 1) { own = d; yr = y; best = name.length; }
+    if (y === e.y || y === prevY) { own = d; yr = y; best = name.length; }
   }
   if (!own) {
     // 推不出年份（如“景元年间”）时，只按本年与上一年在用的年号名定所属，多家并列时加国号
     const nm = x => x.s.replace(/(元|[〇一二三四五六七八九十]+)年$/, '');
-    const ds = [...new Set([...es0, ...eras(e.y - 1)].filter(x => nm(x) && (e.cal.startsWith(nm(x)) || e.cal.startsWith(x.d + nm(x)))).map(x => x.d))];
+    const ds = [...new Set([...es0, ...eras(prevY)].filter(x => nm(x) && (e.cal.startsWith(nm(x)) || e.cal.startsWith(x.d + nm(x)))).map(x => x.d))];
     return es0.length > 1 && ds.length === 1 && !e.cal.startsWith(ds[0]) ? ds[0] + e.cal : e.cal;
   }
   const es = eras(yr), head = es.length > 1 && !e.cal.startsWith(own) ? own + e.cal : e.cal;

@@ -44,7 +44,8 @@ for (const [n] of PEOPLE_RAW) if (common(n, id)) commonSub[n] = common(n, id).sl
   for (const [n, , , life0] of PEOPLE_RAW) { const life = common(n, id) ? common(n, id)[1] : life0, m = String(life || '').match(/[–-]\s*(前)?(\d+)/);
     if (m && (m[1] ? -m[2] : +m[2]) > t0 && liveN(n) === 0) problems.push(`人物「${n}」（${life}）卒于本卷首个事件之后，却没有在世事件`); } }
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
-const dataSrc = bookSrc + `\n// 跨卷人物的统一简介（构建时由 books/_people.js 注入）\nconst PEOPLE_COMMON = ${JSON.stringify(commonSub)};\nPEOPLE_RAW.forEach(p => { const c = PEOPLE_COMMON[p[0]]; if (c) [p[2], p[3], p[4]] = c; });\n`;
+// 没写 CITIES、PHASES 的书补空表，引擎各处直接遍历
+const dataSrc = bookSrc + (/\bconst CITIES\b/.test(bookSrc) ? '' : '\nconst CITIES = [];') + (/\bconst PHASES\b/.test(bookSrc) ? '' : '\nconst PHASES = [];') + `\n// 跨卷人物的统一简介（构建时由 books/_people.js 注入）\nconst PEOPLE_COMMON = ${JSON.stringify(commonSub)};\nPEOPLE_RAW.forEach(p => { const c = PEOPLE_COMMON[p[0]]; if (c) [p[2], p[3], p[4]] = c; });\n`;
 
 const bm = `./basemaps/${BOOK.basemap}/`;
 const BASEMAP = JSON.parse(r(bm + 'basemap.json'));
