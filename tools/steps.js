@@ -11,7 +11,7 @@ function load(id) {
   let YEARS = [];
   if (B.yearStride) {
     const keep = new Set([Y0, Y1, ...EVENTS.map(e => e.y), ...SNAPSHOTS.map(s => s[0]), ...PHASES.flatMap(p => [p[0], p[1]]),
-      ...CITIES.flatMap(c => c.n.map(([yy]) => Math.floor(yy)))]);
+      ...CITIES.flatMap(c => [...c.n, ...(Array.isArray(c.cap) ? c.cap : [])].map(([yy]) => Math.floor(yy)))]);
     const lab = (f, t) => { const F0 = F[f]; return [F0.name(t), F0.mapName ? F0.mapName(t) : '', typeof F0.realm === 'function' ? F0.realm(t) : F0.realm].join('|'); };
     for (const f of Object.keys(F)) { let a = lab(f, Y0);
       for (let k = 1; k <= (Y1 - Y0 + 1) * 12; k++) { const t = Y0 + k / 12, b = lab(f, t); if (b !== a) keep.add(Math.floor(t + 1e-9)); a = b; } }

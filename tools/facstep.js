@@ -24,6 +24,8 @@ for (const id of ids) {
     for (const m of F0[key].toString().matchAll(/\b[ty]\s*<=?\s*(-?\d+(?:\.\d+)?)/g)) check(`${f}.${key}`, +m[1]);
   }
   for (const c of CITIES) c.n.forEach(([X, nm], j) => check(`城 ${nm || (c.n[j - 1] || [])[1] + '（废）'}`, X));
+  // 分段都城标记 cap: [[阈值, 1 或 0], …]
+  for (const c of CITIES) if (Array.isArray(c.cap)) c.cap.forEach(([X, v]) => X > B.range[0] && check(`城 ${c.n[0][1]} ${v ? '为都' : '不再为都'}`, X));
   if (out.length) { console.log(`== ${id}`); out.forEach(l => console.log(l)); n += out.length; }
 }
 console.log(`共 ${n} 处`);

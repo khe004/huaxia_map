@@ -18,7 +18,7 @@ const fmtYearFull = y => (APPROX(y) ? '约' : '') + (y < 0 ? `公元前 ${-y} �
 const YEARS = [];
 if (B.yearStride) {
   const keep = new Set([Y0, Y1, ...EVENTS.map(e => e.y), ...SNAPSHOTS.map(s => s[0]), ...PHASES.flatMap(p => [p[0], p[1]]),
-    ...(typeof CITIES === 'undefined' ? [] : CITIES).flatMap(c => c.n.map(([yy]) => Math.floor(yy)))]);
+    ...(typeof CITIES === 'undefined' ? [] : CITIES).flatMap(c => [...c.n, ...(Array.isArray(c.cap) ? c.cap : [])].map(([yy]) => Math.floor(yy)))]);
   // 势力的名称、地图标签、分组按 t 切换：逐月比较，变化所在的年份保留
   const lab = (f, t) => { const F0 = FACTIONS[f]; return [F0.name(t), F0.mapName ? F0.mapName(t) : '', typeof F0.realm === 'function' ? F0.realm(t) : F0.realm].join('|'); };
   for (const f of Object.keys(FACTIONS)) { let a = lab(f, Y0);
