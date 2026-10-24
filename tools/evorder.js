@@ -33,7 +33,7 @@ for (const id of ids) {
   const off = new Map(), rows = [];
   // 王莽始建国、天凤、地皇年间改用丑正（以夏正十二月为正月），月份换算与他朝差一个月，不比较
   // 武周载初至久视年间行周正（以十一月为正月、十二月为腊月，夏正正月改称一月），正月、腊月的换算与他月不同，不比较
-  for (const e of E) { if (/始建国|天凤|地皇/.test(e.cal || '') || /(载初|天授|如意|长寿|延载|证圣|天册万岁|万岁登封|万岁通天|神功|圣历|久视)[^月]*(正|腊)月/.test(e.cal || '')) continue; const m = (e.cal || '').match(/(?:^|年)(闰)?(正|十二|十一|十|一|二|三|四|五|六|七|八|九)月/); if (!m) continue;
+  for (const e of E) { if (/始建国|天凤|地皇/.test(e.cal || '') || /(载初|天授|如意|长寿|延载|证圣|天册万岁|万岁登封|万岁通天|神功|圣历|久视)[^月]*(正|腊)月/.test(e.cal || '')) continue; const m = (e.cal || '').match(/(?:^|[年载])(闰)?(正|十二|十一|十|一|二|三|四|五|六|七|八|九)月/); if (!m) continue;
     const d = ((Math.floor(e.mo) - CN[m[2]]) % 12 + 12) % 12; rows.push([e, d, m[0]]); off.set(d, (off.get(d) || 0) + 1); }
   const main = [...off].sort((a, b) => b[1] - a[1])[0];
   for (const [e, d, s] of rows) if (main && d !== main[0] && !(e.cal.includes('闰') && d === (main[0] + 11) % 12) && Math.floor(e.mo) === e.mo) out.push(`  ? 「${e.t}」cal ${e.cal} 与 mo ${e.mo} 的换算（差 ${d} 个月）和本卷多数（差 ${main[0]}）不同`);

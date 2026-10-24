@@ -85,6 +85,8 @@ function cnNum(n) {
   return (t === 1 ? '' : DIG[t]) + '十' + (o ? DIG[o] : '');
 }
 // 年号：BOOK.calendar.eras / spans（[起年, 年号, 起年记作第几年]，第三项缺省为 1，用于不立年号、以帝号接续纪年的“明帝二年”）；也可以直接给 BOOK.calendar.label(y) 返回 [{d, s}]
+// 唐天宝三载至至德三载（744–758）称“载”：BOOK.calendar.zai = [744, 758]
+const zaiOf = (cal, y) => (cal.zai && y >= cal.zai[0] && y <= cal.zai[1] ? '载' : '年');
 function eras(y) {
   const cal = B.calendar || {};
   if (cal.label) return cal.label(y) || [];
@@ -94,7 +96,7 @@ function eras(y) {
     let e = null; for (const it of cal.eras[k]) if (it[0] <= y) e = it;
     if (!e) continue;
     const n = y - e[0] + (e[2] || 1) - (e[0] < 0 && y > 0 ? 1 : 0);
-    out.push({ d: k, s: `${e[1]}${cnNum(n)}年` });
+    out.push({ d: k, s: `${e[1]}${cnNum(n)}${zaiOf(cal, y)}` });
   }
   return out;
 }

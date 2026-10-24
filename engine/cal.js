@@ -10,7 +10,7 @@ function calText(e, C, range, eras) {
     const hit = es0.filter(x => e.cal.includes(x.s)); if (!hit.length) return e.cal;
     return [e.cal, ...es0.filter(x => !hit.some(h => h.d === x.d)).map(eraFmt)].join(' · ');
   }
-  // 年号纪年：由 cal 开头的年号名与年数推出它实际所在的年份。年中改元（嘉平六年二月，公历年表已是正元元年）、
+  // 年号纪年：由 cal 开头的年号名与年数（“年”或天宝至德间的“载”）推出它实际所在的年份。年中改元（嘉平六年二月，公历年表已是正元元年）、
   // 夏历十二月折成公历次年（建兴六年十二月）时，这一年与事件的公历年不同；同名年号（蜀、吴都有建兴）按年份区分
   const N = '〇一二三四五六七八九', d1 = c => Math.max(0, N.indexOf(c || '〇'));
   const num = s => (s === '元' ? 1 : s.includes('十') ? (d1(s.split('十')[0]) || 1) * 10 + d1(s.split('十')[1]) : d1(s));
@@ -21,19 +21,19 @@ function calText(e, C, range, eras) {
   for (const d of Object.keys(C.eras || {})) for (const [st, name, n0 = 1] of C.eras[d]) {
     const body = e.cal.startsWith(d + name) ? e.cal.slice(d.length) : e.cal;
     if (name.length <= best || !body.startsWith(name)) continue;
-    const m = body.slice(name.length).match(/^(元|[〇一二三四五六七八九十]+)年/); if (!m) continue;
+    const m = body.slice(name.length).match(/^(元|[〇一二三四五六七八九十]+)[年载]/); if (!m) continue;
     let y = st + num(m[1]) - n0; if (st < 0 && y >= 0) y++;
     if (y === e.y || y === prevY) { own = d; yr = y; best = name.length; }
   }
   if (!own) {
     // 推不出年份（如“景元年间”）时，只按本年与上一年在用的年号名定所属，多家并列时加国号
-    const nm = x => x.s.replace(/(元|[〇一二三四五六七八九十]+)年$/, '');
+    const nm = x => x.s.replace(/(元|[〇一二三四五六七八九十]+)[年载]$/, '');
     const ds = [...new Set([...es0, ...eras(prevY)].filter(x => nm(x) && (e.cal.startsWith(nm(x)) || e.cal.startsWith(x.d + nm(x)))).map(x => x.d))];
     return es0.length > 1 && ds.length === 1 && !e.cal.startsWith(ds[0]) ? ds[0] + e.cal : e.cal;
   }
   const es = eras(yr), head = es.length > 1 && !e.cal.startsWith(own) ? own + e.cal : e.cal;
   // 他家的元年（年中改元）与卷末之前结束的最后一年（年中亡国）未必覆盖事件所在月份，不补；纪年写到卷末只是本卷止于此年
   const ends = x => { const sp = (C.spans || {})[x.d]; return sp && sp[1] === yr && sp[1] < range[1]; };
-  const more = es.filter(x => x.d !== own && !e.cal.includes(x.s) && !x.s.includes('元年') && !ends(x));
+  const more = es.filter(x => x.d !== own && !e.cal.includes(x.s) && !/元[年载]/.test(x.s) && !ends(x));
   return [head, ...more.map(eraFmt)].join(' · ');
 }
