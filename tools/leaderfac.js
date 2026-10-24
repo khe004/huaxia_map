@@ -36,7 +36,9 @@ for (const id of ids) {
     if (own.length && !own.includes(fac)) out.push(`  ${who}：人物表归 ${fac}（${F[fac] ? F[fac].name(Y1) : '?'}），专属势力 ${own.map(f => `${f}（${lab[f].split('|').filter(x => x.includes(who))[0]}）`).join('、')}`);
   }
   const mine = new Set(PEOPLE_RAW.map(p => p[0]));
-  for (const nm of ALL) if (nm.length >= 2 && !mine.has(nm) && !NAMED_OK.has(`${id}:${nm}`)) for (const f of Object.keys(F)) if (lab[f].includes(nm)) out.push(`  ${nm}：写在势力 ${f}（${lab[f].split('|').find(x => x.includes(nm))}）的名称里，本卷人物表未收`);
+  // 只是本卷某个更长人名的一部分（如“刘武”之于“刘武周”）的不算
+  const inLonger = (nm, s) => [...mine].some(m => m.length > nm.length && m.includes(nm) && s.split(m).join('').indexOf(nm) < 0);
+  for (const nm of ALL) if (nm.length >= 2 && !mine.has(nm) && !NAMED_OK.has(`${id}:${nm}`)) for (const f of Object.keys(F)) if (lab[f].includes(nm) && !inLonger(nm, lab[f])) out.push(`  ${nm}：写在势力 ${f}（${lab[f].split('|').find(x => x.includes(nm))}）的名称里，本卷人物表未收`);
   if (out.length) { console.log(`== ${id}`); out.forEach(l => console.log(l)); n += out.length; }
 }
 console.log(`共 ${n} 人`);
