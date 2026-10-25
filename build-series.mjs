@@ -24,7 +24,7 @@ const rows = S.books.map((b, i) => {
   const CAL = BOOK.calendar || {}, cnY = n => (n === 1 ? '元' : cn(n));
   const erasOf = y => { if (CAL.label) return CAL.label(y) || [];
     const out = []; for (const k of Object.keys(CAL.eras || {})) { const sp = (CAL.spans || {})[k]; if (sp && (y < sp[0] || y > sp[1])) continue;
-      let e = null; for (const it of CAL.eras[k]) if (it[0] <= y) e = it; if (e) out.push({ d: k, s: e[1] + cnY(y - e[0] + (e[2] || 1) - (e[0] < 0 && y > 0 ? 1 : 0)) + (CAL.zai && y >= CAL.zai[0] && y <= CAL.zai[1] ? '载' : '年') }); }
+      let e = null; for (const it of CAL.eras[k]) if (it[0] <= y) e = it; if (e) out.push({ d: k, s: e[1] + cnY(y - e[0] + (e[2] || 1) - (e[0] < 0 && y > 0 ? 1 : 0)) + ((z => z && y >= z[0] && y <= z[1])(Array.isArray(CAL.zai) ? CAL.zai : (CAL.zai || {})[k]) ? '载' : '年') }); }
     return out; };
   const calOf = e => CALTEXT(e, CAL, BOOK.range, erasOf);
   IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
