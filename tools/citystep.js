@@ -9,6 +9,8 @@ const OK = new Set([
   'wuyue:姑苏:-514',    // 阖闾即位后才筑大城，专诸刺王僚一事只提到吴
   'danggu:弹汗山:182',  // 檀石槐死后王庭渐散，无确切年月的事件
   'yongjia:建康:313.333', // 避愍帝讳改名在愍帝即位时；石勒据襄国的正文只顺带提到建邺
+  'daye:东都:609',      // 大业五年正月改东京为东都，卷中无此事件；前一年的事件只是提到东京
+  'yuanhe:兴元府:784.416', // 兴元元年六月升梁州为兴元府，写在收复长安一事的正文里
 ]);
 let n = 0;
 for (const id of ids) {
@@ -17,12 +19,17 @@ for (const id of ids) {
   const says = (e, w) => w.length >= 2 ? (e.t + (e.p || '') + e.d).includes(w) : (e.t + (e.p || '')).includes(w);
   const out = [];
   // 城名的出现、改名、废弃，以及分段都城标记 cap: [[阈值, 1 或 0], …] 的迁入、迁出（按当时的城名查事件）
-  const nameAt = (city, t) => { let n = ''; for (const [yy, nn] of city.n) if (yy <= t + 1e-9) n = nn || n; return n; };
+  // 名称写空（null 或 ''）表示该城从此退场：之后不再有名字
+  const nameAt = (city, t) => { let n = ''; for (const [yy, nn] of city.n) if (yy <= t + 1e-9) n = nn || ''; return n; };
+  const capAt = (city, t) => { if (!Array.isArray(city.cap)) return !!city.cap; let v = 0; for (const [yy, c] of city.cap) if (yy <= t + 1e-9) v = c; return !!v; };
   const marks = [];
   for (const city of CITIES) {
     city.n.forEach(([X, name], j) => { const old = j ? city.n[j - 1][1] : ''; marks.push([X, [name, old], `${old || '（无）'}→${name || '（废）'} @${X}`, 0]); });
     if (Array.isArray(city.cap)) city.cap.forEach(([X, v]) => { const nm = nameAt(city, X) || city.n[0][1]; marks.push([X, [nm], `${nm} ${v ? '为都' : '不再为都'} @${X}`, 1]); });
   }
+  // 退场（不再显示名称）之后仍标为都城的
+  for (const city of CITIES) if (city.cap) { const st = steps.find(s => s.t >= Y0 && capAt(city, s.t) && !nameAt(city, s.t) && city.n.some(([yy]) => yy <= s.t + 1e-9));
+    if (st) out.push(`  退场仍为都：${city.n[0][1]} 在 ${st.y} 年已不显示，却仍标为都城`); }
   // 都城标记只查“提前”：迁都、亡国之前的事件本来就常提到该城
   for (const [X, ws, label, isCap] of marks) {
     if (X <= Y0) continue;

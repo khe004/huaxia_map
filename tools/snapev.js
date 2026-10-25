@@ -22,7 +22,7 @@ for (const id of ids) {
   const t0 = evT(EV[0]);
   const nm = (f, t) => { const F = X.FACTIONS[f]; try { return F && F.name ? F.name(t) : f; } catch (e) { return f; } };
   let prevT = -Infinity;
-  X.SNAPSHOTS.forEach(([y, m, list]) => {
+  X.SNAPSHOTS.forEach(([y, m, list], j) => {
     const t = tOf(y, m), prev = cur.slice();
     if (t < prevT - 1e-9) out.push(`  ✗ 快照顺序：[${y}, ${m}] 早于上一条`);
     prevT = t;
@@ -36,7 +36,8 @@ for (const id of ids) {
       idx.forEach(i => { cur[i] = f; });
     }
     const ch = []; cur.forEach((f, i) => { if (f !== prev[i]) ch.push(i); });
-    if (t <= t0 + 1e-9) return;
+    // 第一条快照是开局形势（引擎不论其月份都从卷首生效）；其余早于首个事件的也并入开局
+    if (j === 0 || t <= t0 + 1e-9) return;
     if (!ch.length) { out.push(`  ∅ 空操作：[${y}, ${m}] ${list.map(([f, tok]) => f + ' ' + tok).join('；')}（不改变任何地块）`); return; }
     const names = ch.map(i => seeds[i].n);
     const eff = EV.find(e => evT(e) >= t - 1e-9);

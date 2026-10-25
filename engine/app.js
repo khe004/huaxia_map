@@ -86,20 +86,7 @@ function cnNum(n) {
 }
 // 年号：BOOK.calendar.eras / spans（[起年, 年号, 起年记作第几年]，第三项缺省为 1，用于不立年号、以帝号接续纪年的“明帝二年”）；也可以直接给 BOOK.calendar.label(y) 返回 [{d, s}]
 // 唐天宝三载至至德三载（744–758）称“载”：BOOK.calendar.zai = [744, 758]（各家都写“载”），或 { 唐: [744, 758] }（只有这一家）
-const zaiOf = (cal, y, k) => { const z = Array.isArray(cal.zai) ? cal.zai : (cal.zai || {})[k]; return z && y >= z[0] && y <= z[1] ? '载' : '年'; };
-function eras(y) {
-  const cal = B.calendar || {};
-  if (cal.label) return cal.label(y) || [];
-  const out = [];
-  for (const k of Object.keys(cal.eras || {})) {
-    const span = (cal.spans || {})[k]; if (span && (y < span[0] || y > span[1])) continue;
-    let e = null; for (const it of cal.eras[k]) if (it[0] <= y) e = it;
-    if (!e) continue;
-    const n = y - e[0] + (e[2] || 1) - (e[0] < 0 && y > 0 ? 1 : 0);
-    out.push({ d: k, s: `${e[1]}${cnNum(n)}${zaiOf(cal, y, k)}` });
-  }
-  return out;
-}
+function eras(y) { return erasFor(B.calendar || {}, y); }
 // 干支：按天文纪年（公元前 1 年 = 0 年）推算
 function ganzhi(y) { if (APPROX(y)) return ''; const a = y < 0 ? y + 1 : y; const i = ((a - 4) % 60 + 60) % 60; return '甲乙丙丁戊己庚辛壬癸'[i % 10] + '子丑寅卯辰巳午未申酉戌亥'[i % 12]; }
 function phaseOf(y) { return PHASES.find(p => y >= p[0] && y <= p[1]) || [y, y, '']; }
@@ -154,6 +141,7 @@ if (UNITS.objects.nb) {
   GEO.cn = { type: 'FeatureCollection', features: [...byP].filter(([, gs]) => isCN(gs[0])).map(([p, gs]) => mergeFeat(p, gs)) };
   GEO.cnout = { type: 'FeatureCollection', features: [mergeFeat('中国', ug.filter(isCN))] };
   GEO.nb = topojson.feature(UNITS, UNITS.objects.nb);
+  GEO.nb.features = GEO.nb.features.filter(f => f.geometry);
   GEO.nb.features.push(...[...byP].filter(([, gs]) => !isCN(gs[0])).map(([p, gs]) => mergeFeat(p, gs)));
 }
 rewind(GEO.cn); rewind(GEO.nb); rewind(GEO.cnout);
@@ -189,6 +177,8 @@ UNITS.objects.units.geometries = UNITS.objects.units.geometries.flatMap(g =>
   g.type === 'MultiPolygon' && g.arcs.length > 1 ? g.arcs.map(a => ({ type: 'Polygon', arcs: a, properties: { ...g.properties } })) : [g]);
 const UALL = topojson.feature(UNITS, UNITS.objects.units); rewind(UALL);
 const inScope = f => {
+  // 底图里少数要素没有几何（如越南昆仑岛），不纳入
+  if (!f.geometry) return false;
   const { n, p } = f.properties;
   if ((SC.provinces || []).includes(p)) return true;
   if ((SC.partial || {})[p]) return SC.partial[p].includes(n);
@@ -350,7 +340,8 @@ function renderTerritory() {
     .attr('font-size', d => d.fs).text(d => d.name);
 
   // legend
-  const counts = d3.rollups(st.filter(f => f !== 'x'), v => v.length, f => f).sort((a, b) => b[1] - a[1]);
+  // 与 renderYear 一致：只计分得地块的种子点，没有地块的势力不进图例
+  const counts = d3.rollups(st.filter((f, i) => f !== 'x' && HAS_LAND.has(i)), v => v.length, f => f).sort((a, b) => b[1] - a[1]);
   $('#legend').innerHTML = groupByRealm(counts, T).map(([rn, , fs]) => (rn ? `<span class="rg">${rn}</span>` : '') + fs.map(([f]) => `<span><i style="background:${fColor(f)}"></i>${fName(f, T)}</span>`).join('')).join('') +
     (B.regions?.legendNote ? `<span class="note">· ${B.regions.legendNote}</span>` : '');
   cityText.text(d => cityName(d, T));
@@ -504,11 +495,14 @@ function setStep(k, toYearView) {
   k = Math.max(0, Math.min(NS, k));
   const changed = k !== state.step;
   state.step = k; state.year = STEPS[k].y; range.value = k;
-  if (STEPS[k].ev != null || state.view.t === 'year' || state.view.t === 'events') state.sel = STEPS[k].ev;
+  // 人物页拖动滑块：只选中与此人有关的事件，免得无关事件画进人物轨迹
+  if (state.view.t === 'person' && state.person) { const L = PEOPLE.get(state.person).live; state.sel = STEPS[k].ev != null && L.includes(STEPS[k].ev) ? STEPS[k].ev : null; }
+  else if (STEPS[k].ev != null || state.view.t === 'year' || state.view.t === 'events') state.sel = STEPS[k].ev;
   if (toYearView && (state.view.t === 'event' || state.view.t === 'person')) { state.person = null; state.sel = null; state.stack = []; state.view = { t: state.tab === 'people' ? 'people' : state.tab === 'events' ? 'events' : 'year' }; }
   // 事件详情页中翻到、拖到另一个事件：就地换成该事件的详情（不压入返回栈）
-  const swap = state.view.t === 'event' && STEPS[k].ev != null && STEPS[k].ev !== state.view.i;
-  if (swap) state.view = { t: 'event', i: STEPS[k].ev };
+  // 拖到没有事件的年初一步：回到当年的年份视图（不压入返回栈）
+  const swap = state.view.t === 'event' && STEPS[k].ev !== state.view.i;
+  if (swap) { if (STEPS[k].ev != null) state.view = { t: 'event', i: STEPS[k].ev }; else { state.view = { t: state.tab === 'people' ? 'people' : state.tab === 'events' ? 'events' : 'year' }; state.stack = []; state.sel = null; state.person = null; } }
   renderStamp();
   if (changed || toYearView) { renderTerritory(); }
   renderEvents();
@@ -539,7 +533,8 @@ const SRC = B.source || { type: 'sections', heading: '出处' };
 function chapterNum(n) {
   const h = Math.floor(n / 100), r = n % 100;
   if (!h) return n === 1 ? '一' : cnNum(n);
-  return DIG[h] + '百' + (r ? (r < 10 ? DIG[r] : r === 10 ? '十' : cnNum(r)) : '');
+  // 一百零一、一百一十、一百一十五、一百二十
+  return DIG[h] + '百' + (r ? (r < 10 ? '零' + DIG[r] : r < 20 ? '一' + cnNum(r) : cnNum(r)) : '');
 }
 function srcShort(refs) {
   if (!refs || !refs.length) return '';
@@ -682,17 +677,21 @@ function renderPerson(n) {
   const co = new Map();
   evs.filter(e => !isPost(e, n)).forEach(e => e.who.forEach(w => { if (w !== n && !isPost(e, w)) co.set(w, (co.get(w) || 0) + 1); }));
   const coTop = [...co].sort((a, b) => b[1] - a[1]).slice(0, 10);
-  // 生卒年：形如 161–223、?–220、前232–前202
-  const lm = p.life.match(/^(前)?(\d+)?\??\s*[–-]\s*(前)?(\d+)/);
-  const a = lm && lm[2] ? (lm[1] ? -lm[2] : +lm[2]) : null, b = lm ? (lm[3] ? -lm[4] : +lm[4]) : null;
-  const liveEvs = evs.filter(e => !isPost(e, n)), fy = liveEvs.length ? liveEvs[liveEvs.length - 1].y : evs.length ? evs[0].y : state.year;
+  // 生卒年：形如 161–223、?–220、前232–前202、约前390–前338、?–约前200、531–?（卒年不详）
+  const lm = p.life.match(/^约?(前)?(\d+)?\??\s*[–-]\s*约?(前)?(\d+)?/);
+  const a = lm && lm[2] ? (lm[1] ? -lm[2] : +lm[2]) : null, b0 = lm && lm[4] ? (lm[3] ? -lm[4] : +lm[4]) : null;
+  const liveEvs = evs.filter(e => !isPost(e, n)), tOf = e => e.y + (e.mo - 1) / 12,
+    // 势力名按最后一个在世事件的时刻取（年中改号的，如杨行密死后淮南改称吴）
+    fy = liveEvs.length ? tOf(liveEvs[liveEvs.length - 1]) : evs.length ? tOf(evs[0]) : state.year;
   const pad = Math.max(10, (Y1 - Y0) * .3), lo = Y0 - pad, hi = Y1 + pad * .5, sc = v => (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * 100;
   // 夏历十二月去世折成公历次年一二月，事件年份可能比卒年晚一年，寿命条画到最后一个在世事件为止（最多延长一年；演义等虚构情节不计）
-  const hist = p.live.filter(i => !EVENTS[i].src), lastLive = hist.length ? Math.max(...hist.map(i => EVENTS[i].y)) : null, b2 = b != null && lastLive != null && lastLive > b ? Math.min(lastLive, b + 1) : b;
+  const hist = p.live.filter(i => !EVENTS[i].src), lastLive = hist.length ? Math.max(...hist.map(i => EVENTS[i].y)) : null;
+  // 卒年不详的，寿命条画到最后一个在世事件
+  const b = b0 != null ? b0 : a != null ? lastLive ?? a : null, b2 = b != null && lastLive != null && lastLive > b ? Math.min(lastLive, b + 1) : b;
   // 演义等虚构情节若落在生卒之外（如华佗卒后的刮骨疗毒），刻度画成虚线，并在提示里注明
   // 生年不详时左端默认按活 40 岁算，若有更早的在世事件则延伸到该事件
   const firstLive = hist.length ? Math.min(...hist.map(i => EVENTS[i].y)) : null, a2 = a != null ? a : b != null ? Math.min(b - 40, firstLive ?? b - 40) : null;
-  const life = b ? `<div class="lifebar" title="生卒年"><div style="left:${sc(a2)}%;width:${sc(b2) - sc(a2)}%;background:${fColor(p.f)};${a ? '' : 'opacity:.45'}"></div>${evs.filter(e => !isPost(e, n)).map(e => (e.src && (e.y > b2 || e.y < a2)
+  const life = b ? `<div class="lifebar" title="生卒年"><div style="left:${sc(a2)}%;width:${sc(b2) - sc(a2)}%;background:${fColor(p.f)};${a != null && b0 != null ? '' : 'opacity:.45'}"></div>${evs.filter(e => !isPost(e, n)).map(e => (e.src && (e.y > b2 || e.y < a2)
     ? `<div class="fic" style="left:${sc(e.y)}%" title="${tagOf(e)}：${e.t}（${fmtYearFull(e.y)}，与史实生卒不合）"></div>`
     : `<div style="left:${sc(e.y)}%;width:2px;background:var(--ink)"></div>`)).join('')}</div>` : '';
   pbody.innerHTML = `
@@ -727,7 +726,8 @@ new MutationObserver(refill).observe(document.documentElement, { attributes: tru
 // ---------- start ----------
 state.step = YEAR_STEP[state.year];
 // 从上一卷接着读或从目录进入：停在第一个事件（此时开篇的疆域快照已生效）；从下一卷倒回来：停在最后一个事件
-const startAt = SER && new URLSearchParams(location.search).get('at');
+// ?at=start|end、?ev=、?p= 深链：合集各卷与独立单卷都支持
+const startAt = new URLSearchParams(location.search).get('at');
 if (startAt === 'start') state.step = EV_STEP[EV_SORTED[0].i];
 if (startAt === 'end') state.step = EV_STEP[EV_SORTED[EV_SORTED.length - 1].i];
 if (startAt) { state.year = STEPS[state.step].y; state.sel = STEPS[state.step].ev; }
@@ -735,7 +735,7 @@ range.value = state.step;
 renderStamp(); renderTerritory(); renderEvents(); renderPanel(); markTimeline(); markBookEnd();
 if (B.view) svg.call(zoom.transform, HOME);
 // 从其他卷的人物页跳来：?ev=事件标题&p=人物，打开该事件，并沿此人的行迹浏览
-if (SER) {
+{
   const q = new URLSearchParams(location.search), ei = EVENTS.findIndex(e => e.t === q.get('ev')), pn = q.get('p');
   if (ei >= 0) { if (pn && PEOPLE.has(pn)) { setTab('people'); openPerson(pn); } openEvent(ei); }
   // 只带 ?p=人物（如从目录页的检索进入）：打开此人的人物页

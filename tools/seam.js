@@ -6,12 +6,13 @@ function load(id){const c={};vm.createContext(c);vm.runInContext(fs.readFileSync
 function stateAt(X,t){
   const seeds=X.SEEDS_RAW.split(/\s{2,}|\n+/).map(s=>s.trim()).filter(Boolean).map(s=>{const[z,n,c]=s.split('|');return{z,n,c}});
   const by=new Map();seeds.forEach((s,i)=>by.set(s.n,i));
-  let cur=seeds.map(()=>X.BOOK.baseFaction);
-  for(const [y,m,list] of X.SNAPSHOTS){ if(y+(m-1)/12>t+1e-9) break;
+  let cur=seeds.map(s=>(s.z==='x'?'x':X.BOOK.baseFaction));
+  // 与引擎一致：第一条快照是开局形势，不论写的是几月都从卷首生效
+  for(const [j,[y,m,list]] of X.SNAPSHOTS.entries()){ if(j>0&&y+(m-1)/12>t+1e-9) break;
     for(const [f,tok] of list) for(const k of tok.split(/\s+/).filter(Boolean)){
       let idx=[]; if(k==='*')idx=seeds.map((_,i)=>i); else if(k[0]==='@')seeds.forEach((s,i)=>s.z===k.slice(1)&&idx.push(i)); else if(k[0]==='#')cur.forEach((g,i)=>g===k.slice(1)&&idx.push(i)); else if(by.has(k))idx=[by.get(k)];
       idx.forEach(i=>cur[i]=f);} }
-  const nm=f=>{const F=X.FACTIONS[f];return (F.name?F.name(t):f).replace(/（[^）]*）/g,'')};
+  const nm=f=>{const F=X.FACTIONS[f];return F?(F.name?F.name(t):f).replace(/（[^）]*）/g,''):f};
   return new Map(seeds.map((s,i)=>[s.n,{f:cur[i],nm:nm(cur[i]),c:s.c}]));
 }
 const evT=e=>e.y+(e.mo-1)/12;

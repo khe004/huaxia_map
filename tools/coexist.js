@@ -8,6 +8,7 @@ const lab = h => { let [r, g, b] = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2)
   const x = (r * .4124 + g * .3576 + b * .1805) / .95047, y = r * .2126 + g * .7152 + b * .0722, z = (r * .0193 + g * .1192 + b * .9505) / 1.08883;
   const f = t => (t > .008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116); return [116 * f(y) - 16, 500 * (f(x) - f(y)), 200 * (f(y) - f(z))]; };
 const dE = (a, b) => { const p = lab(a), q = lab(b); return Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]); };
+const NL = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'noland.json'), 'utf8')); } catch (e) { return {}; } })();
 let n = 0;
 for (const id of ids) {
   const c = {}; vm.createContext(c);
@@ -17,10 +18,11 @@ for (const id of ids) {
   let cur = S.map(() => BOOK.baseFaction); const seen = new Map();
   for (const [y, , ops] of SNAPSHOTS) {
     for (const [f, t] of ops) { const out = [];
-      for (const k of t.split(/\s+/)) { if (k === '*') S.forEach((s, i) => out.push(i)); else if (k[0] === '@') S.forEach((s, i) => s[0] === k.slice(1) && out.push(i));
+      for (const k of t.split(/\s+/).filter(Boolean)) { if (k === '*') S.forEach((s, i) => out.push(i)); else if (k[0] === '@') S.forEach((s, i) => s[0] === k.slice(1) && out.push(i));
         else if (k[0] === '#') cur.forEach((g, i) => g === k.slice(1) && out.push(i)); else out.push(S.findIndex(s => s[1] === k)); }
-      out.forEach(i => { cur[i] = f; }); }
-    const u = [...new Set(cur)].filter(f => FACTIONS[f]);
+      out.filter(i => i >= 0).forEach(i => { cur[i] = f; }); }
+    // 没有地块的种子点（tools/noland.js 的结果）不进图例，不算并存
+    const nl = new Set(NL[id] || []), u = [...new Set(cur.filter((f, i) => !nl.has(S[i][1])))].filter(f => FACTIONS[f]);
     for (const a of u) for (const b of u) if (a < b && !seen.has(a + '|' + b)) { const d = dE(FACTIONS[a].color, FACTIONS[b].color); if (d < th) seen.set(a + '|' + b, [d, y]); }
   }
   for (const [k, [d, y]] of seen) { const [a, b] = k.split('|'); console.log(`${id}: ${a} ${FACTIONS[a].color} — ${b} ${FACTIONS[b].color}  ΔE ${d.toFixed(1)}（${y} 年起并存）`); n++; }

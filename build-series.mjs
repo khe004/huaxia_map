@@ -14,18 +14,15 @@ const pcx = {}; vm.createContext(pcx); vm.runInContext(r('./books/_people.js') +
 const plain = s => String(s).replace(/\*\*(?:[^|*]{1,6}\|)?([^*]*)\*\*/g, '“$1”').replace(/““/g, '“').replace(/””/g, '”');
 const IDX = { books: [], events: [], people: {} };
 // 事件纪年的写法与引擎共用 engine/cal.js
-const CALTEXT = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./engine/cal.js') + ';this.f = calText;', c); return c.f; })();
+const [CALTEXT, ERASFOR] = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./engine/cal.js') + ';this.f = [calText, erasFor];', c); return c.f; })();
 const rows = S.books.map((b, i) => {
   execFileSync('node', [new URL('./build.mjs', import.meta.url).pathname, b.id, '--series'], { stdio: 'inherit' });
   const c = {}; vm.createContext(c);
   vm.runInContext(r(`./books/${b.id}/book.js`) + '\n;this.__ = { BOOK, EVENTS, PEOPLE_RAW, FACTIONS };', c);
   const { BOOK, EVENTS, PEOPLE_RAW, FACTIONS } = c.__;
   // 王年、年号纪年：与引擎 eras() 同一算法（BOOK.calendar.label 或 eras/spans），事件没写 cal 时也能按纪年检索
-  const CAL = BOOK.calendar || {}, cnY = n => (n === 1 ? '元' : cn(n));
-  const erasOf = y => { if (CAL.label) return CAL.label(y) || [];
-    const out = []; for (const k of Object.keys(CAL.eras || {})) { const sp = (CAL.spans || {})[k]; if (sp && (y < sp[0] || y > sp[1])) continue;
-      let e = null; for (const it of CAL.eras[k]) if (it[0] <= y) e = it; if (e) out.push({ d: k, s: e[1] + cnY(y - e[0] + (e[2] || 1) - (e[0] < 0 && y > 0 ? 1 : 0)) + ((z => z && y >= z[0] && y <= z[1])(Array.isArray(CAL.zai) ? CAL.zai : (CAL.zai || {})[k]) ? '载' : '年') }); }
-    return out; };
+  const CAL = BOOK.calendar || {};
+  const erasOf = y => ERASFOR(CAL, y);
   const calOf = e => CALTEXT(e, CAL, BOOK.range, erasOf);
   IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
   const evOf = new Map(), postOf = new Map();
@@ -141,8 +138,8 @@ const snip = (s, terms, n = 46) => { let i = -1; for (const t of terms) { const 
 const evHref = e => B[e.k][0] + '/index.html?ev=' + encodeURIComponent(e.t);
 const evCnt = b => (b[2] ? b[2] + ' 个事件' : b[4] ? '仅身后提及 ' + b[4] + ' 次' : '无事件');
 const pHref = (n, k) => B[k][0] + '/index.html?p=' + encodeURIComponent(n);
-// 公元年份：208、208年、公元208年、前209、公元前209年
-const yearOf = t => { const m = t.match(/^(公元)?(前)?(\\d{1,4})年?$/); return m ? (m[2] ? -m[3] : +m[3]) : null; };
+// 公元年份：208、208年、公元208年、前209、公元前209年（“755载”同“755年”）；纪年检索里“载”与“年”等价（天宝三年 = 天宝三载）
+const yearOf = t => { const m = t.match(/^(公元)?(前)?(\\d{1,4})[年载]?$/); return m ? (m[2] ? -m[3] : +m[3]) : null; };
 // 生卒年：形如 155–220、?–208?、前259–前210，取出生年与卒年
 const lifeYears = l => { const m = String(l || '').match(/^约?(前)?(\\d+)?\\??\\s*[–-]\\s*约?(前)?(\\d+)?/); return m ? [m[2] ? (m[1] ? -m[2] : +m[2]) : null, m[4] ? (m[3] ? -m[4] : +m[4]) : null] : []; };
 // 生卒年里与检索年份相同的年份加高亮（检索词写作“公元前210年”“155年”时也按年份比对，不按字面）
@@ -153,7 +150,7 @@ function scoreP(p, terms) { let s = 0; for (const t of terms) {
   else if (p.zi && p.zi.includes(t)) s += 30; else if (has(p.bio, t) || p.bk.some(b => b[1].includes(t))) s += 5; else return 0; } return s + Math.min(p.ne, 20) / 10; }
 function scoreE(e, terms) { let s = 0; for (const t of terms) {
   const yr = yearOf(t);
-  if (yr != null && e.y === yr) s += 40; else if (has(e.t, t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (has(e.p, t) || has(e.m, t) || has(e.cal, t)) s += 20;
+  if (yr != null && e.y === yr) s += 40; else if (has(e.t, t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (has(e.p, t) || has(e.m, t) || has(String(e.cal || '').replace(/载/g, '年'), t.replace(/载/g, '年'))) s += 20;
   else if (e.who.includes(t)) s += 15; else if (has(e.d, t)) s += 5; else return 0; } return s; }
 function run() {
   const raw = q.value.trim(), terms = raw.replace(/(前)\\s+(?=\\d)/g, '$1').replace(/(\\d)\\s+年/g, '$1年').split(/\\s+/).filter(Boolean), v = volSel.value === '' ? null : +volSel.value;
@@ -194,7 +191,10 @@ if (t0 === 'people') { pf.v = $('#pvol').value = hp.get('v') ?? ''; pf.x = hp.ge
 if (t0 === 'events') { ef.v = $('#evol').value = hp.get('v') ?? ''; const k = hp.get('k'); if (KN[k]) { ef.k = k; $('#ekind').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.k === k)); } }
 show(t0, true); if (t0 === 'search') run();
 })();`;
-const html = `<title>${esc(S.title)}</title>
+// 目录页发布为 artifact 的主页面，发布时会套上文档骨架（doctype 等），这里只写片段；编码与 viewport 仍写上，便于本地直接打开
+const html = `<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(S.title)}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

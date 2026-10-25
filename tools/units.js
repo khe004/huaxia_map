@@ -53,4 +53,8 @@ run(['-i', T('u.json'), T('nb.json'), 'combine-files', '-merge-layers', 'force',
   '-filter-fields', 'n,p,c', 'target=units', '-filter-fields', 'n', 'target=nb',
   '-o', 'format=topojson', 'quantization=20000', 'target=units,nb', out]);
 fs.rmSync(tmp, { recursive: true });
+// 简化、去小岛后有的要素没有几何了（如越南昆仑岛、印度洋小岛国），去掉，免得引擎渲染与悬停时出错
+const topo = JSON.parse(fs.readFileSync(out, 'utf8'));
+for (const k of Object.keys(topo.objects)) topo.objects[k].geometries = topo.objects[k].geometries.filter(g => g.type != null);
+fs.writeFileSync(out, JSON.stringify(topo));
 console.log(feats.length, 'units →', out);

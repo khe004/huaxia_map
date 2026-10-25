@@ -3,6 +3,8 @@
 //   给出相邻距离时只检查地盘相邻的势力（两势力有种子点相距不超过该值），适合春秋这类小国林立的时期。
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const [id, th = 25, near] = process.argv.slice(2);
+if (!id) { console.log('用法：node tools/palette.js <书目录名> [阈值，默认 25] [相邻距离（度）]'); process.exit(1); }
+const NL = new Set((() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'noland.json'), 'utf8'))[id] || []; } catch (e) { return []; } })());
 const ctx = {}; vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'books', id, 'book.js'), 'utf8') + ';this.D={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS}', ctx);
 const { BOOK, FACTIONS, SEEDS_RAW, SNAPSHOTS } = ctx.D;
@@ -11,17 +13,17 @@ let cur = S.map(() => BOOK.baseFaction); const co = new Set();
 for (const [, , ops] of SNAPSHOTS) {
   for (const [f, t] of ops) {
     const out = [];
-    for (const k of t.split(/\s+/)) {
+    for (const k of t.split(/\s+/).filter(Boolean)) {
       if (k === '*') S.forEach((s, i) => out.push(i));
       else if (k[0] === '@') S.forEach((s, i) => s[0] === k.slice(1) && out.push(i));
       else if (k[0] === '#') cur.forEach((g, i) => g === k.slice(1) && out.push(i));
       else out.push(S.findIndex(s => s[1] === k));
     }
-    out.forEach(i => { cur[i] = f; });
+    out.filter(i => i >= 0).forEach(i => { cur[i] = f; });
   }
-  if (!near) { const u = [...new Set(cur)]; for (const a of u) for (const b of u) if (a < b) co.add(a + '|' + b); continue; }
+  if (!near) { const u = [...new Set(cur.filter((f, i) => !NL.has(S[i][1])))]; for (const a of u) for (const b of u) if (a < b) co.add(a + '|' + b); continue; }
   S.forEach((s, i) => S.forEach((t, j) => {
-    const a = cur[i], b = cur[j]; if (a >= b) return;
+    const a = cur[i], b = cur[j]; if (a >= b || NL.has(s[1]) || NL.has(t[1])) return;
     const [x1, y1] = s[2].split(',').map(Number), [x2, y2] = t[2].split(',').map(Number);
     if (Math.hypot((x1 - x2) * Math.cos(y1 * Math.PI / 180), y1 - y2) <= +near) co.add(a + '|' + b);
   }));

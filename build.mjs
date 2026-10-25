@@ -41,7 +41,7 @@ const commonSub = {};
 for (const [n] of PEOPLE_RAW) if (common(n, id)) commonSub[n] = common(n, id).slice(0, 3).map(v => (defSrc ? v.split(`**${defSrc}|`).join('**') : v));
 // 卒年晚于本卷第一个事件、本卷却没有一件在世事件的人物（只在身后被提及），多半是漏标了他生前参与的事件
 { const t0 = Math.min(...EVENTS.map(e => e.y));
-  for (const [n, , , life0] of PEOPLE_RAW) { const life = common(n, id) ? common(n, id)[1] : life0, m = String(life || '').match(/[–-]\s*(前)?(\d+)/);
+  for (const [n, , , life0] of PEOPLE_RAW) { const life = common(n, id) ? common(n, id)[1] : life0, m = String(life || '').match(/[–-]\s*约?(前)?(\d+)/);
     if (m && (m[1] ? -m[2] : +m[2]) > t0 && liveN(n) === 0) problems.push(`人物「${n}」（${life}）卒于本卷首个事件之后，却没有在世事件`); } }
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
 // 没写 CITIES、PHASES 的书补空表，引擎各处直接遍历
@@ -83,7 +83,7 @@ const html = r('./engine/page.html')
 const out = new URL(SERIES_MODE ? `./dist/series/${id}/` : `./dist/${id}/`, import.meta.url);
 mkdirSync(out, { recursive: true });
 // 合集里的分卷是独立网页，要自带文档头
-writeFileSync(new URL('index.html', out), SERIES_MODE ? `<!doctype html>\n<html lang="zh-CN">\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n${html}` : html);
+writeFileSync(new URL('index.html', out), `<!doctype html>\n<html lang="zh-CN">\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n${html}`);
 if (SERIES_MODE) for (const t of BASEMAP.terrain) copyFileSync(new URL(bm + t.href.slice(3), import.meta.url), new URL(t.href, out));
 else for (const t of BASEMAP.terrain) copyFileSync(new URL(bm + t.href, import.meta.url), new URL(t.href, out));
 console.log(SERIES_MODE ? `dist/series/${id}/index.html` : `dist/${id}/index.html`, (html.length / 1024).toFixed(1) + ' KB', `· ${EVENTS.length} 事件 · ${PEOPLE_RAW.length} 人物`);

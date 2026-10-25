@@ -74,7 +74,9 @@ function zhouMonth(y, zm) {
 
 const FACTIONS = {
   zhou:    { color: '#d4b44a', name: () => '周' },
-  jin:     { color: '#3c8a52', name: () => '晋' },
+  jin:     { color: '#3c8a52', name: t => (t < -452.834 ? '晋' : '晋公室') },
+  zhao:    { color: '#7a9a3a', name: () => '赵' },
+  wei:     { color: '#9a8ae0', name: () => '魏' },
   qin:     { color: '#3a3d44', name: () => '秦' },
   qi:      { color: '#d6702a', name: t => (t >= -480.67 ? '齐（田氏专政）' : '齐') },
   chu:     { color: '#c4433a', name: () => '楚' },
@@ -158,6 +160,8 @@ const SNAPSHOTS = [
   [-473, 10, [['yue', '朐 徐 钟离 巢']]],
   [-468, 7, [['yue', '介']]],
   [-458, 6, [['jin', '仇由']]],
+  // 三家灭智氏，赵据晋阳、邯郸，魏据河东，晋公室只剩绛
+  [-453, 3, [['zhao', '邯郸 晋阳'], ['wei', '河东']]],
 ];
 
 const ZHOU_LABELS = [

@@ -9,7 +9,7 @@ const R = path.join(__dirname, '..');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.PC=commonOf', pc);
 const yr = (q, n) => (n ? (q ? -n : +n) : null);
-const lifeOf = s => { const m = (s || '').match(/^(前)?(\d+)?\??\s*[–-]\s*(前)?(\d+)?/); return m ? [yr(m[1], m[2]), yr(m[3], m[4])] : [null, null]; };
+const lifeOf = s => { const m = (s || '').match(/^约?(前)?(\d+)?\??\s*[–-]\s*约?(前)?(\d+)?/); return m ? [yr(m[1], m[2]), yr(m[3], m[4])] : [null, null]; };
 const DEATH = /(之死|卒|崩|自杀|被杀|遇刺|遇害|自刎|自刭|自缢|自经|饿死|被醢|弃市|腰斩|被弑|饮酖|败亡|伏诛|之诛|族诛|死于)/;
 const CN = { 正: 1, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 十一: 11, 十二: 12 };
 let total = 0;
@@ -33,7 +33,8 @@ for (const id of ids) {
   const off = new Map(), rows = [];
   // 王莽始建国、天凤、地皇年间改用丑正（以夏正十二月为正月），月份换算与他朝差一个月，不比较
   // 武周载初至久视年间行周正（以十一月为正月、十二月为腊月，夏正正月改称一月），正月、腊月的换算与他月不同，不比较
-  for (const e of E) { if (/始建国|天凤|地皇/.test(e.cal || '') || /(载初|天授|如意|长寿|延载|证圣|天册万岁|万岁登封|万岁通天|神功|圣历|久视)[^月]*(正|腊)月/.test(e.cal || '')) continue; const m = (e.cal || '').match(/(?:^|[年载])(闰)?(正|十二|十一|十|一|二|三|四|五|六|七|八|九)月/); if (!m) continue;
+  // 春秋三卷的周正正月（zm: 1）折成公历上一年年末，书中按 mo 1 留在本年，不比较
+  for (const e of E) { if (e.zm === 1 || /始建国|天凤|地皇/.test(e.cal || '') || /(载初|天授|如意|长寿|延载|证圣|天册万岁|万岁登封|万岁通天|神功|圣历|久视)[^月]*(正|腊)月/.test(e.cal || '')) continue; const m = (e.cal || '').match(/(?:^|[年载])[春夏秋冬]?(闰)?(正|十二|十一|十|一|二|三|四|五|六|七|八|九)月/); if (!m) continue;
     const d = ((Math.floor(e.mo) - CN[m[2]]) % 12 + 12) % 12; rows.push([e, d, m[0]]); off.set(d, (off.get(d) || 0) + 1); }
   const main = [...off].sort((a, b) => b[1] - a[1])[0];
   for (const [e, d, s] of rows) if (main && d !== main[0] && !(e.cal.includes('闰') && d === (main[0] + 11) % 12) && Math.floor(e.mo) === e.mo) out.push(`  ? 「${e.t}」cal ${e.cal} 与 mo ${e.mo} 的换算（差 ${d} 个月）和本卷多数（差 ${main[0]}）不同`);
