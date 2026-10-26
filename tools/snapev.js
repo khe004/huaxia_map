@@ -12,10 +12,11 @@ let total = 0;
 for (const id of ids) {
   const src = fs.readFileSync(`${R}/books/${id}/book.js`, 'utf8');
   const c = {}; vm.createContext(c);
-  vm.runInContext(src + ';this.X={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS,EVENTS}', c);
+  vm.runInContext(src + ';this.X={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS,EVENTS,UNIT_OVERRIDES:typeof UNIT_OVERRIDES!=="undefined"?UNIT_OVERRIDES:{}}', c);
   const X = c.X, out = [];
   const seeds = X.SEEDS_RAW.split(/\s{2,}|\n+/).map(s => s.trim()).filter(Boolean).map(s => { const [z, n] = s.split('|'); return { z, n }; });
   const by = new Map(); seeds.forEach((s, i) => by.set(s.n, i));
+  const HL = require('./land.js').land(X).hasLand;
   let cur = seeds.map(s => (s.z === 'x' ? 'x' : X.BOOK.baseFaction));
   const evT = e => tOf(e.y, e.mo);
   const EV = X.EVENTS.slice().sort((a, b) => evT(a) - evT(b));
@@ -35,7 +36,8 @@ for (const id of ids) {
       else out.push(`  ? 未知的种子点：${k}（[${y}, ${m}]）`);
       idx.forEach(i => { cur[i] = f; });
     }
-    const ch = []; cur.forEach((f, i) => { if (f !== prev[i]) ch.push(i); });
+    // 只算分得到地块的种子点（tools/land.js）：零地块种子的变动在地图上看不出来，按空操作处理
+    const ch = []; cur.forEach((f, i) => { if (f !== prev[i] && HL.has(i)) ch.push(i); });
     // 第一条快照是开局形势（引擎不论其月份都从卷首生效）；其余早于首个事件的也并入开局
     if (j === 0 || t <= t0 + 1e-9) return;
     if (!ch.length) { out.push(`  ∅ 空操作：[${y}, ${m}] ${list.map(([f, tok]) => f + ' ' + tok).join('；')}（不改变任何地块）`); return; }

@@ -3,6 +3,7 @@
 // 用法：node tools/units.js <数据目录> <Natural Earth 国界.geojson> <输出文件>
 // 数据目录需包含：
 //   <省级行政区代码>.json   阿里云 DataV 地级边界（geo.datav.aliyun.com/areas_v3/bound/<代码>_full.json）
+//   <地级代码>_full.json    要按县切开的地级区的县界（见下面 SPLITS）
 //   china.json              DataV 全国省级边界（取香港、澳门、台湾整体）
 //   PRK VNM KOR MNG RUS KAZ KGZ TJK UZB .json   geoBoundaries 一级行政区（gbOpen 简化版）
 // Natural Earth：ne_10m_admin_0_countries.geojson（1:1000 万国界），只取周边国家，并先扣掉上面这些拼块覆盖的范围。
@@ -44,6 +45,23 @@ run(['-i', T('u.json'), '-dissolve', '-o', T('mask.json')]);
 // 2. 周边国家：去掉已由拼块提供的中国、朝鲜、韩国、越南，再扣掉拼块范围（争议地区以拼块为准）
 run(['-i', neFile, '-filter', "!['CHN','TWN','HKG','MAC','KOR','PRK','VNM','MNG','KGZ'].includes(ADM0_A3)",
   '-clip', 'bbox=40,-15,170,72', '-erase', T('mask.json'), '-each', "n=NAME, kind='nb'", '-filter-fields', 'n,kind', '-o', T('nb.json')]);
+// 2b. 种子点比地级区密的地方（山东、喀什），把地级区按县界切出一块，免得古郡分不到地块（东平、胶东、菑川、疏勒、捐毒），或古郡治所落进邻郡（酒泉）。
+//     县界取 DataV <地级代码>_full.json，放在数据目录；切线以外的一侧外扩 6 公里，免得两份边界不重合处留下碎条
+const SPLITS = [['370900', '泰安市', '东平县', ['东平县']], ['370700', '潍坊市', '临朐、昌乐、安丘', ['临朐县', '昌乐县', '安丘市']],
+  ['370200', '青岛市', '平度、莱西、即墨', ['平度市', '莱西市', '即墨区']], ['620900', '酒泉市', '肃州、金塔、玉门', ['肃州区', '金塔县', '玉门市']],
+  ['653100', '喀什地区', '喀什、疏勒、疏附、伽师', ['喀什市', '疏附县', '疏勒县', '伽师县', '岳普湖县', '英吉沙县']]];
+run(['-i', T('u.json'), '-o', T('cur.json')]);
+for (const [code, city, name, cs] of SPLITS) {
+  const f = path.join(dir, code + '_full.json'), js = `${JSON.stringify(cs)}.includes(name)`;
+  run(['-i', f, '-filter', js, '-dissolve', '-buffer', 'radius=6km', '-o', T('g.json')]);
+  run(['-i', f, '-filter', `!(${js})`, '-dissolve', '-o', T('r.json')]);
+  run(['-i', T('g.json'), '-erase', T('r.json'), '-simplify', 'interval=1500', '-o', T('mk.json')]);
+  run(['-i', T('cur.json'), '-filter', `n=='${city}'`, '-clip', T('mk.json'), '-each', `n='${name}'`, '-filter-islands', 'min-area=50km2', '-o', T('piece.json')]);
+  run(['-i', T('cur.json'), '-filter', `n=='${city}'`, '-erase', T('mk.json'), '-filter-islands', 'min-area=50km2', '-o', T('rest.json')]);
+  run(['-i', T('cur.json'), '-filter', `n!='${city}'`, '-o', T('other.json')]);
+  run(['-i', T('other.json'), T('rest.json'), T('piece.json'), 'combine-files', '-merge-layers', 'force', '-o', T('cur.json')]);
+}
+fs.copyFileSync(T('cur.json'), T('u.json'));
 // 3. 合并后统一吸附、清理缝隙、简化，再拆回两个图层
 run(['-i', T('u.json'), T('nb.json'), 'combine-files', '-merge-layers', 'force', 'name=all',
   '-snap', 'interval=0.005', '-clean', 'gap-fill-area=150km2',

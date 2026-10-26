@@ -128,10 +128,15 @@ $('#ekind').addEventListener('click', ev => { const b = ev.target.closest('butto
 let filt = 'all', lim = { p: 12, e: 30 };
 // 检索词里数字与文字之间的空格可有可无：“前209年”能匹配正文的“前 209 年”，反之亦然
 const RX = new Map(), rx = t => { let r = RX.get(t);
-  if (!r) RX.set(t, r = new RegExp(t.replace(/[.*+?^$(){}|[\\]\\\\]/g, '\\\\$&').replace(/(\\d)(?=[^\\d])|([^\\d\\s])(?=\\d)/g, '$1$2\\\\s*'), 'g'));
+  // “年”与“载”等价（天宝三年 = 天宝三载）
+  if (!r) RX.set(t, r = new RegExp(t.replace(/[.*+?^$(){}|[\\]\\\\]/g, '\\\\$&').replace(/(\\d)(?=[^\\d])|([^\\d\\s])(?=\\d)/g, '$1$2\\\\s*').replace(/[年载]/g, '[年载]'), 'g'));
   r.lastIndex = 0; return r; };
 const has = (s, t) => !!s && rx(t).test(s);
-const mk = (s, terms) => { let h = esc(s); for (const t of terms) h = h.replace(rx(esc(t)), '\\u0002$&\\u0003'); return h.replace(/\\u0002/g, '<mark>').replace(/\\u0003/g, '</mark>'); };
+// 高亮：先在原文上找出各检索词命中的区间并合并重叠，再逐段转义，免得后一个词匹配进前一轮插入的标签或转义字符
+const mk = (s, terms) => { s = String(s); const iv = [];
+  for (const t of terms) { const r = rx(t); let m; while ((m = r.exec(s))) { if (!m[0].length) { r.lastIndex++; continue; } iv.push([m.index, m.index + m[0].length]); } }
+  iv.sort((a, b) => a[0] - b[0]); const mg = []; for (const x of iv) { const l = mg[mg.length - 1]; if (l && x[0] <= l[1]) l[1] = Math.max(l[1], x[1]); else mg.push(x.slice()); }
+  let h = '', k = 0; for (const [a, b] of mg) { h += esc(s.slice(k, a)) + '<mark>' + esc(s.slice(a, b)) + '</mark>'; k = b; } return h + esc(s.slice(k)); };
 const snip = (s, terms, n = 46) => { let i = -1; for (const t of terms) { const m = rx(t).exec(s), j = m ? m.index : -1; if (j >= 0 && (i < 0 || j < i)) i = j; }
   if (i < 0) return s.length > n * 2 ? s.slice(0, n * 2) + '…' : s; const a = Math.max(0, i - n), b = Math.min(s.length, i + n);
   return (a ? '…' : '') + s.slice(a, b) + (b < s.length ? '…' : ''); };
@@ -150,10 +155,10 @@ function scoreP(p, terms) { let s = 0; for (const t of terms) {
   else if (p.zi && p.zi.includes(t)) s += 30; else if (has(p.bio, t) || p.bk.some(b => b[1].includes(t))) s += 5; else return 0; } return s + Math.min(p.ne, 20) / 10; }
 function scoreE(e, terms) { let s = 0; for (const t of terms) {
   const yr = yearOf(t);
-  if (yr != null && e.y === yr) s += 40; else if (has(e.t, t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (has(e.p, t) || has(e.m, t) || has(String(e.cal || '').replace(/载/g, '年'), t.replace(/载/g, '年'))) s += 20;
+  if (yr != null && e.y === yr) s += 40; else if (has(e.t, t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (has(e.p, t) || has(e.m, t) || has(e.cal, t)) s += 20;
   else if (e.who.includes(t)) s += 15; else if (has(e.d, t)) s += 5; else return 0; } return s; }
 function run() {
-  const raw = q.value.trim(), terms = raw.replace(/(前)\\s+(?=\\d)/g, '$1').replace(/(\\d)\\s+年/g, '$1年').split(/\\s+/).filter(Boolean), v = volSel.value === '' ? null : +volSel.value;
+  const raw = q.value.trim(), terms = raw.replace(/(公元|前)\\s+(?=前|\\d)/g, '$1').replace(/(\\d)\\s+年/g, '$1年').split(/\\s+/).filter(Boolean), v = volSel.value === '' ? null : +volSel.value;
   try { history.replaceState(null, '', raw ? '#q=' + encodeURIComponent(raw) + (v != null ? '&v=' + v : '') : '#tab=search'); } catch (err) {}
   const on = terms.length > 0; res.hidden = opts.hidden = !on; $('#shint').hidden = on; if (!on) return;
   const psS = filt === 'e' ? [] : PP.filter(p => v == null || p.bk.some(b => b[0] === v)).map(p => [p, scoreP(p, terms)]).filter(x => x[1]).sort((a, b) => b[1] - a[1]), ps = psS.map(x => x[0]);

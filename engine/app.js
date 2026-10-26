@@ -268,7 +268,14 @@ const HOME = (() => {
   const k = Math.min(1, W / (x1 - x0), H / (y1 - y0));
   return d3.zoomIdentity.translate(W / 2 - k * (x0 + x1) / 2, H / 2 - k * (y0 + y1) / 2).scale(k);
 })();
-const zoom = d3.zoom().scaleExtent([Math.min(1, HOME.k), 9]).translateExtent(BASEMAP.pan || [[0, 0], [W, H]])
+// 平移范围：底图配置的 pan 与本卷 view 的投影范围取并集（view 西北角超出 pan 时，全景不被挤偏）
+const PAN = (() => {
+  const p = BASEMAP.pan || [[0, 0], [W, H]];
+  if (!B.view) return p;
+  const ps = B.view.map(c => proj(c)), xs = ps.map(q => q[0]), ys = ps.map(q => q[1]);
+  return [[Math.min(p[0][0], ...xs), Math.min(p[0][1], ...ys)], [Math.max(p[1][0], ...xs), Math.max(p[1][1], ...ys)]];
+})();
+const zoom = d3.zoom().scaleExtent([Math.min(1, HOME.k), 9]).translateExtent(PAN)
   .on('zoom', e => {
     root.attr('transform', e.transform); K = e.transform.k;
     root.selectAll('.sc').attr('transform', `scale(${1 / K})`);
@@ -285,10 +292,11 @@ $('#zin').onclick = () => svg.transition().duration(300).call(zoom.scaleBy, 1.6)
 $('#zout').onclick = () => svg.transition().duration(300).call(zoom.scaleBy, 1 / 1.6);
 $('#zreset').onclick = () => svg.transition().duration(400).call(zoom.transform, HOME);
 function focusPoint(p) {
-  if (K < HOME.k * 1.15) return;
   const t = d3.zoomTransform(svg.node());
   const [x, y] = t.apply(p);
-  if (x > 80 && x < W - 80 && y > 80 && y < H - 80) return;
+  // 全景缩放下只在落点出了屏幕时才平移；放大后离边缘不足 80 像素也平移
+  const m = K < HOME.k * 1.15 ? 10 : 80;
+  if (x > m && x < W - m && y > m && y < H - m) return;
   svg.transition().duration(500).call(zoom.translateTo, p[0], p[1]);
 }
 
@@ -504,6 +512,8 @@ function setStep(k, toYearView) {
   // 拖到没有事件的年初一步：回到当年的年份视图（不压入返回栈）
   const swap = state.view.t === 'event' && STEPS[k].ev !== state.view.i;
   if (swap) { if (STEPS[k].ev != null) state.view = { t: 'event', i: STEPS[k].ev }; else { state.view = { t: state.tab === 'people' ? 'people' : state.tab === 'events' ? 'events' : 'year' }; state.stack = []; state.sel = null; state.person = null; } }
+  // 沿人物行迹浏览时翻到、拖到与此人无关的事件：退出行迹模式
+  if (state.view.t === 'event' && state.person && !PEOPLE.get(state.person).ev.includes(state.view.i)) state.person = null;
   renderStamp();
   if (changed || toYearView) { renderTerritory(); }
   renderEvents();
@@ -571,6 +581,7 @@ function openEvent(i, fromMap) {
   const e = EVENTS[i];
   if (fromMap && state.view.t !== 'person' && !(state.view.t === 'event' && state.person)) state.person = null;
   go({ t: 'event', i }); state.sel = i;
+  if (state.person && !PEOPLE.get(state.person).ev.includes(i)) state.person = null;
   if (EV_STEP[i] !== state.step) { state.step = EV_STEP[i]; state.year = e.y; range.value = state.step; renderStamp(); renderTerritory(); markTimeline(); }
   renderEvents(); renderPanel(); focusPoint(proj(e.ll)); storyCursor();
 }
@@ -672,8 +683,11 @@ function renderPerson(n) {
   const evs = p.ev.slice().sort((a, b) => EV_STEP[a] - EV_STEP[b]).map(i => EVENTS[i]);
   // 合集里，此人在其他卷的事件按时间插入，标明见第几卷，点击跳到那一卷的该事件
   // 两卷重叠处同一事件在本卷已有的，不再重复列出：同年，且标题有一段相同（如“商鞅变法”与“商鞅变法 · 徙木立信”、“魏拔邯郸 · 桂陵之战”与“桂陵之战 · 围魏救赵”）
-  const segs = t => t.split(' · '), sameEv = (e, y, t) => e.y === y && segs(e.t).some(s => segs(t).includes(s));
-  const others = (SER && SER.people && SER.people[n] || []).filter(x => x[0] !== serIdx && !evs.some(e => sameEv(e, x[1], x[3]))).map(([k, y, mo, t, post]) => ({ k, y, mo, t, post }));
+  // 同年、月份相差不超过两个月，且标题有一段相同；或同月且某两段开头两字以上相同（“曹丕代汉”与“曹丕称帝”）
+  const segs = t => t.split(' · '), pre = (u, v) => { let k = 0; while (k < u.length && u[k] === v[k]) k++; return k; };
+  const sameEv = (e, y, mo, t) => e.y === y && Math.abs(e.mo - mo) <= 2 && (segs(e.t).some(s => segs(t).includes(s))
+    || Math.floor(e.mo) === Math.floor(mo) && segs(e.t).some(s => segs(t).some(u => pre(s, u) >= 2)));
+  const others = (SER && SER.people && SER.people[n] || []).filter(x => x[0] !== serIdx && !evs.some(e => sameEv(e, x[1], x[2], x[3]))).map(([k, y, mo, t, post]) => ({ k, y, mo, t, post }));
   const merged = [...evs.map(e => ({ e, y: e.y, mo: e.mo })), ...others].sort((u, v) => u.y - v.y || u.mo - v.mo || (u.e ? serIdx : u.k) - (v.e ? serIdx : v.k));
   const co = new Map();
   evs.filter(e => !isPost(e, n)).forEach(e => e.who.forEach(w => { if (w !== n && !isPost(e, w)) co.set(w, (co.get(w) || 0) + 1); }));

@@ -2,12 +2,13 @@
 // 检查地图上相邻色块的颜色是否相近：在构建好的页面（合集各卷 dist/series/<书>/index.html，独立书 dist/<书>/index.html）里
 // 按页面实际的拼块归属求出相邻的种子点，逐个时间步列出接壤的势力对，计算两色的 CIELAB ΔE。
 // ΔE 低于阈值（默认 20）的标 ✗。需要本机的 Chrome（无头模式）。
-const fs = require('fs'), path = require('path'), os = require('os'), { execFileSync } = require('child_process');
+const fs = require('fs'), path = require('path');
 const R = path.join(__dirname, '..');
 const args = process.argv.slice(2), th = +((args.find(a => a.startsWith('--th=')) || '--th=20').slice(5));
 const ids = args.filter(a => !a.startsWith('--')).length ? args.filter(a => !a.startsWith('--')) : require('./books.js')();
 const inSeries = JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
-const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const { findChrome, tempDir, dumpDom } = require('./chrome.js');
+const CHROME = findChrome();
 const probe = `
 ;(() => {
   const lab = h => { let [r, g, b] = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(c => (c > .04045 ? ((c + .055) / 1.055) ** 2.4 : c / 12.92)); const x = (r * .4124 + g * .3576 + b * .1805) / .95047, y = r * .2126 + g * .7152 + b * .0722, z = (r * .0193 + g * .1192 + b * .9505) / 1.08883; const f = t => (t > .008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116); return [116 * f(y) - 16, 500 * (f(x) - f(y)), 200 * (f(y) - f(z))]; };
@@ -24,7 +25,7 @@ const probe = `
   document.documentElement.setAttribute('data-adj', JSON.stringify(out));
 })();
 })();`;
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'adj-'));
+const tmp = tempDir('adj-');
 let bad = 0;
 for (const id of ids) {
   // 合集各卷在 dist/series/<书>/（build-series.mjs），独立成书的在 dist/<书>/（node build.mjs <书>）
@@ -33,7 +34,7 @@ for (const id of ids) {
   let html = fs.readFileSync(src, 'utf8'); const k = html.lastIndexOf('})();');
   html = html.slice(0, k) + probe + html.slice(k + 5);
   fs.mkdirSync(path.join(tmp, id), { recursive: true }); fs.writeFileSync(path.join(tmp, id, 'index.html'), html);
-  const dom = execFileSync(CHROME, ['--headless=new', '--disable-gpu', '--virtual-time-budget=20000', '--dump-dom', 'file://' + path.join(tmp, id, 'index.html')], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 1 << 28 });
+  const dom = dumpDom(CHROME, path.join(tmp, id, 'index.html'), tmp);
   const m = dom.match(/data-adj="([^"]*)"/); if (!m) { console.log(`== ${id}：页面没有返回结果`); continue; }
   const rows = JSON.parse(m[1].replace(/&quot;/g, '"').replace(/&amp;/g, '&')).sort((a, b) => a[4] - b[4]);
   const hit = rows.filter(r => r[4] < th);

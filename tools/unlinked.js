@@ -14,7 +14,8 @@ const poolOf = id => {
   const names = new Set(Object.keys(pc)); near.forEach(b => get(b).PEOPLE_RAW.forEach(p => names.add(p[0])));
   const X = get(id), stop = new Set();
   Object.values((X.BOOK.calendar || {}).eras || {}).forEach(l => l.forEach(it => it[1] && stop.add(it[1])));
-  Object.values(X.FACTIONS).forEach(F => { try { F.name(X.BOOK.range[0]).split(/[（）·\s]+/).forEach(w => w && stop.add(w)); } catch (e) {} });
+  // 势力名只取括号外的国号部分作停用词（“吴（杨行密）”只停用“吴”）；括号里的君主、首领名照常检查
+  Object.values(X.FACTIONS).forEach(F => { try { F.name(X.BOOK.range[0]).replace(/（[^）]*）/g, ' ').split(/[·\s]+/).forEach(w => w && stop.add(w)); } catch (e) {} });
   // 只取两字以上；一个名字是另一个名字的一部分时，以最长匹配为准
   return [...names].filter(n => n.length >= 2 && !stop.has(n)).sort((a, b) => b.length - a.length);
 };

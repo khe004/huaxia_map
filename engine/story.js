@@ -1,7 +1,10 @@
 // ---------- 人物交汇图：横轴为事件（时间顺序），纵轴为地点（按州、郡），人物画成线 ----------
 const story = $('#story'), sLeft = $('#s-left'), sScroll = $('#s-scroll'), sBody = $('#s-body'), sChips = $('#s-chips');
 const ZHOU_ORDER = B.regions?.order || [];
+// 事件归入哪一郡：与地图一致，先取事件点所在的拼块（已按 UNIT_OVERRIDES 归属），落在拼块外（海上、境外）再取最近的种子点
 function nearestSeed([lon, lat]) {
+  const f = UF.features.find(u => d3.geoContains(u, [lon, lat]));
+  if (f && SEEDS[f.properties.j] && SEEDS[f.properties.j].z !== 'x') return f.properties.j;
   let best = -1, bd = Infinity;
   SEEDS.forEach((s, i) => { if (s.z === 'x') return; const dx = (s.lon - lon) * Math.cos(lat * Math.PI / 180), dy = s.lat - lat, d = dx * dx + dy * dy; if (d < bd) { bd = d; best = i; } });
   return best;
@@ -142,7 +145,7 @@ function storyCursor(scroll = true) {
   }
 }
 function storyFocus(n) {
-  if (story.hidden) return;
+  if (story.hidden || !n) return;
   if (!sel.includes(n) && storyable(n)) { sel = sel.concat(n); saveSel(); renderChips(); }
   renderStory();
 }
@@ -155,7 +158,8 @@ function setMode(m) {
   $('.toggles').hidden = m !== 'map';
   document.querySelectorAll('#viewsw button').forEach(b => b.classList.toggle('on', b.dataset.mode === m));
   hideTip();
-  if (m === 'story') { renderChips(); renderStory(); storyCursor(); }
+  // 切到交汇图时，地图上已选中的人物加入交汇图
+  if (m === 'story') { if (state.person && !sel.includes(state.person) && storyable(state.person)) { sel = sel.concat(state.person); saveSel(); } renderChips(); renderStory(); storyCursor(); }
 }
 $('#viewsw').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setMode(b.dataset.mode); });
 addEventListener('resize', () => { if (!story.hidden) renderStory(); });

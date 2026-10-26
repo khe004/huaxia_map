@@ -24,7 +24,17 @@ function erasFor(C, y) {
 const eraFmt = x => (x.d && !x.s.startsWith(x.d) ? x.d : '') + x.s;
 function calText(e, C, range, eras) {
   const es0 = eras(e.y);
-  if (!e.cal) return !es0.length ? '' : es0.length === 1 ? es0[0].s : es0.map(eraFmt).join(' · ');
+  if (!e.cal) {
+    // 没写原书纪年的事件：年中改元、建国的（eras 第四项），按事件月份取新旧年号，事件在建国之前的不列
+    const es = es0.map(x => {
+      const list = (C.eras || {})[x.d] || [], cur = list.filter(it => it[0] <= e.y).pop(), sp0 = (C.spans || {})[x.d];
+      if (sp0 && sp0[2] && sp0[1] === e.y && e.mo >= sp0[2]) return null;
+      if (!cur || cur[0] !== e.y || (cur[2] || 1) > 1 || !cur[3] || e.mo >= cur[3]) return x;
+      const prev = list.filter(it => it[0] < e.y).pop(), sp = (C.spans || {})[x.d];
+      return prev && prev[1] && !(sp && sp[0] === e.y && sp[0] > range[0]) ? { d: x.d, s: eraLabel(C, x.d, prev, e.y, null) } : null;
+    }).filter(Boolean);
+    return !es.length ? '' : es.length === 1 ? es[0].s : es.map(eraFmt).join(' · ');
+  }
   // 春秋卷：cal 用鲁历，补周王纪年（王年踰年改元，按公历年即可）
   if (C.label) {
     const hit = es0.filter(x => e.cal.includes(x.s)); if (!hit.length) return e.cal;
@@ -53,20 +63,28 @@ function calText(e, C, range, eras) {
     const ds = [...new Set([...es0, ...eras(prevY)].filter(x => nm(x) && (e.cal.startsWith(nm(x)) || e.cal.startsWith(x.d + nm(x)))).map(x => x.d))];
     return es0.length > 1 && ds.length === 1 && !e.cal.startsWith(ds[0]) ? ds[0] + e.cal : e.cal;
   }
-  const es = eras(yr), head = es.length > 1 && !e.cal.startsWith(own) ? own + e.cal : e.cal;
-  // 他家的元年（年中改元）与卷末之前结束的最后一年（年中亡国）未必覆盖事件所在月份，不补；纪年写到卷末只是本卷止于此年
-  const ends = x => { const sp = (C.spans || {})[x.d]; return sp && sp[1] === yr && sp[1] < range[1]; };
+  // 夏历十二月折成公历次年的（yr 比事件公历年早一年），e.y 才开始的一家若在 yr 年末已改元（第四项写 13），也要补出
+  const es = eras(yr), es1 = yr < e.y ? eras(e.y).filter(x => !es.some(z => z.d === x.d)).map(x => ({ ...x, late: 1 })) : [];
+  // 事件月份折算到 yr 这一年（夏历十二月折成公历次年的，算作 yr 的第 13 个月）
+  const mon = e.mo + 12 * (e.y - yr);
+  // 他家的元年（年中改元）与卷末之前结束的最后一年（年中亡国）未必覆盖事件所在月份，不补；纪年写到卷末只是本卷止于此年。
+  // spans 写第三项（亡国或停用的公历月份）时，这一年在此月之前的事件照补
+  const ends = x => { const sp = (C.spans || {})[x.d]; return sp && sp[1] === yr && (sp[2] ? mon >= sp[2] : sp[1] < range[1]); };
   // 他家这一年改元的：给了改元月份（C.eras 第四项）就按事件月份取新旧年号，没给的不补
   const other = x => {
     const list = (C.eras || {})[x.d] || [], cur = list.filter(it => it[0] <= yr).pop();
-    if (!cur || !cur[1] || cur[0] !== yr) return x.s;
+    if (!cur || !cur[1]) return null;
+    if (x.late) return cur[0] === yr && cur[3] && mon >= cur[3] ? eraLabel(C, x.d, cur, yr, null) : null;
+    // 第三项大于 1 的（[558, '明帝', 2]）是接续纪年，不是这一年改元
+    if (cur[0] !== yr || (cur[2] || 1) > 1) return x.s;
     if (!cur[3]) return null;
-    // 事件月份折算到 yr 这一年（夏历十二月折成公历次年的，算作 yr 的第 13 个月）
-    if (e.mo + 12 * (e.y - yr) >= cur[3]) return eraLabel(C, x.d, cur, yr, null);
+    if (mon >= cur[3]) return eraLabel(C, x.d, cur, yr, null);
     const prev = list.filter(it => it[0] < yr).pop();
     const sp = (C.spans || {})[x.d];
-    return prev && prev[1] && !(sp && sp[0] === yr) ? eraLabel(C, x.d, prev, yr, null) : null;
+    return prev && prev[1] && !(sp && sp[0] === yr && sp[0] > range[0]) ? eraLabel(C, x.d, prev, yr, null) : null;
   };
-  const more = es.filter(x => x.d !== own && !ends(x)).map(x => ({ d: x.d, s: other(x) })).filter(x => x.s && !e.cal.includes(x.s));
+  const more = [...es, ...es1].filter(x => x.d !== own && !ends(x)).map(x => ({ d: x.d, s: other(x) })).filter(x => x.s && !e.cal.includes(x.s));
+  // 只剩本家一种纪年时不加国号
+  const head = more.length && !e.cal.startsWith(own) ? own + e.cal : e.cal;
   return [head, ...more.map(eraFmt)].join(' · ');
 }

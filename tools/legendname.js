@@ -23,12 +23,13 @@ const OK = new Set([
 ]);
 let n = 0;
 for (const id of ids) {
-  const { X: { BOOK: B, FACTIONS: F, SEEDS_RAW, SNAPSHOTS, EVENTS, PEOPLE_RAW }, steps, tOf } = require('./steps.js').load(id);
+  const { X, X: { BOOK: B, FACTIONS: F, SEEDS_RAW, SNAPSHOTS, EVENTS, PEOPLE_RAW }, steps, tOf } = require('./steps.js').load(id);
   const seeds = SEEDS_RAW.split(/\s{2,}|\n+/).map(s => s.trim()).filter(Boolean).map(s => { const [z, n] = s.split('|'); return { z, n }; });
   const by = new Map(); seeds.forEach((s, i) => s.z !== 'x' && by.set(s.n, i));
   const resolve = (tok, cur) => { const out = []; for (const t of tok.split(/\s+/).filter(Boolean)) {
     if (t === '*') seeds.forEach((s, i) => s.z !== 'x' && out.push(i)); else if (t[0] === '@') seeds.forEach((s, i) => s.z === t.slice(1) && out.push(i));
     else if (t[0] === '#') cur.forEach((f, i) => f === t.slice(1) && out.push(i)); else if (by.has(t)) out.push(by.get(t)); } return out; };
+  const HL = require('./land.js').land({ BOOK: B, SEEDS_RAW, UNIT_OVERRIDES: X.UNIT_OVERRIDES || {} }).hasLand;
   let cur = seeds.map(s => (s.z === 'x' ? 'x' : B.baseFaction)), si = 0;
   if (SNAPSHOTS.length) { for (const [f, tok] of SNAPSHOTS[0][2]) resolve(tok, cur).forEach(i => { cur[i] = f; }); si = 1; }
   const out = []; let prev = null;
@@ -40,7 +41,8 @@ for (const id of ids) {
   const base = x => x.replace(/（[^）]*）/g, '');
   steps.forEach((st, k) => {
     while (si < SNAPSHOTS.length && tOf(SNAPSHOTS[si][0], SNAPSHOTS[si][1]) <= st.t + 1e-9) { for (const [f, tok] of SNAPSHOTS[si][2]) resolve(tok, cur).forEach(i => { cur[i] = f; }); si++; }
-    const shown = new Set(cur.filter(f => f !== 'x' && F[f]));
+    // 图例只列分得到地块的势力（与引擎 HAS_LAND 一致，见 tools/land.js）
+    const shown = new Set(cur.filter((f, i) => f !== 'x' && F[f] && HL.has(i)));
     const now = {}; for (const f of shown) now[f] = labels(f, st.t);
     if (prev) for (const f of shown) if (prev[f]) for (const kind of Object.keys(now[f])) {
       const a = prev[f][kind], b = now[f][kind]; if (a == null || b == null || a === b) continue;

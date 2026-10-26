@@ -50,7 +50,8 @@ function initAudio() {
   src.connect(lp).connect(bp).connect(wg).connect(master); src.start(); lfo.start(); lfo2.start();
   Object.assign(music, { ctx, master, rev });
 }
-function voiceOut(t, wet = .5) { const g = music.ctx.createGain(); g.connect(music.master); const s = music.ctx.createGain(); s.gain.value = wet; g.connect(s).connect(music.rev); return g; }
+// 各声部接到本次播放的总线上（bus 直通、wet 进混响）；关闭时断开总线，已排程的音符随之静默
+function voiceOut(t, wet = .5) { const g = music.ctx.createGain(); g.connect(music.bus); const s = music.ctx.createGain(); s.gain.value = wet; g.connect(s).connect(music.wet); return g; }
 
 // —— 乐器 ——
 function qin(t, f, vel = 1, len = 2.6) {
@@ -174,7 +175,11 @@ function musicOn() {
     if (!music.audio) { music.audio = new Audio(music.file); music.audio.loop = true; music.audio.volume = .6; }
     music.audio.play().catch(() => {});
   } else {
-    initAudio(); music.ctx.resume();
+    initAudio(); clearTimeout(music.sleep); music.ctx.resume();
+    // 快速重开：上一次已排程而未奏完的音符立即断开，免得新旧小节叠音
+    (music.old || []).forEach(n => n.disconnect()); music.old = null;
+    music.bus = music.ctx.createGain(); music.bus.connect(music.master);
+    music.wet = music.ctx.createGain(); music.wet.connect(music.rev);
     music.master.gain.cancelScheduledValues(music.ctx.currentTime);
     music.master.gain.setTargetAtTime(.75, music.ctx.currentTime, .6);
     music.nextBar = music.ctx.currentTime + .2; music.plan = null; music.bar = 0;
@@ -184,7 +189,13 @@ function musicOn() {
 }
 function musicOff() {
   if (music.audio) music.audio.pause();
-  if (music.ctx) { music.master.gain.setTargetAtTime(0, music.ctx.currentTime, .3); clearInterval(music.timer); }
+  if (music.ctx) {
+    music.master.gain.setTargetAtTime(0, music.ctx.currentTime, .3); clearInterval(music.timer);
+    // 淡出后断开已排程的音符（最多提前约 1.2 秒排到的小节），并挂起音频上下文，停止后台运算
+    if (music.bus) music.old = [music.bus, music.wet];
+    music.bus = music.wet = null; clearTimeout(music.sleep);
+    music.sleep = setTimeout(() => { (music.old || []).forEach(n => n.disconnect()); music.old = null; if (!music.on) music.ctx.suspend(); }, 1500);
+  }
   music.on = false; renderMusicBtn();
 }
 function renderMusicBtn() {

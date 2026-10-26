@@ -10,7 +10,7 @@ const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./bo
 const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.PC=commonOf', pc);
 const yr = (q, n) => (n ? (q ? -n : +n) : null);
 const lifeOf = s => { const m = (s || '').match(/^约?(前)?(\d+)?\??\s*[–-]\s*约?(前)?(\d+)?/); return m ? [yr(m[1], m[2]), yr(m[3], m[4])] : [null, null]; };
-const DEATH = /(之死|卒|崩|自杀|被杀|遇刺|遇害|自刎|自刭|自缢|自经|饿死|被醢|弃市|腰斩|被弑|饮酖|败亡|伏诛|之诛|族诛|死于)/;
+const { DEATH, diesIn } = require('./death.js');
 const CN = { 正: 1, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 十一: 11, 十二: 12 };
 let total = 0;
 for (const id of ids) {
@@ -22,10 +22,8 @@ for (const id of ids) {
   const out = [], post = (e, n) => (e.post || []).includes(n);
   // 1
   const dead = new Map();
-  // “斩、杀、诛、鸩、弑”只算紧跟其后的人名（“马援斩征侧”是征侧死，不是马援死）
-  const slain = (s, n) => new RegExp('(斩|杀|诛|鸩|弑)' + n).test(s);
-  for (const e of E) for (const n of e.who) { const seg = e.t.split(' · ').find(s => s.includes(n)) || '';
-    if (e.t.includes(n) && (DEATH.test(seg.replace(new RegExp('(斩|杀|诛|鸩|弑)[^ ·]*'), m => (m.includes(n) ? m : ''))) || slain(seg, n))) dead.has(n) || dead.set(n, e); }
+  // 死亡事件的判断与 posthumous.js 相同（tools/death.js）
+  for (const e of E) for (const n of e.who) if (diesIn(e, n)) dead.has(n) || dead.set(n, e);
   for (const e of E) for (const n of e.who) { const d = dead.get(n); if (d && e.k > d.k && !post(e, n)) out.push(`  ✗ ${n} 死于「${d.t}」(${d.y}/${d.mo})，之后又出现在「${e.t}」(${e.y}/${e.mo})`); }
   // 2
   for (const e of E) for (const n of e.who) { const [b] = life.get(n) || []; if (b != null && e.y < b) out.push(`  ✗ ${n} 生于 ${b}，却出现在「${e.t}」(${e.y})`); }
@@ -37,7 +35,7 @@ for (const id of ids) {
   for (const e of E) { if (e.zm === 1 || /始建国|天凤|地皇/.test(e.cal || '') || /(载初|天授|如意|长寿|延载|证圣|天册万岁|万岁登封|万岁通天|神功|圣历|久视)[^月]*(正|腊)月/.test(e.cal || '')) continue; const m = (e.cal || '').match(/(?:^|[年载])[春夏秋冬]?(闰)?(正|十二|十一|十|一|二|三|四|五|六|七|八|九)月/); if (!m) continue;
     const d = ((Math.floor(e.mo) - CN[m[2]]) % 12 + 12) % 12; rows.push([e, d, m[0]]); off.set(d, (off.get(d) || 0) + 1); }
   const main = [...off].sort((a, b) => b[1] - a[1])[0];
-  for (const [e, d, s] of rows) if (main && d !== main[0] && !(e.cal.includes('闰') && d === (main[0] + 11) % 12) && Math.floor(e.mo) === e.mo) out.push(`  ? 「${e.t}」cal ${e.cal} 与 mo ${e.mo} 的换算（差 ${d} 个月）和本卷多数（差 ${main[0]}）不同`);
+  for (const [e, d, s] of rows) if (main && d !== main[0] && !(e.cal.includes('闰') && (d === (main[0] + 11) % 12 || d === (main[0] + 1) % 12)) && Math.floor(e.mo) === e.mo) out.push(`  ? 「${e.t}」cal ${e.cal} 与 mo ${e.mo} 的换算（差 ${d} 个月）和本卷多数（差 ${main[0]}）不同`);
   // 4
   for (let k = 1; k < E.length; k++) { const a = E[k - 1], b = E[k]; if (a.y !== b.y || Math.floor(a.mo) !== Math.floor(b.mo)) continue;
     for (const n of b.who) if (a.d.includes(n + '死后') || a.d.includes(n + '死前')) {} 

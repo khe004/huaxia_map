@@ -6,7 +6,7 @@ const tOf = (y, m) => y + (m - 1) / 12;
 function load(id) {
   const c = {}; vm.createContext(c);
   vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`, 'utf8') +
-    ';this.X={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS,EVENTS,PHASES,PEOPLE_RAW,CITIES:typeof CITIES==="undefined"?[]:CITIES}', c);
+    ';this.X={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS,EVENTS,PHASES,PEOPLE_RAW,CITIES:typeof CITIES==="undefined"?[]:CITIES,UNIT_OVERRIDES:typeof UNIT_OVERRIDES==="undefined"?{}:UNIT_OVERRIDES}', c);
   const X = c.X, { BOOK: B, FACTIONS: F, SNAPSHOTS, EVENTS, PHASES, CITIES } = X, [Y0, Y1] = B.range;
   let YEARS = [];
   if (B.yearStride) {
