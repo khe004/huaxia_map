@@ -91,7 +91,8 @@ function eras(y) { return erasFor(B.calendar || {}, y); }
 function ganzhi(y) { if (APPROX(y)) return ''; const a = y < 0 ? y + 1 : y; const i = ((a - 4) % 60 + 60) % 60; return '甲乙丙丁戊己庚辛壬癸'[i % 10] + '子丑寅卯辰巳午未申酉戌亥'[i % 12]; }
 function phaseOf(y) { return PHASES.find(p => y >= p[0] && y <= p[1]) || [y, y, '']; }
 /*CAL*/
-function eraLine(y, sep = ' · ') { const es = eras(y); return !es.length ? '' : es.length === 1 ? es[0].s : es.map(eraFmt).join(sep); }
+// 时间轴与年份标题只列 BOOK.calendar.axis 中的几家（五代十国并存的年号太多）；事件详情仍按家补全
+function eraLine(y, sep = ' · ') { const ax = (B.calendar || {}).axis, es = eras(y).filter(x => !ax || ax.includes(x.d)); return !es.length ? '' : es.length === 1 ? es[0].s : es.map(eraFmt).join(sep); }
 const calLine = e => calText(e, B.calendar || {}, B.range, eras);
 const yearLine = (y, sep = ' · ') => [ganzhi(y) && ganzhi(y) + '年', eraLine(y, sep)].filter(Boolean).join(sep);
 const fName = (f, y) => FACTIONS[f].name(y);
