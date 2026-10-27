@@ -21,6 +21,11 @@ function erasFor(C, y) {
   }
   return out;
 }
+// 本年改元的 cur 尚未生效时，事件所在月份用的年号：往前找，同一年先后改元两次的（契丹大同、天禄）取月份已到的那一个
+const prevEra = (list, cur, y, mon) => {
+  for (let i = list.indexOf(cur) - 1; i >= 0; i--) { const it = list[i]; if (it[0] < y || (it[0] === y && it[3] && mon >= it[3])) return it; }
+  return null;
+};
 const eraFmt = x => (x.d && !x.s.startsWith(x.d) ? x.d : '') + x.s;
 function calText(e, C, range, eras) {
   const es0 = eras(e.y);
@@ -30,7 +35,7 @@ function calText(e, C, range, eras) {
       const list = (C.eras || {})[x.d] || [], cur = list.filter(it => it[0] <= e.y).pop(), sp0 = (C.spans || {})[x.d];
       if (sp0 && sp0[2] && sp0[1] === e.y && e.mo >= sp0[2]) return null;
       if (!cur || cur[0] !== e.y || (cur[2] || 1) > 1 || !cur[3] || e.mo >= cur[3]) return x;
-      const prev = list.filter(it => it[0] < e.y).pop(), sp = (C.spans || {})[x.d];
+      const prev = prevEra(list, cur, e.y, e.mo), sp = (C.spans || {})[x.d];
       return prev && prev[1] && !(sp && sp[0] === e.y && sp[0] > range[0]) ? { d: x.d, s: eraLabel(C, x.d, prev, e.y, null) } : null;
     }).filter(Boolean);
     return !es.length ? '' : es.length === 1 ? es[0].s : es.map(eraFmt).join(' · ');
@@ -46,16 +51,19 @@ function calText(e, C, range, eras) {
   const num = s => (s === '元' ? 1 : s.includes('十') ? (d1(s.split('十')[0]) || 1) * 10 + d1(s.split('十')[1]) : d1(s));
   // 上一年：公历无 0 年，公元 1 年的上一年是前 1 年（-1）
   const prevY = e.y === 1 ? -1 : e.y - 1;
-  let own = null, yr = e.y, best = 0;
+  let own = null, yr = e.y, best = 0, ownSt = -Infinity;
   // cal 可以带国号（“魏正始十年”“后赵建武四年”）：去掉与该家国号相同的前缀再匹配年号名
   for (const d of Object.keys(C.eras || {})) for (const [st, name, n0 = 1] of C.eras[d]) {
     if (!name) continue;
     const body = e.cal.startsWith(d + name) ? e.cal.slice(d.length) : e.cal;
-    if (name.length <= best || !body.startsWith(name)) continue;
+    // 两家同名年号推出同一年的（晋、汉都有天福十二年），取后起的一家
+    if (name.length < best || !body.startsWith(name)) continue;
     const m = body.slice(name.length).match(/^(元|[〇一二三四五六七八九十]+)[年载]/); if (!m) continue;
+    // 接续纪年（[936, '长兴', 7]）只认第 n0 年以后，长兴元年仍归原来的一家
+    if (num(m[1]) < n0) continue;
     let y = st + num(m[1]) - n0; if (st < 0 && y >= 0) y++;
     // 周正的正月（夏历十一月）落在公历上一年末：年号所在年份比事件的公历年晚一年
-    if (y === e.y || y === prevY || y === e.y + 1) { own = d; yr = y; best = name.length; }
+    if ((y === e.y || y === prevY || y === e.y + 1) && !(name.length === best && st <= ownSt)) { own = d; yr = y; best = name.length; ownSt = st; }
   }
   if (!own) {
     // 推不出年份（如“景元年间”）时，只按本年与上一年在用的年号名定所属，多家并列时加国号
@@ -76,10 +84,10 @@ function calText(e, C, range, eras) {
     if (!cur || !cur[1]) return null;
     if (x.late) return cur[0] === yr && cur[3] && mon >= cur[3] ? eraLabel(C, x.d, cur, yr, null) : null;
     // 第三项大于 1 的（[558, '明帝', 2]）是接续纪年，不是这一年改元
-    if (cur[0] !== yr || (cur[2] || 1) > 1) return x.s;
+    if (cur[0] !== yr || ((cur[2] || 1) > 1 && !cur[3])) return x.s;
     if (!cur[3]) return null;
     if (mon >= cur[3]) return eraLabel(C, x.d, cur, yr, null);
-    const prev = list.filter(it => it[0] < yr).pop();
+    const prev = prevEra(list, cur, yr, mon);
     const sp = (C.spans || {})[x.d];
     return prev && prev[1] && !(sp && sp[0] === yr && sp[0] > range[0]) ? eraLabel(C, x.d, prev, yr, null) : null;
   };
