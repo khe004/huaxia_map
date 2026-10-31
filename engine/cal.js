@@ -5,7 +5,10 @@
 // 同一年先后改元的（嗣圣、文明、光宅），这一年合写作“嗣圣、文明、光宅元年”；C.zai 让天宝三载至至德三载写“载”
 const cnNumC = n => { const D = '〇一二三四五六七八九'; if (n === 1) return '元'; if (n < 10) return D[n]; const t = Math.floor(n / 10), o = n % 10; return (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
 const zaiOfC = (C, y, k) => { const z = Array.isArray(C.zai) ? C.zai : (C.zai || {})[k]; return z && y >= z[0] && y <= z[1] ? '载' : '年'; };
+// 不立年号的一家（中统以前的蒙古）：C.eras 写 [起年, '#干支']，按公历年的干支记作“丙寅年”
+const ganzhiC = y => { const g = ((y - 4) % 60 + 60) % 60; return '甲乙丙丁戊己庚辛壬癸'[g % 10] + '子丑寅卯辰巳午未申酉戌亥'[g % 12]; };
 const eraLabel = (C, k, it, y, all) => {
+  if (it[1] === '#干支') return ganzhiC(y) + '年';
   const n = y - it[0] + (it[2] || 1) - (it[0] < 0 && y > 0 ? 1 : 0);
   const same = n === 1 && all ? all.filter(x => x[0] === y && (x[2] || 1) === 1) : [];
   return (same.length > 1 ? same.map(x => x[1]).join('、') : it[1]) + cnNumC(n) + zaiOfC(C, y, k);
@@ -54,7 +57,7 @@ function calText(e, C, range, eras) {
   let own = null, yr = e.y, best = 0, ownSt = -Infinity;
   // cal 可以带国号（“魏正始十年”“后赵建武四年”）：去掉与该家国号相同的前缀再匹配年号名
   for (const d of Object.keys(C.eras || {})) for (const [st, name, n0 = 1] of C.eras[d]) {
-    if (!name) continue;
+    if (!name || name[0] === '#') continue;
     const body = e.cal.startsWith(d + name) ? e.cal.slice(d.length) : e.cal;
     // 两家同名年号推出同一年的（晋、汉都有天福十二年），取后起的一家
     if (name.length < best || !body.startsWith(name)) continue;
