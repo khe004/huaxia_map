@@ -44,6 +44,9 @@ const BOOK = {
   },
   realms: { zhong: '清', fan: '四邻' },
   looseRealms: ['zhong', 'fan'],
+  // 底图范围以外的周边陆地按所属上色（只上色，不分种子点）：西伯利亚等俄国本土、日本本土与千岛
+  // 千岛群岛北部 1875 年《库页岛千岛群岛交换条约》归日本（本卷无此事件，按条约签订的五月切换）
+  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': [[1865, 'eluosi'], [1875.33, 'riben']] },
   calendar: {
     eras: { 清: [[1865, '同治', 4], [1875, '光绪']] },
     spans: { 清: [1865, 1885] },

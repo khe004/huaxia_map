@@ -44,6 +44,8 @@ const BOOK = {
   },
   realms: { zhong: '清', fan: '四邻' },
   looseRealms: ['zhong', 'fan'],
+  // 底图范围以外的周边陆地按所属上色（只上色，不分种子点）：西伯利亚等俄国本土
+  outer: { Russia: 'eluosi' },
   calendar: {
     eras: { 清: [[1690, '康熙', 29]] },
     spans: { 清: [1690, 1722] },

@@ -43,6 +43,8 @@ const BOOK = {
   },
   realms: { zhong: '清与民国', fan: '四邻' },
   looseRealms: ['zhong', 'fan'],
+  // 底图范围以外的周边陆地按所属上色（只上色，不分种子点）：西伯利亚等俄国本土、日本本土与千岛
+  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': 'riben' },
   calendar: {
     eras: { 清: [[1902, '光绪', 28], [1909, '宣统']], 民国: [[1912, '民国', 1, 1]] },
     // 宣统三年岁末（公历 1912 年 2 月 18 日春节之前）清帝退位，没有宣统四年；公历 1912 年只列民国

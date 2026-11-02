@@ -201,6 +201,14 @@ UF.features.forEach((f, k) => {
 });
 const HAS_LAND = new Set(UF.features.map(f => f.properties.j));
 const meshBy = fn => path(topojson.mesh(UNITS, UOBJ, fn));
+// 底图范围以外的周边陆地（UNITS.objects.nb，如俄罗斯西伯利亚、日本本土）按 BOOK.outer 上色：
+// { 周边陆地名: 势力 | [[起始时刻, 势力或 null], …] }；只上色，不分种子点、不计入势力的地块数
+const OUTER = B.outer || {};
+const outerOf = (n, t) => { const v = OUTER[n]; if (!v) return null; if (typeof v === 'string') return v; let f = null; for (const [t0, g] of v) if (t0 <= t + 1e-9) f = g; return f; };
+const NBG = UNITS.objects.nb ? UNITS.objects.nb.geometries : [];
+const OUTF = UNITS.objects.nb ? topojson.feature(UNITS, UNITS.objects.nb).features.map((f, k) => ({ ...f, k })).filter(f => f.geometry && OUTER[f.properties.n]) : [];
+rewind({ features: OUTF });
+const outerCells = root.append('g').selectAll('path').data(OUTF).join('path').attr('class', 'cell').attr('fill', 'transparent').attr('d', path);
 const gTerr = root.append('g');
 const cells = gTerr.selectAll('path').data(UF.features).join('path').attr('class', 'cell').attr('d', path);
 // 势力着色之上只叠中性的局部明暗（已去掉大范围明暗），同一势力内颜色保持一致
@@ -210,10 +218,19 @@ root.append('path').attr('class', 'zhouline').attr('d', meshBy((a, b) => a !== b
 const facBorderIn = root.append('path').attr('class', 'fborder-in');
 const facBorder = root.append('path').attr('class', 'fborder');
 // 拼块外缘：与不上色的陆地相邻的一段按势力国界画粗线，临海的一段画细线
+let OUTER_BORDER = null;
 if (UNITS.objects.nb) {
   const ALL = { type: 'GeometryCollection', geometries: [...UNITS.objects.units.geometries, ...UNITS.objects.nb.geometries] };
   const inS = g => g.properties && g.properties.j != null;
-  root.append('path').attr('class', 'fborder').attr('d', path(topojson.mesh(UNITS, ALL, (a, b) => a !== b && inS(a) !== inS(b))));
+  // 与周边陆地相邻的一段：周边陆地按 BOOK.outer 上色且与拼块同属一势力时不画国界（renderTerritory 里按时刻更新）
+  const outerBorder = root.append('path').attr('class', 'fborder');
+  const outerEdge = (st, T) => path(topojson.mesh(UNITS, ALL, (a, b) => {
+    if (a === b || inS(a) === inS(b)) return false;
+    const u = inS(a) ? a : b, o = inS(a) ? b : a;
+    return !(o.properties && st[u.properties.j] === outerOf(o.properties.n, T));
+  }));
+  outerBorder.attr('d', outerEdge(STATES[0], STEPS[0].t));
+  if (OUTF.length) OUTER_BORDER = (st, T) => outerBorder.attr('d', outerEdge(st, T));
   root.append('path').attr('class', 'frontier').attr('d', path(topojson.mesh(UNITS, ALL, (a, b) => a === b && inS(a))));
 } else root.append('path').attr('class', 'frontier').attr('d', meshBy((a, b) => a === b));
 root.append('path').attr('class', 'natline').attr('d', path(GEO.cnout));
@@ -316,6 +333,10 @@ cells.on('mousemove', (ev, d) => {
   const today = d.properties.p === d.properties.n || /^(北京|天津|上海|重庆)$/.test(d.properties.p) ? `今${d.properties.p}${d.properties.p === d.properties.n ? '' : d.properties.n}` : `今${d.properties.p}${d.properties.n}`;
   showTip(ev, `<b>${s.n}</b> <span class="s">· ${s.z}</span><div>属 <span style="color:${fColor(f)}">●</span> ${fName(f, curT())}</div><div class="s">${today}</div>`);
 }).on('mouseleave', hideTip);
+outerCells.on('mousemove', (ev, d) => {
+  const f = outerOf(d.properties.n, curT()); if (!f) return hideTip();
+  showTip(ev, `<b>${fName(f, curT())}</b><div class="s">底图范围以外，只按所属上色</div>`);
+}).on('mouseleave', hideTip);
 
 // ---------- state ----------
 const state = { mode: 'map', step: 0, year: B.startYear || YEARS[0], view: { t: 'year' }, stack: [], person: null, sel: null, tab: 'year' };
@@ -326,6 +347,8 @@ const curT = () => STEPS[state.step].t;
 function renderTerritory() {
   const y = state.year, st = curSt(), T = curT();
   cells.transition().duration(450).attr('fill', d => fillOf(st[d.properties.j]));
+  outerCells.transition().duration(450).attr('fill', d => { const f = outerOf(d.properties.n, T); return f ? fillOf(f) : 'transparent'; });
+  if (OUTER_BORDER) OUTER_BORDER(st, T);
   const fa = (a, b) => a !== b && st[a.properties.j] !== st[b.properties.j];
   facBorder.attr('d', meshBy((a, b) => fa(a, b) && !sameRealm(st[a.properties.j], st[b.properties.j], T)));
   facBorderIn.attr('d', meshBy((a, b) => fa(a, b) && sameRealm(st[a.properties.j], st[b.properties.j], T)));
@@ -352,6 +375,8 @@ function renderTerritory() {
   // legend
   // 与 renderYear 一致：只计分得地块的种子点，没有地块的势力不进图例
   const counts = d3.rollups(st.filter((f, i) => f !== 'x' && HAS_LAND.has(i)), v => v.length, f => f).sort((a, b) => b[1] - a[1]);
+  // 只占着周边陆地（BOOK.outer）的势力也列进图例
+  for (const n of Object.keys(OUTER)) { const f = outerOf(n, T); if (f && !counts.some(c => c[0] === f)) counts.push([f, 0]); }
   $('#legend').innerHTML = groupByRealm(counts, T).map(([rn, , fs]) => (rn ? `<span class="rg">${rn}</span>` : '') + fs.map(([f]) => `<span><i style="background:${fColor(f)}"></i>${fName(f, T)}</span>`).join('')).join('') +
     (B.regions?.legendNote ? `<span class="note">· ${B.regions.legendNote}</span>` : '');
   cityText.text(d => cityName(d, T));

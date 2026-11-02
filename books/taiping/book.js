@@ -45,6 +45,8 @@ const BOOK = {
   },
   realms: { zhong: '清与太平天国', fan: '四邻' },
   looseRealms: ['zhong', 'fan'],
+  // 底图范围以外的周边陆地按所属上色（只上色，不分种子点）：西伯利亚等俄国本土
+  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', 'North Kuril Islands': 'eluosi' },
   calendar: {
     eras: { 清: [[1851, '咸丰'], [1862, '同治']] },
     spans: { 清: [1851, 1864] },

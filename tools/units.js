@@ -82,7 +82,7 @@ for (const [code, city, name, cs] of SPLITS) {
     if (n === '三沙市') continue;
     if (n === 'Sakhalin Oblast') {
       const ps = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates : [f.geometry.coordinates], big = ps.reduce((a, b) => (b[0].length > a[0].length ? b : a));
-      ps.filter(q => q !== big).forEach(q => nbAdd.push({ type: 'Feature', properties: { n: 'Kuril Islands', kind: 'nb' }, geometry: { type: 'Polygon', coordinates: q } }));
+      ps.filter(q => q !== big).forEach(q => nbAdd.push({ type: 'Feature', properties: { n: (q[0].reduce((s, p) => s + p[0], 0) / q[0].length < 149.2 ? 'South' : 'North') + ' Kuril Islands', kind: 'nb' }, geometry: { type: 'Polygon', coordinates: q } }));
       const isl = { ...f, geometry: { type: 'Polygon', coordinates: big } };
       units.push(...cut(isl, [139, 49.999, 146, 56]), ...named(cut(isl, [139, 44, 146, 49.999]), 'Sakhalin South'));
       continue;
