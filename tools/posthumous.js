@@ -38,7 +38,9 @@ for (const id of ids) {
     const d = death(life.get(w)), post = (e.post || []).includes(w);
     if (d == null) continue;
     if (e.src) continue; // 演义情节等虚构事件不按史实生卒检查
-    const gone = d < e.y && !(d === e.y - 1 && e.mo < 3);
+    // 夏历十一、十二月折成公历次年一二月的，卒年可能等于事件的上一年；写了 cal 的只在 cal 是十一、十二月时才放过
+    const lunarTail = e.mo < 3 && (!e.cal || /^[^（]*十[一二]月/.test(e.cal));
+    const gone = d < e.y && !(d === e.y - 1 && lunarTail);
     if (gone && !post) out.push(`  ${e.y} ${e.t}：${w}（卒 ${d}）未标身后`);
     if (post && d > e.y) out.push(`  ${e.y} ${e.t}：${w}（卒 ${d}）标了身后但当时在世`);
   }

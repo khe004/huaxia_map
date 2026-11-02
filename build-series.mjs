@@ -11,7 +11,11 @@ const fy = y => (y < 0 ? `前 ${-y}` : `${y}`);
 let prevLast = null;
 // 目录页检索用的索引：全部事件与人物（跨卷人物合为一条，列出所在各卷）
 const pcx = {}; vm.createContext(pcx); vm.runInContext(r('./books/_people.js') + ';this.PC = commonOf;', pcx);
-const plain = s => String(s).replace(/\*\*(?:[^|*]{1,6}\|)?([^*]*)\*\*/g, '“$1”').replace(/““/g, '“').replace(/””/g, '”');
+// 引文 **…** 改为引号：已在引号里的（如 “**…**。”、“诸将易得耳。**…**。”）不再加，免得引号重复或不成对
+const plain = s => String(s).replace(/\*\*(?:[^|*]{1,6}\|)?([^*]*)\*\*/g, (m, x, i, all) => {
+  const before = all.slice(0, i), open = (before.match(/“/g) || []).length - (before.match(/”/g) || []).length;
+  return open > 0 ? x : '“' + x + '”';
+});
 const IDX = { books: [], events: [], people: {} };
 // 事件纪年的写法与引擎共用 engine/cal.js
 const [CALTEXT, ERASFOR] = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./engine/cal.js') + ';this.f = [calText, erasFor];', c); return c.f; })();
@@ -27,15 +31,17 @@ const rows = S.books.map((b, i) => {
   IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
   const evOf = new Map(), postOf = new Map();
   for (const e of EVENTS) {
-    IDX.events.push([i, e.y, e.mo, e.t, e.p, e.m, e.k, e.who.join('、'), plain(e.d), calOf(e)]);
+    // 相邻两卷交界处重复收录的同一事件（同年同月同题）在检索里只列一次，指向前一卷
+    if (!IDX.events.some(x => x[0] === i - 1 && x[1] === e.y && x[2] === e.mo && x[3] === e.t)) IDX.events.push([i, e.y, e.mo, e.t, e.p, e.m, e.k, e.who.join('、'), plain(e.d), calOf(e)]);
     // 人物的各卷事件数只计在世时的事件（post 身后出场不算）
     for (const n of e.who) if (!(e.post || []).includes(n)) evOf.set(n, (evOf.get(n) || []).concat(e)); else postOf.set(n, (postOf.get(n) || 0) + 1);
   }
   for (const [n, f, zi, life, bio] of PEOPLE_RAW) {
     const cm = pcx.PC(n, b.id), es = (evOf.get(n) || []).sort((u, v) => u.y - v.y || u.mo - v.mo), t = es.length ? es[0].y + (es[0].mo - 1) / 12 : BOOK.range[0];
     let fn = f; try { fn = FACTIONS[f].name(t).replace(/（[^）]*）/g, ''); } catch (err) {}
-    // 跨卷合并只认 books/_people.js 登记的人物；未登记的同名者（如西晋刘毅与东晋刘毅）按生卒分作两人
-    const key = cm ? (cm[3] ? n + '\u0001' + cm[1] : n) : n + '\u0001' + life;
+    // 跨卷合并只认 books/_people.js 登记的人物；未登记的同名者（如西晋刘毅与东晋刘毅）按生卒分作两人，
+    // 生卒不详（如 '?–?'）的未登记者再按卷区分，免得不同时代的同名者并成一人
+    const key = cm ? (cm[3] ? n + '\u0001' + cm[1] : n) : n + '\u0001' + (/\d/.test(life) ? life : b.id);
     const P = IDX.people[key] || (IDX.people[key] = [cm ? cm[0] : zi, cm ? cm[1] : life, plain(cm ? cm[2] : bio), []]);
     if (!cm && bio && !P[2]) P[2] = plain(bio);
     // [卷序, 势力名, 在世事件数, 首个在世事件的时间, 身后被提及的事件数]：人物页签按首次出场先后排列

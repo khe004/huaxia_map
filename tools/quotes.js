@@ -4,19 +4,26 @@
 //   原文目录下为若干 .txt（简体），引文去掉标点、空白后在全部文本中查找。
 const fs = require('fs'), path = require('path');
 const [id, dir, ...more] = process.argv.slice(2);
-const strip = s => s.replace(/-\{|\}-/g, '').replace(/[［］\s，。．、；：？！〈〉“”‘’「」『』《》（）()\-—…·,.;:?!'"]/g, '');
-const load = d => fs.readdirSync(d).filter(f => f.endsWith('.txt')).map(f => [f.replace(/\.txt$/, ''), strip(fs.readFileSync(path.join(d, f), 'utf8'))]);
+// 原文的异体字按通行字比较（籓→藩、砲→炮、於→于、籐→藤），书中引文写通行字
+const strip = s => s.replace(/[籓砲於籐]/g, c => ({ 籓: '藩', 砲: '炮', 於: '于', 籐: '藤' })[c]).replace(/-\{|\}-/g, '').replace(/[［］\s，。．、；：？！〈〉“”‘’「」『』《》（）()\-—…·,.;:?!'"]/g, '');
+// 原文文本（维基文库）里的个别讹字：书中引文按正字写，核对前先把原文改正
+const ERRATA = [['晋一等候爵', '晋一等侯爵'], ['温州为里安府', '温州为瑞安府'], ['置行台尚书省为汴', '置行台尚书省于汴'], ['荒为酒', '荒于酒'],
+  ['右都临完颜思敬', '右都监完颜思敬'], ['尽遂卫士', '尽逐卫士']].map(([a, b]) => [strip(a), strip(b)]);
+const fixText = t => ERRATA.reduce((s, [a, b]) => s.split(a).join(b), t);
+const load = d => fs.readdirSync(d).filter(f => f.endsWith('.txt')).map(f => [f.replace(/\.txt$/, ''), fixText(strip(fs.readFileSync(path.join(d, f), 'utf8')))]);
 const corpora = { '': load(dir) };
 for (const m of more) { const [k, d] = m.split('='); corpora[k] = load(d); }
 // 以 _ 开头的是 books/ 下的共用数据文件（如 _people 跨卷人物简介）
 const src = fs.readFileSync(path.join(__dirname, '..', 'books', ...(id[0] === '_' ? [id + '.js'] : [id, 'book.js'])), 'utf8');
 let n = 0, bad = 0; const cnt = {};
-for (const m of src.matchAll(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g)) {
+// 注释行里的 **…**（说明引文写法的示例）不算引文
+for (const m of src.replace(/^\s*\/\/.*$/gm, '').matchAll(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g)) {
   n++;
   const k = m[1] || '', q = strip(m[2]); cnt[k || '默认'] = (cnt[k || '默认'] || 0) + 1;
   const c = corpora[k];
   if (!c) { bad++; console.log('? 未提供原文：', k, m[2]); continue; }
-  if (!c.find(([, t]) => t.includes(q))) { bad++; console.log('✗', k ? k + '|' : '', m[2]); }
+  // 去掉标点后为空的（如 **……**）不算找到
+  if (!q || !c.find(([, t]) => t.includes(q))) { bad++; console.log('✗', k ? k + '|' : '', m[2]); }
 }
 console.log(`${n} 条引文（${Object.entries(cnt).map(([k, v]) => k + ' ' + v).join('，')}），${n - bad} 条找到，${bad} 条未找到`);
 process.exit(bad ? 1 : 0);

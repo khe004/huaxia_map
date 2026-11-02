@@ -26,7 +26,8 @@ function erasFor(C, y) {
 }
 // 本年改元的 cur 尚未生效时，事件所在月份用的年号：往前找，同一年先后改元两次的（契丹大同、天禄）取月份已到的那一个
 const prevEra = (list, cur, y, mon) => {
-  for (let i = list.indexOf(cur) - 1; i >= 0; i--) { const it = list[i]; if (it[0] < y || (it[0] === y && it[3] && mon >= it[3])) return it; }
+  // 没写改元月份的同年年号：只有这一家的第一个年号（建国当年，如南明弘光）算从年初起，其余的（唐隆）不知何时改元，跳过
+  for (let i = list.indexOf(cur) - 1; i >= 0; i--) { const it = list[i]; if (it[0] < y || (it[0] === y && (it[3] ? mon >= it[3] : i === 0))) return it; }
   return null;
 };
 const eraFmt = x => (x.d && !x.s.startsWith(x.d) ? x.d : '') + x.s;
@@ -54,7 +55,7 @@ function calText(e, C, range, eras) {
   const num = s => (s === '元' ? 1 : s.includes('十') ? (d1(s.split('十')[0]) || 1) * 10 + d1(s.split('十')[1]) : d1(s));
   // 上一年：公历无 0 年，公元 1 年的上一年是前 1 年（-1）
   const prevY = e.y === 1 ? -1 : e.y - 1;
-  let own = null, yr = e.y, best = 0, ownSt = -Infinity;
+  let own = null, yr = e.y, best = 0, ownSt = -Infinity, byGz = false;
   // cal 可以带国号（“魏正始十年”“后赵建武四年”）：去掉与该家国号相同的前缀再匹配年号名
   for (const d of Object.keys(C.eras || {})) for (const [st, name, n0 = 1] of C.eras[d]) {
     if (!name || name[0] === '#') continue;
@@ -68,7 +69,17 @@ function calText(e, C, range, eras) {
     // 周正的正月（夏历十一月）落在公历上一年末：年号所在年份比事件的公历年晚一年
     if ((y === e.y || y === prevY || y === e.y + 1) && !(name.length === best && st <= ownSt)) { own = d; yr = y; best = name.length; ownSt = st; }
   }
+  // 以干支记年的 cal（蒙古“十二年丁丑秋八月”“岁壬戌”“己未九月”）：由干支推出年份，归不立年号、按干支记年的一家（'#干支'）；
+  // 那一年这一家还没开始干支记年的（1206 年以前），不归哪一家，其他各家照补
   if (!own) {
+    const gm = e.cal.match(/^(?:岁|(?:元|[〇一二三四五六七八九十]+)年)?([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])/);
+    const gy = gm && [e.y, prevY, e.y + 1].find(y => ganzhiC(y) === gm[1]);
+    if (gy != null) {
+      yr = gy; own = ''; byGz = true;
+      for (const d of Object.keys(C.eras || {})) { const it = C.eras[d].filter(x => x[0] <= gy).pop(); if (it && it[1] === '#干支') own = d; }
+    }
+  }
+  if (own === null) {
     // 推不出年份（如“景元年间”）时，只按本年与上一年在用的年号名定所属，多家并列时加国号
     const nm = x => x.s.replace(/(元|[〇一二三四五六七八九十]+)[年载]$/, '');
     const ds = [...new Set([...es0, ...eras(prevY)].filter(x => nm(x) && (e.cal.startsWith(nm(x)) || e.cal.startsWith(x.d + nm(x)))).map(x => x.d))];
@@ -84,8 +95,13 @@ function calText(e, C, range, eras) {
   // 他家这一年改元的：给了改元月份（C.eras 第四项）就按事件月份取新旧年号，没给的不补
   const other = x => {
     const list = (C.eras || {})[x.d] || [], cur = list.filter(it => it[0] <= yr).pop();
+    if (x.late) {
+      if (cur && cur[1] && cur[0] === yr && cur[3] && mon >= cur[3]) return eraLabel(C, x.d, cur, yr, null);
+      // e.y 年初才建立的一家（中华民国 1912 年 1 月），事件在夏历上一年的岁末：按公历月份比对建立月份（第四项）
+      const c2 = list.filter(it => it[0] <= e.y).pop();
+      return c2 && c2[1] && c2[0] === e.y && c2[3] && e.mo >= c2[3] ? eraLabel(C, x.d, c2, e.y, null) : null;
+    }
     if (!cur || !cur[1]) return null;
-    if (x.late) return cur[0] === yr && cur[3] && mon >= cur[3] ? eraLabel(C, x.d, cur, yr, null) : null;
     // 第三项大于 1 的（[558, '明帝', 2]）是接续纪年，不是这一年改元
     if (cur[0] !== yr || ((cur[2] || 1) > 1 && !cur[3])) return x.s;
     if (!cur[3]) return null;
@@ -94,8 +110,10 @@ function calText(e, C, range, eras) {
     const sp = (C.spans || {})[x.d];
     return prev && prev[1] && !(sp && sp[0] === yr && sp[0] > range[0]) ? eraLabel(C, x.d, prev, yr, null) : null;
   };
-  const more = [...es, ...es1].filter(x => x.d !== own && !ends(x)).map(x => ({ d: x.d, s: other(x) })).filter(x => x.s && !e.cal.includes(x.s));
-  // 只剩本家一种纪年时不加国号
-  const head = more.length && !e.cal.startsWith(own) ? own + e.cal : e.cal;
+  // cal 里已写了的不再补（干支记年的“己未年”，cal 写作“蒙古九年己未”也算写了）
+  const said = t => e.cal.includes(t) || (/^[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]年$/.test(t) && e.cal.includes(t.slice(0, 2)));
+  const more = [...es, ...es1].filter(x => x.d !== own && !ends(x)).map(x => ({ d: x.d, s: other(x) })).filter(x => x.s && !said(x.s));
+  // 只剩本家一种纪年时不加国号；按干支推出的，这一年有几家并列时也加（“蒙古壬寅年秋七月（宋淳祐二年）”）
+  const head = (more.length || (byGz && es.length > 1)) && own && !e.cal.startsWith(own) ? own + e.cal : e.cal;
   return [head, ...more.map(eraFmt)].join(' · ');
 }

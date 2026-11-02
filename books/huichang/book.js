@@ -67,7 +67,6 @@ const BOOK = {
 const FACTIONS = {
   tang:       { color: '#d4a017', realm: 'tang', mapName: () => '唐',
     name: t => (t < 824.333 ? '唐（穆宗李恒）' : t < 827.025 ? '唐（敬宗李湛）' : t < 840.083 ? '唐（文宗李昂）' : t < 846.25 ? '唐（武宗李炎）' : t < 859.666 ? '唐（宣宗李忱）' : '唐（懿宗李漼）') },
-  jimi:       { color: '#f3e7b3', realm: 'tang', mapName: () => '羁縻府州', name: () => '唐羁縻府州' },
   hebei:      { color: '#4f7f4f', realm: 'tang', name: t => (t < 822.083 ? '成德 · 卢龙' : '河朔三镇') },
   zelu:       { color: '#5a6e8c', realm: 'tang', name: () => '泽潞（刘稹）' },
   guiyi:      { color: '#7fae6e', realm: 'tang', name: () => '归义军（张义潮）' },

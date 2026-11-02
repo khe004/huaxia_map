@@ -1,7 +1,7 @@
 // 用法：node tools/evorder.js [书 …]：检查事件的时间先后是否自相矛盾
 // 1. 人物在自己的死亡事件（标题含其名与“死、卒、崩、被杀”等，或“斩、杀、诛、鸩、弑”紧接其名）之后又出现在其他事件中（标了 post 的除外）
 // 2. 人物出现在出生年之前的事件中
-// 3. 事件的 cal（原书纪年）里的月份与 mo 的换算关系和本卷多数事件不一致（小数月份为同月排序而设，不比较）
+// 3. 事件的 cal（原书纪年）里的月份与 mo 的换算关系和本卷多数事件不一致（小数月份为同月排序而设，不比较；比多数多差一个月的是月下旬的日子，也不算）
 // 4. 同年同月的几个事件，排在后面的事件简介里写着前一个事件的人“死后”等字样（按数组顺序排先后，可能颠倒）
 // 5. 两个事件的年、月完全相同：两步的时刻 t 相同，后一事件的疆域快照、势力或城邑改名会提前落在前一事件上，应给其一个小数月份（如 9.5）
 const fs = require('fs'), vm = require('vm'), path = require('path');
@@ -35,7 +35,9 @@ for (const id of ids) {
   for (const e of E) { if (e.zm === 1 || /始建国|天凤|地皇/.test(e.cal || '') || /(载初|天授|如意|长寿|延载|证圣|天册万岁|万岁登封|万岁通天|神功|圣历|久视)[^月]*(正|腊)月/.test(e.cal || '')) continue; const m = (e.cal || '').match(/(?:^|[年载])[春夏秋冬]?(闰)?(正|十二|十一|十|一|二|三|四|五|六|七|八|九)月/); if (!m) continue;
     const d = ((Math.floor(e.mo) - CN[m[2]]) % 12 + 12) % 12; rows.push([e, d, m[0]]); off.set(d, (off.get(d) || 0) + 1); }
   const main = [...off].sort((a, b) => b[1] - a[1])[0];
-  for (const [e, d, s] of rows) if (main && d !== main[0] && !(e.cal.includes('闰') && (d === (main[0] + 11) % 12 || d === (main[0] + 1) % 12)) && Math.floor(e.mo) === e.mo) out.push(`  ? 「${e.t}」cal ${e.cal} 与 mo ${e.mo} 的换算（差 ${d} 个月）和本卷多数（差 ${main[0]}）不同`);
+  for (const [e, d, s] of rows) if (main && d !== main[0] && !(e.cal.includes('闰') && (d === (main[0] + 11) % 12 || d === (main[0] + 1) % 12))
+    // 夏历一个月跨公历两个月：按日期落在后一个月的（武昌起义八月十九日是公历十月十日，中华民国成立是十一月十三日、公历次年一月一日），比多数多差一个月
+    && d !== (main[0] + 1) % 12 && Math.floor(e.mo) === e.mo) out.push(`  ? 「${e.t}」cal ${e.cal} 与 mo ${e.mo} 的换算（差 ${d} 个月）和本卷多数（差 ${main[0]}）不同`);
   // 4
   for (let k = 1; k < E.length; k++) { const a = E[k - 1], b = E[k]; if (a.y !== b.y || Math.floor(a.mo) !== Math.floor(b.mo)) continue;
     for (const n of b.who) if (a.d.includes(n + '死后') || a.d.includes(n + '死前')) {} 

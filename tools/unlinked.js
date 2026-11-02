@@ -11,7 +11,11 @@ const series = JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.
 const cache = new Map(), get = id => { if (!cache.has(id)) cache.set(id, load(id)); return cache.get(id); };
 const poolOf = id => {
   const k = series.indexOf(id), near = k < 0 ? [id] : series.slice(Math.max(0, k - 2), k + 3);
-  const names = new Set(Object.keys(pc)); near.forEach(b => get(b).PEOPLE_RAW.forEach(p => names.add(p[0])));
+  // books/_people.js 的跨卷人物只取与本卷年代相近（生卒与本卷起讫相距不过 60 年）或指定适用于前后两卷的，免得“长平之战”里查出元代的王都
+  const [r0, r1] = get(id).BOOK.range, yrs = l => (String(l).match(/(前)?\d+/g) || []).map(x => (x[0] === '前' ? -x.slice(1) : +x));
+  const names = new Set(Object.entries(pc).filter(([, v]) => (Array.isArray(v[0]) ? v : [v]).some(c => (c[3] ? c[3].some(b => near.includes(b))
+    : (ys => ys.length > 0 && Math.max(...ys) >= r0 - 60 && Math.min(...ys) <= r1 + 60)(yrs(c[1]))))).map(([n]) => n));
+  near.forEach(b => get(b).PEOPLE_RAW.forEach(p => names.add(p[0])));
   const X = get(id), stop = new Set();
   Object.values((X.BOOK.calendar || {}).eras || {}).forEach(l => l.forEach(it => it[1] && stop.add(it[1])));
   // 势力名只取括号外的国号部分作停用词（“吴（杨行密）”只停用“吴”）；括号里的君主、首领名照常检查

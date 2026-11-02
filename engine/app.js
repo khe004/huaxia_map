@@ -173,9 +173,10 @@ const pts = SEEDS.map(s => proj([s.lon, s.lat]));
 
 // 古政区的范围：按 BOOK.scope 挑出现代地级行政区，再归入最近的种子点（或 UNIT_OVERRIDES 指定）拼合
 const SC = B.scope || {};
-// 有飞地的地级区（如伊犁州的奎屯、海西州的唐古拉山镇）拆成几块，各自归入最近的种子点
+// 有飞地的地级区（如伊犁州的奎屯、海西州的唐古拉山镇）拆成几块，各自归入最近的种子点；
+// 属性 w 的拼块（冲绳的先岛诸岛、越南广宁的近海岛屿）整块归属，免得离岛被对岸的种子点分走
 UNITS.objects.units.geometries = UNITS.objects.units.geometries.flatMap(g =>
-  g.type === 'MultiPolygon' && g.arcs.length > 1 ? g.arcs.map(a => ({ type: 'Polygon', arcs: a, properties: { ...g.properties } })) : [g]);
+  g.type === 'MultiPolygon' && g.arcs.length > 1 && !g.properties.w ? g.arcs.map(a => ({ type: 'Polygon', arcs: a, properties: { ...g.properties } })) : [g]);
 const UALL = topojson.feature(UNITS, UNITS.objects.units); rewind(UALL);
 const inScope = f => {
   // 底图里少数要素没有几何（如越南昆仑岛），不纳入
@@ -565,8 +566,10 @@ function srcBlock(refs) {
 }
 // 正文中的原书引文：**…** → 加粗下划线
 // 可写作 **左传|…** 注明另一出处：悬停显示“《左传》原文”，下划线换色
+// 出处前缀限六字，书名长的用简称写，悬停时写出全名
+const SRC_FULL = { 要录: '建炎以来系年要录', 长编: '续资治通鉴长编' };
 const rich = t => esc(t).replace(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g, (_, src, q) => src
-  ? `<b class="yw yw2" title="《${src}》原文">${q}</b>` : `<b class="yw" title="${esc(B.quoteLabel || '原文')}">${q}</b>`);
+  ? `<b class="yw yw2" title="《${SRC_FULL[src] || src}》原文">${q}</b>` : `<b class="yw" title="${esc(B.quoteLabel || '原文')}">${q}</b>`);
 const tagOf = e => (e.src ? (B.tags || {})[e.src] || e.src : '');
 const evItem = (e, on) => `<button class="item${on ? ' on' : ''}" data-event="${e.i}"><span class="y">${fmtYear(e.y)}</span><span class="t"><i class="${e.k}"></i>${e.t}</span><span class="s">${[e.p + ' · ' + e.m, srcShort(e.refs), tagOf(e)].filter(Boolean).join(' · ')}</span></button>`;
 
@@ -706,7 +709,8 @@ function renderPerson(n) {
   // 演义等虚构情节若落在生卒之外（如华佗卒后的刮骨疗毒），刻度画成虚线，并在提示里注明
   // 生年不详时左端默认按活 40 岁算，若有更早的在世事件则延伸到该事件
   const firstLive = hist.length ? Math.min(...hist.map(i => EVENTS[i].y)) : null, a2 = a != null ? a : b != null ? Math.min(b - 40, firstLive ?? b - 40) : null;
-  const life = b ? `<div class="lifebar" title="生卒年"><div style="left:${sc(a2)}%;width:${sc(b2) - sc(a2)}%;background:${fColor(p.f)};${a != null && b0 != null ? '' : 'opacity:.45'}"></div>${evs.filter(e => !isPost(e, n)).map(e => (e.src && (e.y > b2 || e.y < a2)
+  // 卒于时间轴之前的（只在身后被提及）不画寿命条；生卒同年的至少画 2px
+  const life = b != null && b2 >= lo ? `<div class="lifebar" title="生卒年"><div style="left:${sc(a2)}%;width:max(2px, ${sc(b2) - sc(a2)}%);background:${fColor(p.f)};${a != null && b0 != null ? '' : 'opacity:.45'}"></div>${evs.filter(e => !isPost(e, n)).map(e => (e.src && (e.y > b2 || e.y < a2)
     ? `<div class="fic" style="left:${sc(e.y)}%" title="${tagOf(e)}：${e.t}（${fmtYearFull(e.y)}，与史实生卒不合）"></div>`
     : `<div style="left:${sc(e.y)}%;width:2px;background:var(--ink)"></div>`)).join('')}</div>` : '';
   pbody.innerHTML = `

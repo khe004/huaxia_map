@@ -40,7 +40,9 @@ for (const id of ids) {
   const mine = new Set(PEOPLE_RAW.map(p => p[0]));
   // 只是本卷某个更长人名的一部分（如“刘武”之于“刘武周”）的不算
   const inLonger = (nm, s) => [...mine].some(m => m.length > nm.length && m.includes(nm) && s.split(m).join('').indexOf(nm) < 0);
-  for (const nm of ALL) if (nm.length >= 2 && !mine.has(nm) && !NAMED_OK.has(`${id}:${nm}`)) for (const f of Object.keys(F)) if (lab[f].includes(nm) && !inLonger(nm, lab[f])) out.push(`  ${nm}：写在势力 ${f}（${lab[f].split('|').find(x => x.includes(nm))}）的名称里，本卷人物表未收`);
+  // 王号里的“王”字连着名字的（“东海王越”里的“王越”），不是名叫王某的人
+  const inTitle = (nm, s) => nm[0] === '王' && [...s.matchAll(new RegExp(nm, 'g'))].every(m => m.index > 0 && /[\u4e00-\u9fff]/.test(s[m.index - 1]));
+  for (const nm of ALL) if (nm.length >= 2 && !mine.has(nm) && !NAMED_OK.has(`${id}:${nm}`)) for (const f of Object.keys(F)) if (lab[f].includes(nm) && !inLonger(nm, lab[f]) && !inTitle(nm, lab[f])) out.push(`  ${nm}：写在势力 ${f}（${lab[f].split('|').find(x => x.includes(nm))}）的名称里，本卷人物表未收`);
   if (out.length) { console.log(`== ${id}`); out.forEach(l => console.log(l)); n += out.length; }
 }
 console.log(`共 ${n} 人`);

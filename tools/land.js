@@ -12,12 +12,14 @@ function units() {
   // 每个拼块（多块的拆开，与引擎一致）：名称、省区、质心
   UNITS = T.objects.units.geometries.flatMap(g => {
     const polys = g.type === 'Polygon' ? [g.arcs] : g.type === 'MultiPolygon' ? g.arcs : [];
-    return polys.map(p => {
+    // 各块的质心（外环减内环）；属性 w 的拼块整块归属（与引擎一致），各块合起来算一个质心
+    const cent = ps => {
       let A = 0, X = 0, Y = 0;
-      for (const [k, rr] of p.entries()) { const r = ring(rr), sg = k ? -1 : 1;
+      for (const p of ps) for (const [k, rr] of p.entries()) { const r = ring(rr), sg = k ? -1 : 1;
         for (let i = 0; i + 1 < r.length; i++) { const c = r[i][0] * r[i + 1][1] - r[i + 1][0] * r[i][1]; A += sg * c; X += sg * (r[i][0] + r[i + 1][0]) * c; Y += sg * (r[i][1] + r[i + 1][1]) * c; } }
-      return { n: g.properties.n, p: g.properties.p, c: A ? [X / (3 * A), Y / (3 * A)] : ring(p[0])[0] };
-    });
+      return { n: g.properties.n, p: g.properties.p, c: A ? [X / (3 * A), Y / (3 * A)] : ring(ps[0][0])[0] };
+    };
+    return g.properties.w ? [cent(polys)] : polys.map(p => cent([p]));
   });
   return UNITS;
 }

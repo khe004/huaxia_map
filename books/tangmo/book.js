@@ -73,7 +73,6 @@ const TANGWANG = t => (t < 907.333 ? 'tang' : 'guo');
 const FACTIONS = {
   tang:       { color: '#d4a017', realm: 'tang', mapName: () => '唐',
     name: t => (t < 873.583 ? '唐（懿宗李漼）' : t < 888.25 ? '唐（僖宗李儇）' : t < 904.666 ? '唐（昭宗李晔）' : '唐（哀帝李柷）') },
-  jimi:       { color: '#f3e7b3', realm: 'tang', mapName: () => '羁縻府州', name: () => '唐羁縻府州' },
   qi:         { color: '#7a1f3d', realm: 'pan', name: () => '齐（黄巢）' },
   bian:       { color: '#cc3d4a', realm: TANGWANG, name: t => (t < 907.333 ? '宣武（朱全忠）' : '梁（朱温）') },
   jin:        { color: '#5b4b8a', realm: TANGWANG, name: t => (t < 907.333 ? '河东（李克用）' : '晋（李克用）') },

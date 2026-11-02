@@ -5,7 +5,7 @@
 //   <省级行政区代码>.json   阿里云 DataV 地级边界（geo.datav.aliyun.com/areas_v3/bound/<代码>_full.json）
 //   <地级代码>_full.json    要按县切开的地级区的县界（见下面 SPLITS）
 //   china.json              DataV 全国省级边界（取香港、澳门、台湾整体）
-//   PRK VNM KOR MNG RUS KAZ KGZ TJK UZB .json   geoBoundaries 一级行政区（gbOpen 简化版）
+//   PRK VNM KOR MNG RUS KAZ KGZ TJK UZB JPN .json   geoBoundaries 一级行政区（gbOpen 简化版）
 // Natural Earth：ne_10m_admin_0_countries.geojson（1:1000 万国界），只取周边国家，并先扣掉上面这些拼块覆盖的范围。
 // 输出对象：units（拼块，属性 n 名称、p 所属省区或国家、c 外国的国家代码）、nb（周边国家，属性 n）。
 // 依赖：mapshaper（见 tools/package.json）
@@ -27,7 +27,10 @@ const FOREIGN = [['PRK', '朝鲜'], ['KOR', '韩国'], ['VNM', '越南'], ['MNG'
   ['RUS', '俄罗斯', ['Altai Republic', 'Tuva', 'Buryatia', 'Zabaykalsky Krai', 'Khakassia']],
   ['KAZ', '哈萨克斯坦', ['Almaty Region', 'Almaty', 'Jambyl Region', 'South Kazakhstan Region', 'East Kazakhstan Region']],
   ['KGZ', '吉尔吉斯斯坦'], ['TJK', '塔吉克斯坦', ['Sughd Region', 'Gorno-Badakhshan Autonomous Region']],
-  ['UZB', '乌兹别克斯坦', ['Andijan Region', 'Namangan Region', 'Fergana Region', 'Tashkent Region', 'Tashkent', 'Sirdaryo Region', 'Jizzakh Region', 'Samarqand Region', 'Qashqadaryo Region', 'Surxondaryo Region', 'Bukhara Region']]];
+  ['UZB', '乌兹别克斯坦', ['Andijan Region', 'Namangan Region', 'Fergana Region', 'Tashkent Region', 'Tashkent', 'Sirdaryo Region', 'Jizzakh Region', 'Samarqand Region', 'Qashqadaryo Region', 'Surxondaryo Region', 'Bukhara Region']],
+  // 清代各卷用：黑龙江以北、乌苏里江以东（省区“远东”，1858、1860 年割俄），冲绳（省区“琉球”）
+  ['RUS', '远东', ['Amur Oblast', 'Jewish Autonomous Oblast', 'Khabarovsk Krai', 'Primorsky Krai', 'Sakhalin Oblast']],
+  ['JPN', '琉球', ['Okinawa Prefecture']]];
 for (const [c, p, only] of FOREIGN) {
   const j = JSON.parse(fs.readFileSync(path.join(dir, c + '.json')));
   for (const f of j.features) {
@@ -63,6 +66,35 @@ for (const [code, city, name, cs] of SPLITS) {
   run(['-i', T('cur.json'), '-filter', `n!='${city}'`, '-o', T('other.json')]);
   run(['-i', T('other.json'), T('rest.json'), T('piece.json'), 'combine-files', '-merge-layers', 'force', '-o', T('cur.json')]);
 }
+// 2c. 远东与南海的修整：
+//   - 哈巴罗夫斯克边疆区只取北纬 55.5 度以南（乌第河以南），以北的鄂霍次克海沿岸并入周边陆地，不上色
+//   - 萨哈林州只取库页岛本岛，千岛群岛并入周边陆地；本岛按北纬 50 度切成南北两块（1905 年南库页割日本）
+//   - 三沙市（南海诸岛）不作拼块，免得被越南、占城的种子点分去
+//   - 湛江市按方框切出广州湾租借地（1899 年租与法国）
+//   - 冲绳、越南广宁、广州湾带离岛，加属性 w 整块归属，免得离岛被对岸的种子点分走
+{
+  const J = JSON.parse(fs.readFileSync(T('cur.json'))), units = [], nbAdd = [];
+  const cut = (f, bbox, op = '-clip') => { fs.writeFileSync(T('f.json'), JSON.stringify({ type: 'FeatureCollection', features: [f] }));
+    run(['-i', T('f.json'), op, 'bbox=' + bbox.join(','), '-o', T('f2.json')]); return JSON.parse(fs.readFileSync(T('f2.json'))).features; };
+  const named = (fs_, n, extra = {}) => fs_.map(x => ({ ...x, properties: { ...x.properties, n, ...extra } }));
+  for (const f of J.features) {
+    const { n } = f.properties;
+    if (n === '三沙市') continue;
+    if (n === 'Sakhalin Oblast') {
+      const ps = f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates : [f.geometry.coordinates], big = ps.reduce((a, b) => (b[0].length > a[0].length ? b : a));
+      ps.filter(q => q !== big).forEach(q => nbAdd.push({ type: 'Feature', properties: { n: 'Kuril Islands', kind: 'nb' }, geometry: { type: 'Polygon', coordinates: q } }));
+      const isl = { ...f, geometry: { type: 'Polygon', coordinates: big } };
+      units.push(...cut(isl, [139, 49.999, 146, 56]), ...named(cut(isl, [139, 44, 146, 49.999]), 'Sakhalin South'));
+      continue;
+    }
+    if (n === 'Khabarovsk Krai') { units.push(...cut(f, [125, 40, 150, 55.5])); nbAdd.push(...cut(f, [125, 55.5, 160, 70]).map(x => ({ ...x, properties: { n: 'Russia', kind: 'nb' } }))); continue; }
+    if (n === '湛江市') { const B = [110.2, 20.8, 110.7, 21.45]; units.push(...named(cut(f, B), '广州湾', { w: 1 }), ...cut(f, B, '-erase')); continue; }
+    if (n === 'Okinawa Prefecture' || n === 'Quảng Ninh') f.properties.w = 1;
+    units.push(f);
+  }
+  fs.writeFileSync(T('cur.json'), JSON.stringify({ type: 'FeatureCollection', features: units }));
+  const nb = JSON.parse(fs.readFileSync(T('nb.json'))); nb.features.push(...nbAdd); fs.writeFileSync(T('nb.json'), JSON.stringify(nb));
+}
 fs.copyFileSync(T('cur.json'), T('u.json'));
 // 3. 合并后统一吸附、清理缝隙、简化，再拆回两个图层
 run(['-i', T('u.json'), T('nb.json'), 'combine-files', '-merge-layers', 'force', 'name=all',
@@ -70,7 +102,7 @@ run(['-i', T('u.json'), T('nb.json'), 'combine-files', '-merge-layers', 'force',
   '-simplify', 'interval=3000', 'keep-shapes', '-filter-islands', 'min-area=150km2',
   '-filter', "kind=='u'", '+', 'name=units',
   '-filter', "kind=='nb'", 'target=all', '+', 'name=nb',
-  '-filter-fields', 'n,p,c', 'target=units', '-filter-fields', 'n', 'target=nb',
+  '-filter-fields', 'n,p,c,w', 'target=units', '-filter-fields', 'n', 'target=nb',
   '-o', 'format=topojson', 'quantization=20000', 'target=units,nb', out]);
 fs.rmSync(tmp, { recursive: true });
 // 简化、去小岛后有的要素没有几何了（如越南昆仑岛、印度洋小岛国），去掉，免得引擎渲染与悬停时出错

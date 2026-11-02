@@ -19,9 +19,9 @@ for (const id of ids) {
       out.push(`  ${label} < ${X}：落在 ${where(k)}；附近事件 ${ev.join('、') || '—'}`);
     }
   };
-  for (const [f, F0] of Object.entries(F)) for (const key of ['name', 'mapName', 'realm']) {
+  for (const [f, F0] of Object.entries(F)) for (const key of ['name', 'mapName', 'realm', 'hideLabel']) {
     if (typeof F0[key] !== 'function') continue;
-    for (const m of F0[key].toString().matchAll(/\b[ty]\s*<=?\s*(-?\d+(?:\.\d+)?)/g)) check(`${f}.${key}`, +m[1]);
+    for (const m of F0[key].toString().matchAll(/\b[ty]\s*[<>]=?\s*(-?\d+(?:\.\d+)?)/g)) check(`${f}.${key}`, +m[1]);
   }
   for (const c of CITIES) c.n.forEach(([X, nm], j) => check(`城 ${nm || (c.n[j - 1] || [])[1] + '（废）'}`, X));
   // 分段都城标记 cap: [[阈值, 1 或 0], …]
