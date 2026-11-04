@@ -1,0 +1,40 @@
+# 推送到 main 后构建合集（dist/series）并发布到 GitHub Pages
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node build-series.mjs
+      # 目录页按 artifact 片段输出（发布时由 artifact 套上文档骨架），挂到 Pages 上要自己补 doctype
+      - run: sed -i '1i <!doctype html>\n<html lang="zh-CN">' dist/series/index.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/series
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
