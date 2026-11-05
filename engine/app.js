@@ -387,7 +387,7 @@ function renderTerritory() {
   const counts = d3.rollups(st.filter((f, i) => f !== 'x' && HAS_LAND.has(i)), v => v.length, f => f).sort((a, b) => b[1] - a[1]);
   // 只占着周边陆地（BOOK.outer）的势力也列进图例
   for (const n of Object.keys(OUTER)) { const f = outerOf(n, T); if (f && !counts.some(c => c[0] === f)) counts.push([f, 0]); }
-  $('#legend').innerHTML = groupByRealm(counts, T).map(([rn, , fs]) => (rn ? `<span class="rg">${rn}</span>` : '') + fs.map(([f]) => `<span><i style="background:${fColor(f)}"></i>${fName(f, T)}</span>`).join('')).join('') +
+  $('#legend').innerHTML = groupByRealm(counts, T).map(([rn, , fs], gi) => (rn ? `${gi ? '<b class="br"></b>' : ''}<span class="rg">${rn}</span>` : '') + fs.map(([f]) => `<span><i style="background:${fColor(f)}"></i>${fName(f, T)}</span>`).join('')).join('') +
     (B.regions?.legendNote ? `<span class="note">· ${B.regions.legendNote}</span>` : '');
   cityText.text(d => cityName(d, T));
   cityG.style('display', d => (cityName(d, T) ? null : 'none')).classed('cap', d => cityCap(d, T));
