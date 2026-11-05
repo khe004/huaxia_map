@@ -82,7 +82,7 @@ const FACTIONS = {
   guixi:     { color: '#3f8f5a', realm: 'nan', mapName: () => '桂系', name: () => '桂系（陆荣廷）' },
   dianxi:    { color: '#d98fb0', realm: 'nan', mapName: () => '滇黔', name: () => '滇系（唐继尧）与黔系' },
   xiangjun:  { color: '#4a7fc1', realm: 'nan', mapName: () => '湘军', name: () => '湘军（谭延闿、程潜、赵恒惕）' },
-  yuejun:    { color: '#20a4b0', realm: 'nan', mapName: () => '粤军', name: () => '援闽粤军（陈炯明）' },
+  yuejun:    { color: '#d4c23f', realm: 'nan', mapName: () => '粤军', name: () => '援闽粤军（陈炯明）' },
   jingguo:   { color: '#6a5acd', realm: 'nan', mapName: () => '靖国军', name: () => '陕西靖国军（于右任）' },
   // 新文化运动的人物：不画地盘，只用于人物分组
   wenhua:    { color: '#8a6d3b', realm: 'nan', mapName: () => '新文化', name: () => '新文化运动' },
