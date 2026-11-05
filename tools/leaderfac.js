@@ -17,7 +17,9 @@ const NAMED_OK = new Set([
   'sanguo:刘焉', 'sanguo:士燮', 'sanguo:张杨', 'sanguo:公孙度', // 《三国演义》单行本：图例沿用割据者名，演义情节未写其人
   'bawang:王伦',                                   // “赵王伦”里的“王伦”，与南宋使臣王伦同名，不是其人
   'yuanjia:刘义',
-  'beifa:达赖喇嘛',                               // 西藏的图例名沿用前后各卷，本卷没有西藏的事件                                  // “刘义符”里的“刘义”，与南宋襄阳别将刘义同名，不是其人
+  'beifa:达赖喇嘛',
+  'kangzhan:溥仪', 'kangzhan:热振',                // 伪满、西藏的图例名沿用前后各卷，本卷没有其事件
+  'kangzhan:甘宁',                                 // “陕甘宁边区”里的“甘宁”，与三国吴将甘宁同名，不是其人                               // 西藏的图例名沿用前后各卷，本卷没有西藏的事件                                  // “刘义符”里的“刘义”，与南宋襄阳别将刘义同名，不是其人
 ]);
 const ALL = new Set();
 { const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.P=PEOPLE_COMMON', pc); Object.keys(pc.P).forEach(k => ALL.add(k));
