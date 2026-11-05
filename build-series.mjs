@@ -1,6 +1,6 @@
 // 组装合集：node build-series.mjs
 // 按 series.json 的卷目逐卷以 --series 方式构建到 dist/series/<书>/，再生成目录页 dist/series/index.html。
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import vm from 'node:vm';
 const r = f => readFileSync(new URL(f, import.meta.url), 'utf8');
@@ -363,3 +363,8 @@ ${searchJs}
 `;
 writeFileSync(new URL('./dist/series/index.html', import.meta.url), html);
 console.log('dist/series/index.html', S.books.length, '卷');
+// 合并或改名的卷（series.json 的 moved）：旧目录放一个跳转页，旧链接仍能打开
+for (const [from, to] of Object.entries(S.moved || {})) {
+  mkdirSync(new URL(`./dist/series/${from}/`, import.meta.url), { recursive: true });
+  writeFileSync(new URL(`./dist/series/${from}/index.html`, import.meta.url), `<!doctype html><meta charset="utf-8"><title>跳转</title><meta http-equiv="refresh" content="0; url=../${to}/index.html"><script>location.replace('../${to}/index.html' + location.hash)</script><a href="../${to}/index.html">本卷已并入新卷，点此前往</a>\n`);
+}
