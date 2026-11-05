@@ -77,7 +77,7 @@ const FACTIONS = {
   duwenxiu:  { color: '#2e8b57', realm: 'zhong', mapName: () => '杜文秀', name: () => '杜文秀（大理）' },
   yingguo:   { color: '#7f1d4e', realm: 'fan', mapName: () => '英国', name: () => '英国' },
   faguo:     { color: '#3a5fa8', realm: 'fan', mapName: () => '法国', name: () => '法国' },
-  riben:     { color: '#e05a6a', realm: 'fan', mapName: () => '日本', name: () => '日本' },
+  riben:     { color: '#e36bd2', realm: 'fan', mapName: () => '日本', name: () => '日本' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: () => '俄罗斯', name: () => '俄罗斯' },
   xifan:     { color: '#a34a5a', realm: 'fan', mapName: () => '西藏', name: () => '西藏（噶厦，驻藏大臣）' },
   timur:     { color: '#d9822b', realm: 'fan', mapName: () => '浩罕', name: () => '布哈拉、浩罕诸部' },

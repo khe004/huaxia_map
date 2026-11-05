@@ -79,7 +79,7 @@ const FACTIONS = {
   xinjiang:  { color: '#b5835a', realm: 'zhong', mapName: () => '新疆', name: t => (t < 1933.25 ? '新疆（金树仁）' : '新疆（盛世才）') },
   gongchan:  { color: '#b03a2e', realm: 'hong', mapName: () => '苏区', name: () => '中华苏维埃共和国（瑞金）' },
   manzhou:   { color: '#f2a7b0', realm: 'ri', mapName: () => '伪满', name: () => '“满洲国”（溥仪，日本扶植）' },
-  riben:     { color: '#e05a6a', realm: 'ri', mapName: () => '日本', name: () => '日本（关东军）' },
+  riben:     { color: '#e36bd2', realm: 'ri', mapName: () => '日本', name: () => '日本（关东军）' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: () => '苏联', name: () => '苏联' },
   tuwa:      { color: '#9bb7a0', realm: 'fan', mapName: () => '唐努图瓦', name: () => '唐努图瓦人民共和国' },
   menggu:    { color: '#1b2a49', realm: 'fan', mapName: () => '外蒙古', name: () => '蒙古人民共和国（乌兰巴托）' },

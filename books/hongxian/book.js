@@ -80,7 +80,7 @@ const FACTIONS = {
     name: t => (t < 1912.25 ? '中华民国（南京临时政府，袁世凯在北京）' : t < 1915.9416 ? '中华民国（北京政府，袁世凯）' : t < 1916.225 ? '中华帝国（袁世凯，洪宪）' : t < 1916.4166 ? '中华民国（北京政府，袁世凯）' : '中华民国（北京政府，黎元洪）') },
   nanfang:   { color: '#3f8f5a', realm: 'nan', mapName: t => (t < 1915.975 ? '讨袁军' : '护国军'),
     name: t => (t < 1915.975 ? '讨袁军（国民党各省都督）' : t < 1916.3333 ? '护国军（云南、贵州、广西诸省都督）' : '护国军（军务院，肇庆）') },
-  riben:     { color: '#e05a6a', realm: 'fan', mapName: () => '日本', name: () => '日本' },
+  riben:     { color: '#e36bd2', realm: 'fan', mapName: () => '日本', name: () => '日本' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: () => '俄罗斯', name: () => '俄罗斯' },
   yingguo:   { color: '#7f1d4e', realm: 'fan', mapName: () => '英国', name: () => '英国' },
   faguo:     { color: '#3a5fa8', realm: 'fan', mapName: () => '法国', name: () => '法国' },

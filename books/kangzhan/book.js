@@ -76,7 +76,7 @@ const FACTIONS = {
   xinjiang:  { color: '#b5835a', realm: 'zhong', mapName: () => '新疆', name: () => '新疆（盛世才）' },
   donggan:   { color: '#9c6b8e', realm: 'zhong', mapName: () => '东干军', name: () => '东干军（马虎山）' },
   gongchan:  { color: '#b03a2e', realm: 'zhong', mapName: () => '边区', name: () => '陕甘宁边区与敌后根据地（八路军、新四军）' },
-  riben:     { color: '#e05a6a', realm: 'ri', mapName: () => '日军', name: () => '日本与日军占领区' },
+  riben:     { color: '#e36bd2', realm: 'ri', mapName: () => '日军', name: () => '日本与日军占领区' },
   jidong:    { color: '#a25b7a', realm: 'ri', mapName: () => '冀东', name: () => '“冀东防共自治政府”（殷汝耕）' },
   linshi:    { color: '#d6d08f', realm: 'ri', mapName: () => '伪临时政府', name: () => '伪“中华民国临时政府”（王克敏，北平）' },
   weixin:    { color: '#9fc7d6', realm: 'ri', mapName: () => '伪维新政府', name: () => '伪“中华民国维新政府”（梁鸿志，南京）' },

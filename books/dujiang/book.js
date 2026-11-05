@@ -80,7 +80,7 @@ const FACTIONS = {
   hanguo:    { color: '#9fbf6f', realm: 'fan', mapName: () => '南朝鲜', name: () => '大韩民国（汉城）' },
   meiguo:    { color: '#7f9f4f', realm: 'fan', mapName: () => '美军', name: () => '美军占领区（冲绳、朝鲜南部）' },
   menggu:    { color: '#1b2a49', realm: 'fan', mapName: () => '外蒙古', name: t => (t < 1946.0083 ? '蒙古人民共和国（乌兰巴托）' : '蒙古人民共和国（乌兰巴托，1946 年中华民国承认独立）') },
-  riben:     { color: '#e05a6a', realm: 'fan', mapName: () => '日本', name: () => '日本（盟军占领）' },
+  riben:     { color: '#e36bd2', realm: 'fan', mapName: () => '日本', name: () => '日本（盟军占领）' },
   yingguo:   { color: '#7f1d4e', realm: 'fan', mapName: () => '英国', name: () => '英国' },
   miandian:  { color: '#b9a36a', realm: 'fan', mapName: () => '缅甸', name: () => '缅甸联邦' },
   faguo:     { color: '#3a5fa8', realm: 'fan', mapName: () => '法国', name: () => '法国（印度支那）' },

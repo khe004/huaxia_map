@@ -88,7 +88,7 @@ const FACTIONS = {
   wenhua:    { color: '#8a6d3b', realm: 'nan', mapName: () => '新文化', name: () => '新文化运动' },
   // 护法军政府：没有自己的地盘（广州一带由桂系控制），只用于人物分组
   hufa:      { color: '#2e6b3a', realm: 'nan', mapName: () => '军政府', name: () => '护法军政府（广州）' },
-  riben:     { color: '#e05a6a', realm: 'fan', mapName: () => '日本', name: () => '日本' },
+  riben:     { color: '#e36bd2', realm: 'fan', mapName: () => '日本', name: () => '日本' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: t => (t < 1918.3583 ? '俄罗斯' : '苏俄'), name: t => (t < 1918.3583 ? '俄罗斯' : '苏维埃俄国（内战中）') },
   yingguo:   { color: '#7f1d4e', realm: 'fan', mapName: () => '英国', name: () => '英国' },
   faguo:     { color: '#3a5fa8', realm: 'fan', mapName: () => '法国', name: () => '法国' },

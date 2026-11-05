@@ -71,7 +71,7 @@ const BOOK = {
 const FACTIONS = {
   houjin:    { color: '#e3c34a', realm: 'zhong', mapName: () => '清', name: t => (t < 1889.1666 ? '清（载湉 · 北京，太后训政）' : t < 1898.6666 ? '清（载湉 · 北京）' : '清（载湉 · 北京，太后训政）') },
   taiwanmzg: { color: '#3a7d44', realm: 'zhong', mapName: () => '台湾民主国', name: () => '台湾民主国（唐景崧、刘永福）' },
-  riben:     { color: '#e05a6a', realm: 'fan', mapName: () => '日本', name: () => '日本' },
+  riben:     { color: '#e36bd2', realm: 'fan', mapName: () => '日本', name: () => '日本' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: () => '俄罗斯', name: () => '俄罗斯' },
   yingguo:   { color: '#7f1d4e', realm: 'fan', mapName: () => '英国', name: () => '英国' },
   faguo:     { color: '#3a5fa8', realm: 'fan', mapName: () => '法国', name: () => '法国' },

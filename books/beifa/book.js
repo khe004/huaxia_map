@@ -96,7 +96,7 @@ const FACTIONS = {
   wenhua:    { color: '#8a6d3b', realm: 'nan', mapName: () => '文化界', name: () => '文化界' },
   // 中国共产党：本卷的红军与根据地都很小，不画地盘，只用于人物分组
   gongchan:  { color: '#b03a2e', realm: 'nan', mapName: () => '中共', name: () => '中国共产党' },
-  riben:     { color: '#e05a6a', realm: 'fan', mapName: () => '日本', name: () => '日本' },
+  riben:     { color: '#e36bd2', realm: 'fan', mapName: () => '日本', name: () => '日本' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: () => '苏联', name: () => '苏联' },
   tuwa:      { color: '#9bb7a0', realm: 'fan', mapName: () => '唐努图瓦', name: () => '唐努图瓦人民共和国' },
   menggu:    { color: '#1b2a49', realm: 'fan', mapName: () => '外蒙古', name: () => '蒙古人民共和国（乌兰巴托）' },

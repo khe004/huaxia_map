@@ -88,7 +88,7 @@ const FACTIONS = {
   manzhou:   { color: '#f2a7b0', realm: 'ri', mapName: () => '伪满', name: t => (t < 1934.1666 ? '“满洲国”（溥仪，日本扶植）' : '“满洲帝国”（溥仪称帝，日本扶植）') },
   jidong:    { color: '#a25b7a', realm: 'ri', mapName: () => '冀东', name: () => '“冀东防共自治政府”（殷汝耕，日本扶植）' },
   mengjiang: { color: '#c7a3c9', realm: 'ri', mapName: () => '伪蒙', name: () => '“蒙古军政府”（德王，日本扶植）' },
-  riben:     { color: '#e05a6a', realm: 'ri', mapName: () => '日本', name: () => '日本（关东军）' },
+  riben:     { color: '#e36bd2', realm: 'ri', mapName: () => '日本', name: () => '日本（关东军）' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: () => '苏联', name: () => '苏联' },
   tuwa:      { color: '#9bb7a0', realm: 'fan', mapName: () => '唐努图瓦', name: () => '唐努图瓦人民共和国' },
   menggu:    { color: '#1b2a49', realm: 'fan', mapName: () => '外蒙古', name: () => '蒙古人民共和国（乌兰巴托）' },

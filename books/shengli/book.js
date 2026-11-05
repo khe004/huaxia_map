@@ -76,7 +76,7 @@ const FACTIONS = {
   xinjiang:  { color: '#b5835a', realm: 'zhong', mapName: () => '新疆', name: () => '新疆（盛世才）' },
   sanqu:     { color: '#3f8f8f', realm: 'zhong', mapName: () => '三区', name: () => '伊宁“东突厥斯坦共和国”（三区，苏联支持）' },
   gongchan:  { color: '#b03a2e', realm: 'zhong', mapName: () => '解放区', name: () => '陕甘宁边区与敌后解放区（八路军、新四军）' },
-  riben:     { color: '#e05a6a', realm: 'ri', mapName: () => '日军', name: () => '日本与日军占领区' },
+  riben:     { color: '#e36bd2', realm: 'ri', mapName: () => '日军', name: () => '日本与日军占领区' },
   wangwei:   { color: '#d8c9a3', realm: 'ri', mapName: () => '汪伪', name: t => (t < 1944.85 ? '汪伪“国民政府”（汪兆铭）' : '汪伪“国民政府”（陈公博）') },
   mengjiang: { color: '#c7a3c9', realm: 'ri', mapName: () => '伪蒙疆', name: () => '伪“蒙古自治邦”（张家口）' },
   manzhou:   { color: '#f2a7b0', realm: 'ri', mapName: () => '伪满', name: () => '“满洲帝国”（溥仪，日本扶植）' },

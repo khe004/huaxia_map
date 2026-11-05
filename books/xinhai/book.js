@@ -70,7 +70,7 @@ const BOOK = {
 const FACTIONS = {
   houjin:    { color: '#e3c34a', realm: 'zhong', mapName: () => '清', name: t => (t < 1908.8333 ? '清（载湉 · 北京，太后训政）' : '清（溥仪 · 北京，载沣监国）') },
   minguo:    { color: '#c0392b', realm: 'zhong', mapName: t => (t < 1912.0083 ? '军政府' : '民国'), name: t => (t < 1912.0083 ? '湖北军政府与各省都督府' : '中华民国（南京临时政府）') },
-  riben:     { color: '#e05a6a', realm: 'fan', mapName: () => '日本', name: () => '日本' },
+  riben:     { color: '#e36bd2', realm: 'fan', mapName: () => '日本', name: () => '日本' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: () => '俄罗斯', name: () => '俄罗斯' },
   yingguo:   { color: '#7f1d4e', realm: 'fan', mapName: () => '英国', name: () => '英国' },
   faguo:     { color: '#3a5fa8', realm: 'fan', mapName: () => '法国', name: () => '法国' },

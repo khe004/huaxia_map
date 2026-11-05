@@ -90,7 +90,7 @@ const FACTIONS = {
   jingguo:   { color: '#6a5acd', realm: 'nan', mapName: () => '靖国军', name: () => '陕西靖国军（于右任）' },
   // 中国共产党：本卷不画地盘，只用于人物分组
   gongchan:  { color: '#b03a2e', realm: 'nan', mapName: () => '中共', name: () => '中国共产党' },
-  riben:     { color: '#e05a6a', realm: 'fan', mapName: () => '日本', name: () => '日本' },
+  riben:     { color: '#e36bd2', realm: 'fan', mapName: () => '日本', name: () => '日本' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: t => (t < 1922.8333 ? '苏俄' : '苏联'), name: t => (t < 1922.8333 ? '苏维埃俄国' : '苏联') },
   yuandong:  { color: '#88b04b', realm: 'fan', mapName: () => '远东共和国', name: () => '远东共和国（赤塔，苏俄的缓冲国）' },
   enqin:     { color: '#6b2737', realm: 'fan', mapName: () => '恩琴', name: () => '外蒙古（恩琴白军，博克多汗复位）' },
