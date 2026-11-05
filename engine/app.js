@@ -278,14 +278,24 @@ const gEv = root.append('g');
 
 // ---------- zoom ----------
 let K = 1;
-// 初始视野：BOOK.view 给出若干经纬度点，缩放到恰好容纳它们（可以小于 1，用于需要看到漠北、西域的书）
-const HOME = (() => {
+// 初始视野：BOOK.view 给出若干经纬度点（本卷要看的地区的边缘，不是经纬度矩形的四角：圆锥投影下矩形四角比边的中点偏北，会把视野推向北方），
+// 缩放到恰好容纳它们（可以小于 1，用于需要看到漠北、西域的书）。按地图框实际的宽高比与底部图例遮住的高度来算，
+// 宽屏时左右多出的地方也用上，图例压住的那一条不算可见区域
+let HOME = d3.zoomIdentity;
+function homeTransform() {
   if (!B.view) return d3.zoomIdentity;
   const ps = B.view.map(c => proj(c)), xs = ps.map(p => p[0]), ys = ps.map(p => p[1]);
   const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
-  const k = Math.min(1, W / (x1 - x0), H / (y1 - y0));
-  return d3.zoomIdentity.translate(W / 2 - k * (x0 + x1) / 2, H / 2 - k * (y0 + y1) / 2).scale(k);
-})();
+  // 地图框在 viewBox 坐标中的可见范围：svg 按 preserveAspectRatio = meet 映射，可见的是外层 .mapwrap（svg 本身可能比它矮，内容溢出仍可见）；
+  // 底部图例压住的一条不算
+  const box = svg.node().getBoundingClientRect(), wrap = svg.node().parentNode.getBoundingClientRect();
+  const cw = box.width || W, ch = box.height || H, s = Math.min(cw / W, ch / H);
+  const ux = x => (W - cw / s) / 2 + (x - box.left) / s, uy = y => (H - ch / s) / 2 + (y - box.top) / s;
+  const lg = $('#legend').getBoundingClientRect(), bottom = lg.height ? Math.min(wrap.bottom, lg.top - 6) : wrap.bottom;
+  const pad = 12, ax0 = ux(wrap.left) + pad, ax1 = ux(wrap.right) - pad, ay0 = uy(wrap.top) + pad, ay1 = uy(bottom) - pad;
+  const k = Math.min(1, (ax1 - ax0) / (x1 - x0), (ay1 - ay0) / (y1 - y0));
+  return d3.zoomIdentity.translate((ax0 + ax1) / 2 - k * (x0 + x1) / 2, (ay0 + ay1) / 2 - k * (y0 + y1) / 2).scale(k);
+}
 // 平移范围：底图配置的 pan 与本卷 view 的投影范围取并集（view 西北角超出 pan 时，全景不被挤偏）
 const PAN = (() => {
   const p = BASEMAP.pan || [[0, 0], [W, H]];
@@ -293,7 +303,7 @@ const PAN = (() => {
   const ps = B.view.map(c => proj(c)), xs = ps.map(q => q[0]), ys = ps.map(q => q[1]);
   return [[Math.min(p[0][0], ...xs), Math.min(p[0][1], ...ys)], [Math.max(p[1][0], ...xs), Math.max(p[1][1], ...ys)]];
 })();
-const zoom = d3.zoom().scaleExtent([Math.min(1, HOME.k), 9]).translateExtent(PAN)
+const zoom = d3.zoom().scaleExtent([0.4, 9]).translateExtent(PAN)
   .on('zoom', e => {
     root.attr('transform', e.transform); K = e.transform.k;
     root.selectAll('.sc').attr('transform', `scale(${1 / K})`);
@@ -308,7 +318,7 @@ const zoom = d3.zoom().scaleExtent([Math.min(1, HOME.k), 9]).translateExtent(PAN
 svg.call(zoom).on('dblclick.zoom', null);
 $('#zin').onclick = () => svg.transition().duration(300).call(zoom.scaleBy, 1.6);
 $('#zout').onclick = () => svg.transition().duration(300).call(zoom.scaleBy, 1 / 1.6);
-$('#zreset').onclick = () => svg.transition().duration(400).call(zoom.transform, HOME);
+$('#zreset').onclick = () => { if (B.view) HOME = homeTransform(); svg.transition().duration(400).call(zoom.transform, HOME); };
 function focusPoint(p) {
   const t = d3.zoomTransform(svg.node());
   const [x, y] = t.apply(p);
@@ -777,7 +787,15 @@ if (startAt === 'end') state.step = EV_STEP[EV_SORTED[EV_SORTED.length - 1].i];
 if (startAt) { state.year = STEPS[state.step].y; state.sel = STEPS[state.step].ev; }
 range.value = state.step;
 renderStamp(); renderTerritory(); renderEvents(); renderPanel(); markTimeline(); markBookEnd();
-if (B.view) svg.call(zoom.transform, HOME);
+// 图例此时已画出：按它的高度算初始视野；最小缩放比初始视野再小一些，仍能拖出去看周边
+const applyHome = () => { HOME = homeTransform(); zoom.scaleExtent([Math.min(1, HOME.k) * 0.75, 9]); svg.call(zoom.transform, HOME); };
+if (B.view) {
+  applyHome();
+  // 页面排版稳定前地图框的尺寸还会变（字体、右栏载入）：读者还没动过地图时，尺寸一变就重新对准初始视野
+  let moved = false;
+  zoom.on('start.home', e => { if (e.sourceEvent) moved = true; });
+  if (window.ResizeObserver) { const ro = new ResizeObserver(() => { if (!moved) applyHome(); }); ro.observe(svg.node()); ro.observe(svg.node().parentNode); }
+}
 // 从其他卷的人物页跳来：?ev=事件标题&p=人物，打开该事件，并沿此人的行迹浏览
 {
   const q = new URLSearchParams(location.search), ei = EVENTS.findIndex(e => e.t === q.get('ev')), pn = q.get('p');
