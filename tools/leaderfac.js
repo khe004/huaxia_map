@@ -19,7 +19,7 @@ const NAMED_OK = new Set([
   'yuanjia:刘义',
   'beifa:达赖喇嘛',
   'kangzhan:溥仪', 'kangzhan:热振',                // 伪满、西藏的图例名沿用前后各卷，本卷没有其事件
-  'kangzhan:甘宁',                                 // “陕甘宁边区”里的“甘宁”，与三国吴将甘宁同名，不是其人                               // 西藏的图例名沿用前后各卷，本卷没有西藏的事件                                  // “刘义符”里的“刘义”，与南宋襄阳别将刘义同名，不是其人
+  'kangzhan:甘宁', 'shengli:甘宁',                                 // “陕甘宁边区”里的“甘宁”，与三国吴将甘宁同名，不是其人                               // 西藏的图例名沿用前后各卷，本卷没有西藏的事件                                  // “刘义符”里的“刘义”，与南宋襄阳别将刘义同名，不是其人
 ]);
 const ALL = new Set();
 { const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.P=PEOPLE_COMMON', pc); Object.keys(pc.P).forEach(k => ALL.add(k));

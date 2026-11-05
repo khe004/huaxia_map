@@ -80,7 +80,7 @@ const FACTIONS = {
   jidong:    { color: '#a25b7a', realm: 'ri', mapName: () => '冀东', name: () => '“冀东防共自治政府”（殷汝耕）' },
   linshi:    { color: '#d6d08f', realm: 'ri', mapName: () => '伪临时政府', name: () => '伪“中华民国临时政府”（王克敏，北平）' },
   weixin:    { color: '#9fc7d6', realm: 'ri', mapName: () => '伪维新政府', name: () => '伪“中华民国维新政府”（梁鸿志，南京）' },
-  wangwei:   { color: '#9db4e0', realm: 'ri', mapName: () => '汪伪', name: () => '汪伪“国民政府”（汪兆铭，南京；华北为伪华北政务委员会）' },
+  wangwei:   { color: '#d8c9a3', realm: 'ri', mapName: () => '汪伪', name: () => '汪伪“国民政府”（汪兆铭，南京；华北为伪华北政务委员会）' },
   mengjiang: { color: '#c7a3c9', realm: 'ri', mapName: () => '伪蒙疆', name: t => (t < 1937.7916 ? '“蒙古军政府”（德王）' : t < 1939.6666 ? '“蒙古联盟自治政府”（德王）' : '“蒙疆联合自治政府”（德王）') },
   manzhou:   { color: '#f2a7b0', realm: 'ri', mapName: () => '伪满', name: () => '“满洲帝国”（溥仪，日本扶植）' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: () => '苏联', name: () => '苏联' },
