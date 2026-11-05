@@ -6,8 +6,8 @@
 
 const BOOK = {
   id: 'xian',
-  title: '西安舆图',
-  brand: '西安',
+  title: '西安事变舆图',
+  brand: '西安事变',
   seal: '民',
   subtitle: '据当时宣言、通电与时人文章 · 福建事变、长征、华北事变与冀东伪政权、一二·九、两广事变、绥远抗战、西安事变 · 公元 1933 – 1937',
   basemap: 'china',

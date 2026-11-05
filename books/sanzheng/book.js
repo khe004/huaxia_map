@@ -21,8 +21,8 @@ function H(r, n, m, extra) {
 
 const BOOK = {
   id: 'sanzheng',
-  title: '三大征舆图',
-  brand: '三大征',
+  title: '万历三征舆图',
+  brand: '万历三征',
   seal: '明',
   subtitle: '据《明史》《清史稿》 · 隆庆开关、俺答封贡、张居正改革与一条鞭法、宁夏之役、援朝抗倭、播州之役、国本之争与矿税、东林党、努尔哈赤建金、萨尔浒之战 · 公元 1567 – 1619',
   basemap: 'china',

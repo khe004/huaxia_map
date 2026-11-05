@@ -6,8 +6,8 @@
 
 const BOOK = {
   id: 'shengli',
-  title: '胜利舆图',
-  brand: '胜利',
+  title: '抗战胜利舆图',
+  brand: '抗战胜利',
   seal: '民',
   subtitle: '据当时条约、宣言与布告 · 太平洋战争、中国远征军、新约、开罗会议、豫湘桂会战、三区事变、苏联出兵东北、日本投降、台湾光复 · 公元 1941 – 1945',
   basemap: 'china',

@@ -7,8 +7,8 @@
 
 const BOOK = {
   id: 'dujiang',
-  title: '渡江舆图',
-  brand: '渡江',
+  title: '渡江战役舆图',
+  brand: '渡江战役',
   seal: '民',
   subtitle: '据当时讲话、宪法、协定与公告 · 东北争夺、政协与停战、全面内战、三大战役、渡江、中华人民共和国成立、国民政府迁台 · 公元 1945 – 1949',
   basemap: 'china',

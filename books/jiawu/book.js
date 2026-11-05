@@ -20,8 +20,8 @@ function H(r, n, m, extra) {
 
 const BOOK = {
   id: 'jiawu',
-  title: '甲午舆图',
-  brand: '甲午',
+  title: '甲午战争舆图',
+  brand: '甲午战争',
   seal: '清',
   subtitle: '据《清史稿》 · 北洋海军、甲午战争、《马关条约》与台湾割让、三国干涉还辽、列强租借港湾、戊戌变法、义和团与八国联军、俄占东三省、《辛丑条约》 · 公元 1886 – 1901',
   basemap: 'china',

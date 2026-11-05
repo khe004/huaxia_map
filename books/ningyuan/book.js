@@ -21,8 +21,8 @@ function H(r, n, m, extra) {
 
 const BOOK = {
   id: 'ningyuan',
-  title: '宁远舆图',
-  brand: '宁远',
+  title: '宁远之战舆图',
+  brand: '宁远之战',
   seal: '明',
   subtitle: '据《明史》《清史稿》 · 红丸与移宫、辽沈之陷、广宁之溃、奢安之乱、魏忠贤与东林、宁远之战、宁锦之战、陕西民变、己巳之变与袁崇焕之死、大凌河、吴桥兵变、林丹汗败亡 · 公元 1620 – 1635',
   basemap: 'china',

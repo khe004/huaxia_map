@@ -21,8 +21,8 @@ function H(r, n, m, extra) {
 
 const BOOK = {
   id: 'gengxu',
-  title: '庚戌舆图',
-  brand: '庚戌',
+  title: '庚戌之变舆图',
+  brand: '庚戌之变',
   seal: '明',
   subtitle: '据《明史》 · 刘瑾专权、安化王与宁王之乱、王守仁、应州之战、佛郎机来华、大礼议、莫登庸篡黎、俺答与庚戌之变、壬寅宫变、严嵩当国、嘉靖倭患与戚继光、海瑞上疏 · 公元 1505 – 1567',
   basemap: 'china',

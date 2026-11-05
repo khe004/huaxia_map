@@ -20,8 +20,8 @@ function H(r, n, m, extra) {
 
 const BOOK = {
   id: 'diaoyu',
-  title: '钓鱼城舆图',
-  brand: '钓鱼城',
+  title: '合州之战舆图',
+  brand: '合州之战',
   seal: '宋',
   subtitle: '据《宋史》《元史》 · 端平入洛、阔端入蜀与襄阳兵变、孟珙收复襄樊、余玠治蜀与山城防线、贵由与蒙哥即位、忽必烈平大理、兀良合台入交趾、蒙哥攻钓鱼城、忽必烈围鄂州、忽必烈与阿里不哥争位 · 公元 1234 – 1260',
   basemap: 'china',

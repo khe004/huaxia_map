@@ -6,8 +6,8 @@
 
 const BOOK = {
   id: 'liansheng',
-  title: '联省舆图',
-  brand: '联省',
+  title: '联省自治舆图',
+  brand: '联省自治',
   seal: '民',
   subtitle: '据当时公文、宣言与时人记述 · 粤军回粤、联省自治、两次直奉战争、陈炯明兵变、曹锟贿选、国民党改组与黄埔建军、北京政变、外蒙古的变局、孙文逝世 · 公元 1920 – 1925',
   basemap: 'china',

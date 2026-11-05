@@ -20,8 +20,8 @@ function H(r, n, m, extra) {
 
 const BOOK = {
   id: 'nanpo',
-  title: '南坡舆图',
-  brand: '南坡',
+  title: '南坡之变舆图',
+  brand: '南坡之变',
   seal: '元',
   subtitle: '据《元史》 · 至大尚书省、仁宗恢复科举、延祐经理、周王出奔、英宗与拜住、南坡之变、两都之战、明宗暴卒、燕铁木儿与伯颜专权、脱脱更化、修三史、白茅决口、变钞与贾鲁开河 · 公元 1307 – 1351',
   basemap: 'china',

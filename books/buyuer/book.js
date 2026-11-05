@@ -21,8 +21,8 @@ function H(r, n, m, extra) {
 
 const BOOK = {
   id: 'buyuer',
-  title: '捕鱼儿海舆图',
-  brand: '捕鱼儿海',
+  title: '洪武之治舆图',
+  brand: '洪武之治',
   seal: '明',
   subtitle: '据《明史》 · 北定山西与关陕、元顺帝死于应昌、平夏、岭北之战、平云南、胡惟庸案与罢中书省、赋役黄册、郭桓案、纳哈出降、捕鱼儿海之战、兀良哈三卫、李成桂代高丽、蓝玉案、朱元璋之死 · 公元 1368 – 1398',
   basemap: 'china',
