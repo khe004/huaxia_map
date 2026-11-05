@@ -60,12 +60,19 @@ const rows = S.books.map((b, i) => {
       <span class="name">${esc(BOOK.brand)}</span>
       <span class="yrs">${esc(b.years)}${ov ? `<em class="ovl">${ov}</em>` : ''}</span>
       <span class="blurb">${esc(b.blurb)}</span>
-      <span class="meta">${EVENTS.length} 事件 · ${PEOPLE_RAW.length} 人物</span>
+      <span class="meta">${metaLine(EVENTS, PEOPLE_RAW)}</span>
     </span>
     <span class="go" aria-hidden="true">›</span>
   </a>
 </li>`;
 });
+// 卷目的统计：有文化事件的卷把史事与文化分开写，人数按各自事件里出场的人计（两边都出场的各算一次）
+function metaLine(EVENTS, PEOPLE_RAW) {
+  const cul = EVENTS.filter(e => e.k === 'cul');
+  if (!cul.length) return `${EVENTS.length} 事件 · ${PEOPLE_RAW.length} 人物`;
+  const main = EVENTS.filter(e => e.k !== 'cul'), np = es => new Set(es.flatMap(e => e.who)).size;
+  return `史事 ${main.length} 件 · ${np(main)} 人　文化 ${cul.length} 件 · ${np(cul)} 人`;
+}
 // 人物所在各卷只保留有在世事件的卷：只在身后被提及的卷（如马援之于卷十四）不算跨卷；一件在世事件都没有的人保留原样
 for (const P of Object.values(IDX.people)) if (P[3].some(b => b[2])) P[3] = P[3].filter(b => b[2]);
 const searchJs = `(() => {
