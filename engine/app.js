@@ -6,7 +6,7 @@ const [W, H] = BASEMAP.size, [Y0, Y1] = B.range;
 const SER = SERIES && SERIES.books.findIndex(b => b.id === B.id) >= 0 ? SERIES : null;
 const serIdx = SER ? SER.books.findIndex(b => b.id === B.id) : -1;
 const $ = s => document.querySelector(s);
-const KIND = { war: '战事', pol: '政事', dip: '外交' };
+const KIND = { war: '战事', pol: '政事', dip: '外交', cul: '文化' };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
 // 年份：公元前用负数，没有公元 0 年
@@ -422,7 +422,7 @@ function renderEvents() {
   });
   sel.select('path.mk').attr('d', d => {
     const cur = focusP || d.y === y; const r = cur ? 6.5 : 3.2;
-    return d.k === 'war' ? `M0,${-r * 1.15}L${r * 1.15},0L0,${r * 1.15}L${-r * 1.15},0Z` : d.k === 'dip' ? d3.symbol(d3.symbolSquare, 3.2 * r * r)() : d3.symbol(d3.symbolCircle, Math.PI * r * r)();
+    return d.k === 'war' ? `M0,${-r * 1.15}L${r * 1.15},0L0,${r * 1.15}L${-r * 1.15},0Z` : d.k === 'dip' ? d3.symbol(d3.symbolSquare, 3.2 * r * r)() : d.k === 'cul' ? d3.symbol(d3.symbolTriangle, 3.6 * r * r)() : d3.symbol(d3.symbolCircle, Math.PI * r * r)();
   });
   sel.sort((a, b) => (a.y === y) - (b.y === y) || (state.sel === a.i) - (state.sel === b.i));
   renderPersonPath();
@@ -602,7 +602,7 @@ function srcBlock(refs) {
 // 正文中的原书引文：**…** → 加粗下划线
 // 可写作 **左传|…** 注明另一出处：悬停显示“《左传》原文”，下划线换色
 // 出处前缀限六字，书名长的用简称写，悬停时写出全名
-const SRC_FULL = { 要录: '建炎以来系年要录', 长编: '续资治通鉴长编' };
+const SRC_FULL = { 要录: '建炎以来系年要录', 长编: '续资治通鉴长编', 东征传: '唐大和上东征传', 名画记: '历代名画记' };
 const rich = t => esc(t).replace(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g, (_, src, q) => src
   ? `<b class="yw yw2" title="《${SRC_FULL[src] || src}》原文">${q}</b>` : `<b class="yw" title="${esc(B.quoteLabel || '原文')}">${q}</b>`);
 const tagOf = e => (e.src ? (B.tags || {})[e.src] || e.src : '');
@@ -765,6 +765,9 @@ function renderPerson(n) {
 
 // ---------- toggles ----------
 const tg = (id, cls) => { const el = $(id); const f = () => { svg.classed(cls, !el.checked); svg.classed('show-prov', K >= 1.8 && $('#tg-modern').checked); }; el.addEventListener('change', f); f(); };
+// 文化事件（文学、学术、宗教、艺术、科技）可以从地图与时间轴上隐去，只看战事、政事、外交；本卷没有文化事件时不显示这个开关
+if (!EVENTS.some(e => e.k === 'cul')) $('#tg-cul-l').style.display = 'none';
+{ const el = $('#tg-cul'), f = () => { svg.classed('hide-cul', !el.checked); $('#ticks').classList.toggle('hide-cul', !el.checked); }; el.addEventListener('change', f); f(); }
 tg('#tg-terrain', 'hide-terrain'); tg('#tg-modern', 'hide-modern'); tg('#tg-zhou', 'hide-zhou'); tg('#tg-city', 'hide-city');
 $('#music').title = B.musicTitle || '原创合成的背景音';
 
