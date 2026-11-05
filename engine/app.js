@@ -74,7 +74,13 @@ const STATES = [];
     STATES.push(cur.slice());
   }
 }
-const EV_SORTED = EVENTS.slice().sort((a, b) => EV_STEP[a.i] - EV_STEP[b.i]);
+const EV_ALL = EVENTS.slice().sort((a, b) => EV_STEP[a.i] - EV_STEP[b.i]);
+// 两条事件线：史事（战事、政事、外交）与文化。时间轴圆点、地图标记、播放、上下翻页与本年大事只走当前一条线，疆域照常逐年推进
+const HAS_CUL = EVENTS.some(e => e.k === 'cul');
+let LINE = 'main';
+const lineOf = e => (e.k === 'cul' ? 'cul' : 'main');
+const onLine = e => lineOf(e) === LINE;
+let EV_SORTED = EV_ALL.filter(onLine);
 
 // ---------- calendar ----------
 const DIG = '〇一二三四五六七八九';
@@ -364,7 +370,7 @@ function renderTerritory() {
   facBorderIn.attr('d', meshBy((a, b) => fa(a, b) && sameRealm(st[a.properties.j], st[b.properties.j], T)));
 
   // faction labels at the medoid of each faction's commanderies
-  const evPts = EVENTS.filter(e => e.y === y && EV_STEP[e.i] <= state.step).map(e => proj(e.ll));
+  const evPts = EVENTS.filter(e => e.y === y && EV_STEP[e.i] <= state.step && onLine(e)).map(e => proj(e.ll));
   const groups = d3.group(st.map((f, i) => [f, i]).filter(([f, i]) => HAS_LAND.has(i) && !(typeof FACTIONS[f].hideLabel === 'function' ? FACTIONS[f].hideLabel(T) : FACTIONS[f].hideLabel)), d => d[0]);
   const labels = [];
   for (const [f, arr] of groups) {
@@ -399,7 +405,7 @@ function visibleEvents() {
   const y = state.year;
   // 人物行迹模式只显示此人在世时的事件；当前选中的事件（如点开的“身后”事件）也一并显示
   if (state.person) { const L = PEOPLE.get(state.person).live; return (state.sel != null && !L.includes(state.sel) ? L.concat(state.sel) : L).map(i => EVENTS[i]); }
-  return EVENTS.filter(e => EV_STEP[e.i] <= state.step);
+  return EVENTS.filter(e => EV_STEP[e.i] <= state.step && onLine(e));
 }
 function renderEvents() {
   const y = state.year, focusP = state.person ? new Set(PEOPLE.get(state.person).live) : null;
@@ -547,6 +553,8 @@ function setStep(k, toYearView) {
   // 事件详情页中翻到、拖到另一个事件：就地换成该事件的详情（不压入返回栈）
   // 拖到没有事件的年初一步：回到当年的年份视图（不压入返回栈）
   const swap = state.view.t === 'event' && STEPS[k].ev !== state.view.i;
+  // 打开另一条线上的事件：切到那条线
+  if (swap && STEPS[k].ev != null && !onLine(EVENTS[STEPS[k].ev])) setLine(lineOf(EVENTS[STEPS[k].ev]), true);
   if (swap) { if (STEPS[k].ev != null) state.view = { t: 'event', i: STEPS[k].ev }; else { state.view = { t: state.tab === 'people' ? 'people' : state.tab === 'events' ? 'events' : 'year' }; state.stack = []; state.sel = null; state.person = null; } }
   // 沿人物行迹浏览时翻到、拖到与此人无关的事件：退出行迹模式
   if (state.view.t === 'event' && state.person && !PEOPLE.get(state.person).ev.includes(state.view.i)) state.person = null;
@@ -565,7 +573,7 @@ function markTimeline() {
 }
 function renderStamp() {
   const y = state.year;
-  const ev = STEPS[state.step].ev;
+  const ev = STEPS[state.step].ev != null && onLine(EVENTS[STEPS[state.step].ev]) ? STEPS[state.step].ev : null;
   const ph = phaseOf(y)[2];
   $('#stamp').innerHTML = `<div class="big">${fmtYear(y)}<small>年</small></div><div class="era">${yearLine(y)}</div>${ev != null ? `<div class="now">▸ ${EVENTS[ev].t}</div>` : ''}${ph ? `<div class="phase">${ph}</div>` : ''}`;
 }
@@ -601,10 +609,10 @@ function srcBlock(refs) {
 }
 // 正文中的原书引文：**…** → 加粗下划线
 // 可写作 **左传|…** 注明另一出处：悬停显示“《左传》原文”，下划线换色
-// 出处前缀限六字，书名长的用简称写，悬停时写出全名
+// 出处前缀限六字，书名长的用简称写，悬停时写出全名；各书可在 BOOK.srcFull 补充（如诗文的长题目）
 const SRC_FULL = { 要录: '建炎以来系年要录', 长编: '续资治通鉴长编', 东征传: '唐大和上东征传', 名画记: '历代名画记' };
 const rich = t => esc(t).replace(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g, (_, src, q) => src
-  ? `<b class="yw yw2" title="《${SRC_FULL[src] || src}》原文">${q}</b>` : `<b class="yw" title="${esc(B.quoteLabel || '原文')}">${q}</b>`);
+  ? `<b class="yw yw2" title="《${(B.srcFull || {})[src] || SRC_FULL[src] || src}》原文">${q}</b>` : `<b class="yw" title="${esc(B.quoteLabel || '原文')}">${q}</b>`);
 const tagOf = e => (e.src ? (B.tags || {})[e.src] || e.src : '');
 const evItem = (e, on) => `<button class="item${on ? ' on' : ''}" data-event="${e.i}"><span class="y">${fmtYear(e.y)}</span><span class="t"><i class="${e.k}"></i>${e.t}</span><span class="s">${[e.p + ' · ' + e.m, srcShort(e.refs), tagOf(e)].filter(Boolean).join(' · ')}</span></button>`;
 
@@ -619,6 +627,8 @@ function openEvent(i, fromMap) {
   const e = EVENTS[i];
   if (fromMap && state.view.t !== 'person' && !(state.view.t === 'event' && state.person)) state.person = null;
   go({ t: 'event', i }); state.sel = i;
+  // 打开另一条线上的事件（人物页、目录、深链）：切到那条线
+  if (!onLine(e)) { setLine(lineOf(e), true); renderStamp(); markBookEnd(); }
   if (state.person && !PEOPLE.get(state.person).ev.includes(i)) state.person = null;
   if (EV_STEP[i] !== state.step) { state.step = EV_STEP[i]; state.year = e.y; range.value = state.step; renderStamp(); renderTerritory(); markTimeline(); }
   renderEvents(); renderPanel(); focusPoint(proj(e.ll)); storyCursor();
@@ -652,7 +662,7 @@ function renderPanel() {
   if (v.t === 'person') return renderPerson(v.n);
 }
 function renderYear() {
-  const y = state.year, evs = EVENTS.filter(e => e.y === y);
+  const y = state.year, evs = EVENTS.filter(e => e.y === y && onLine(e));
   const st = curSt().filter((f, i) => f !== 'x' && HAS_LAND.has(i));
   const counts = d3.rollups(st, v => v.length, f => f).sort((a, b) => b[1] - a[1]);
   const max = counts.length ? counts[0][1] : 1;
@@ -766,10 +776,25 @@ function renderPerson(n) {
 // ---------- toggles ----------
 const tg = (id, cls) => { const el = $(id); const f = () => { svg.classed(cls, !el.checked); svg.classed('show-prov', K >= 1.8 && $('#tg-modern').checked); }; el.addEventListener('change', f); f(); };
 // 文化事件（文学、学术、宗教、艺术、科技）可以从地图与时间轴上隐去，只看战事、政事、外交；本卷没有文化事件时不显示这个开关
-if (!EVENTS.some(e => e.k === 'cul')) $('#tg-cul-l').style.display = 'none';
-{ const el = $('#tg-cul'), f = () => { svg.classed('hide-cul', !el.checked); $('#ticks').classList.toggle('hide-cul', !el.checked); }; el.addEventListener('change', f); f(); }
 tg('#tg-terrain', 'hide-terrain'); tg('#tg-modern', 'hide-modern'); tg('#tg-zhou', 'hide-zhou'); tg('#tg-city', 'hide-city');
 $('#music').title = B.musicTitle || '原创合成的背景音';
+// 史事 / 文化 两条线的切换；所选的线记在本机，翻到下一卷时沿用
+function setLine(l, quiet) {
+  LINE = HAS_CUL ? l : 'main';
+  EV_SORTED = EV_ALL.filter(onLine);
+  $('#ticks').classList.toggle('line-main', LINE === 'main'); $('#ticks').classList.toggle('line-cul', LINE === 'cul');
+  document.querySelectorAll('#linesw button').forEach(b => b.classList.toggle('on', b.dataset.line === LINE));
+  try { localStorage.setItem('yutu-line', LINE); } catch (e) {}
+  if (quiet) return;
+  stop();
+  if (state.view.t === 'event' && !state.person && !onLine(EVENTS[state.view.i])) { state.view = { t: 'year' }; state.stack = []; state.sel = null; }
+  renderStamp(); renderEvents(); markBookEnd(); renderPanel();
+}
+if (HAS_CUL) {
+  $('#linesw').hidden = false;
+  $('#linesw').addEventListener('click', e => { const b = e.target.closest('button'); if (b && b.dataset.line !== LINE) setLine(b.dataset.line); });
+}
+{ let l = 'main'; try { l = localStorage.getItem('yutu-line') || 'main'; } catch (e) {} setLine(l === 'cul' ? 'cul' : 'main', true); }
 
 // 主题切换时重算填充色
 const refill = () => { FILL = {}; cells.interrupt().attr('fill', d => fillOf(curSt()[d.properties.j])); };

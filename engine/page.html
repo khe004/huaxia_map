@@ -120,7 +120,7 @@ button { font: inherit; color: inherit; }
 .ev.pol .mk { fill: var(--ink); }
 .ev.dip .mk { fill: var(--dip); }
 .ev.cul .mk { fill: var(--cul); }
-.hide-cul .ev.cul, .ticks.hide-cul button.cul { display: none; }
+.ticks.line-main button.cul, .ticks.line-cul button:not(.cul) { display: none; }
 .ev.past .mk { fill: var(--muted); stroke-width: 1; opacity: .55; }
 .ev.past.war .mk { fill: var(--seal); opacity: .38; }
 .ev.past.dip .mk { fill: var(--dip); opacity: .38; }
@@ -166,6 +166,8 @@ button { font: inherit; color: inherit; }
 .viewsw button { border: 0; background: var(--panel); padding: 6px 14px; cursor: pointer; font-size: 13.5px; color: var(--ink2); letter-spacing: .08em; }
 .viewsw button + button { border-left: 1px solid var(--line); }
 .viewsw button.on { background: var(--ink); color: var(--panel); font-weight: 700; }
+.viewsw.linesw button { padding: 5px 12px; }
+.viewsw.linesw button[data-line="cul"].on { background: var(--cul); }
 
 /* storyline */
 .story { grid-area: map; min-height: 0; display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
@@ -349,7 +351,6 @@ button { font: inherit; color: inherit; }
       <label><input type="checkbox" id="tg-modern" checked> 今省界</label>
       <label><input type="checkbox" id="tg-zhou" checked> {{regionToggle}}</label>
       <label><input type="checkbox" id="tg-city" checked> 城邑</label>
-      <label id="tg-cul-l"><input type="checkbox" id="tg-cul" checked> 文化</label>
     </div>
   </header>
 
@@ -383,6 +384,7 @@ button { font: inherit; color: inherit; }
       <button class="btn primary" id="play">▶ 播放</button>
       <button class="btn" id="prevEv">‹ 上一事件</button>
       <button class="btn" id="nextEv">下一事件 ›</button>
+      <div class="viewsw linesw" id="linesw" hidden title="时间轴、播放与上下翻页只走一条线：史事（战事、政事、外交）或文化"><button data-line="main" class="on">史事</button><button data-line="cul">文化</button></div>
       <span class="tl-hint">拖动时间轴逐年、逐事件推进；点下方圆点直达某个事件</span>
       <nav class="series" id="series" hidden></nav>
       <a class="btn nextbook" id="nextBook" hidden></a>

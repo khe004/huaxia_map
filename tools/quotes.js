@@ -1,6 +1,6 @@
 // 校验书中标注的原文引文（**…** 或 **出处|…**）是否确实出现在原书文本中。
 // 用法：node tools/quotes.js <书目录名 | _people> <原文目录> [出处=原文目录 …]
-//   第一个目录核对不带出处的引文；其余如 左传=dir 核对 **左传|…**。
+//   第一个目录核对不带出处的引文；其余如 左传=dir 核对 **左传|…**；*=dir 核对其余未单列的出处（如诗文篇名）。
 //   原文目录下为若干 .txt（简体），引文去掉标点、空白后在全部文本中查找。
 const fs = require('fs'), path = require('path');
 const [id, dir, ...more] = process.argv.slice(2);
@@ -20,7 +20,7 @@ let n = 0, bad = 0; const cnt = {};
 for (const m of src.replace(/^\s*\/\/.*$/gm, '').matchAll(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g)) {
   n++;
   const k = m[1] || '', q = strip(m[2]); cnt[k || '默认'] = (cnt[k || '默认'] || 0) + 1;
-  const c = corpora[k];
+  const c = corpora[k] || (k && corpora['*']);
   if (!c) { bad++; console.log('? 未提供原文：', k, m[2]); continue; }
   // 去掉标点后为空的（如 **……**）不算找到
   if (!q || !c.find(([, t]) => t.includes(q))) { bad++; console.log('✗', k ? k + '|' : '', m[2]); }
