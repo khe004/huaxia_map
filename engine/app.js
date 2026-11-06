@@ -837,6 +837,8 @@ if (B.view) {
   else if (pn && PEOPLE.has(pn)) {
     // 时间轴与疆域跳到此人在本卷的第一个（在世）事件，与人物页、金色行迹一致
     const P = PEOPLE.get(pn), first = (P.live.length ? P.live : P.ev).slice().sort((a, b) => EV_STEP[a] - EV_STEP[b])[0];
+    // 此人在当前这条线上没有事件（如记住的是文化线、此人只见于史事）：换到其事件所在的线
+    if (first != null && !onLineP(P)) { setLine(lineOf(EVENTS[first]), true); renderEvents(); markBookEnd(); }
     if (first != null) setStep(EV_STEP[first]);
     setTab('people'); openPerson(pn);
   }
