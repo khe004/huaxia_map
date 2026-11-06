@@ -20,7 +20,9 @@ function storyData() {
 }
 storyData();
 const liveOn = n => PEOPLE.get(n).live.filter(i => onLine(EVENTS[i]));
-const COLW = 46, HEAD = 94, PADX = 24;
+// 列宽随事件数伸缩：事件少（如文化线）时放宽到 120，铺满可视宽度，阶段标题与人名也有地方放
+let COLW = 46;
+const HEAD = 94, PADX0 = 24, NAMEW = n => n.length * 11.5 + 4;
 const PCOL = ['#d1495b', '#2f7fbf', '#e09f1f', '#2a9d8f', '#8d6cab', '#e0602f', '#5aa83c', '#c2569b', '#7a6a4f', '#3fb6d6', '#a83232', '#6b7fd7'];
 // 交汇图只画在世事件不少于 2 件的人物（与顶栏人物按钮一致），默认人选和本地保存的人选都按此过滤
 const storyable = n => PEOPLE.has(n) && liveOn(n).length >= 2;
@@ -61,8 +63,14 @@ function renderStory() {
   const sb = sScroll.offsetHeight - sScroll.clientHeight || 12;
   const avail = sBody.clientHeight - sb - 2;
   const RH = Math.max(12, Math.min(34, Math.floor((avail - HEAD) / ROWS.length)));
-  const H = HEAD + ROWS.length * RH, WD = PADX * 2 + COLS.length * COLW;
-  const yRow = k => HEAD + k * RH + RH / 2, xCol = k => PADX + k * COLW + COLW / 2;
+  // 起止人名画在线的两端外侧：首列、末列的人名要留出左右边距
+  const firstCol = new Map(), lastCol = new Map();
+  for (const n of sel) { const ks = liveOn(n).map(i => colOf.get(i)).filter(k => k != null); if (ks.length) { firstCol.set(n, Math.min(...ks)); lastCol.set(n, Math.max(...ks)); } }
+  const padL = Math.max(PADX0, ...[...firstCol].filter(([, k]) => k === 0).map(([n]) => NAMEW(n) + 16));
+  const padR = Math.max(PADX0, ...[...lastCol].filter(([, k]) => k === COLS.length - 1).map(([n]) => NAMEW(n) + 16));
+  COLW = Math.max(46, Math.min(120, Math.floor((sScroll.clientWidth - padL - padR) / Math.max(1, COLS.length))));
+  const H = HEAD + ROWS.length * RH, WD = padL + padR + COLS.length * COLW;
+  const yRow = k => HEAD + k * RH + RH / 2, xCol = k => padL + k * COLW + COLW / 2;
   geom = { xCol, WD };
 
   // 左侧：州、郡标签
@@ -88,7 +96,10 @@ function renderStory() {
     const cs = COLS.filter(e => e.y >= a && e.y <= b); if (!cs.length) continue;
     const x0 = xCol(colOf.get(cs[0].i)) - COLW / 2, x1 = xCol(colOf.get(cs[cs.length - 1].i)) + COLW / 2;
     S.append('line').attr('class', 'sphase').attr('x1', x0).attr('x2', x0).attr('y1', 4).attr('y2', H);
-    S.append('text').attr('class', 'sphase-t').attr('x', x0 + 6).attr('y', 13).text(`${n} ${fmtYear(a)}–${fmtYear(b)}`);
+    // 阶段标题按阶段宽度取舍：全称带年份 → 只写名称 → 截短加省略号；放不下的悬停看全称
+    const full = `${n} ${fmtYear(a)}–${fmtYear(b)}`, room = (x1 - x0 - 10) / 14;
+    const fit = full.length <= room ? full : n.length <= room ? n : room >= 2 ? n.slice(0, Math.floor(room) - 1) + '…' : '';
+    S.append('text').attr('class', 'sphase-t').attr('x', x0 + 6).attr('y', 13).text(fit).append('title').text(full);
     S.append('line').attr('class', 'sphase-u').attr('x1', x0 + 2).attr('x2', x1 - 2).attr('y1', 17).attr('y2', 17);
   }
   let lastY = null;
@@ -106,6 +117,7 @@ function renderStory() {
     ps.forEach((n, i) => off.set(n + '|' + e.i, (i - (ps.length - 1) / 2) * gap));
   }
   const lines = S.append('g').attr('class', 'slines' + (state.person && sel.includes(state.person) ? ' hot' : ''));
+  const names = [];
   for (const n of sel) {
     const evs = liveOn(n).map(i => EVENTS[i]).sort((a, b) => EV_STEP[a.i] - EV_STEP[b.i]);
     if (!evs.length) continue;
@@ -120,24 +132,37 @@ function renderStory() {
     const g = lines.append('g').attr('class', 'sline' + (state.person === n ? ' on' : '')).attr('data-p', n).style('--pc', pColor(n));
     g.append('path').attr('class', 'shalo').attr('d', d);
     g.append('path').attr('class', 'sstroke').attr('d', d);
-    g.append('text').attr('class', 'sname').attr('x', P[0][0] - 13).attr('y', P[0][1] + 4).text(n);
-    g.append('text').attr('class', 'sname end').attr('x', last[0] + 13).attr('y', last[1] + 4).text(n);
-    g.on('mouseenter', () => { lines.classed('hover', true); g.classed('hov', true); })
-      .on('mouseleave', () => { lines.classed('hover', false); g.classed('hov', false); hideTip(); })
+    names.push({ n, x: P[0][0] - 13, y: P[0][1], end: false }, { n, x: last[0] + 13, y: last[1], end: true });
+    g.on('mouseenter', () => { lines.classed('hover', true); labs.classed('hover', true); g.classed('hov', true); labs.selectAll(`[data-p="${CSS.escape(n)}"]`).classed('hov', true); })
+      .on('mouseleave', () => { lines.classed('hover', false); labs.classed('hover', false); g.classed('hov', false); labs.selectAll('.sline').classed('hov', false); hideTip(); })
       .on('mousemove', ev => showTip(ev, `<b>${esc(n)}</b><div class="s">${esc(PEOPLE.get(n).life)} · 共 ${evs.length} 个事件</div>`))
       .on('click', () => openPerson(n));
   }
 
   // 事件节点
-  const nodes = S.append('g');
+  const nodes = S.append('g'), nodeBox = [];
   for (const e of COLS) {
     const x = xCol(colOf.get(e.i)), y = yRow(rowOf.get(e.j));
     const os = sel.filter(n => e.who.includes(n) && !isPost(e, n)).map(n => off.get(n + '|' + e.i));
     const lo = os.length ? Math.min(...os) : 0, hi = os.length ? Math.max(...os) : 0;
+    nodeBox.push({ x0: x - 7, x1: x + 7, y0: y + lo - 7, y1: y + hi + 7 });
     const g = nodes.append('g').attr('class', 'snode ' + e.k + (state.sel === e.i ? ' sel' : '')).attr('data-e', e.i);
     g.append('rect').attr('x', x - 6).attr('y', y + lo - 6).attr('width', 12).attr('height', hi - lo + 12).attr('rx', 6);
     g.on('mousemove', ev => showTip(ev, `<b>${esc(e.t)}</b><div class="s">${fmtYear(e.y)} 年 · ${esc(e.p)}（${esc(e.m)}）· ${esc(SEEDS[e.j].z + SEEDS[e.j].n)}</div><div>${e.who.map(w => sel.includes(w) && !isPost(e, w) ? `<span style="color:${pColor(w)}">●</span>${w}` : w).join('、')}</div>`))
       .on('mouseleave', hideTip).on('click', () => openEvent(e.i));
+  }
+  // 人名放在最上层（不被别的线、节点压住）；同一处起止的人名互相错开：按横向先后逐个放，与已放的重叠就上下挪一行
+  const labs = S.append('g').attr('class', lines.attr('class'));
+  // 人名也避开事件节点（圆点）
+  const boxes = nodeBox.slice(), hit = b => boxes.some(o => b.x0 < o.x1 && b.x1 > o.x0 && b.y0 < o.y1 && b.y1 > o.y0);
+  for (const L of names.sort((a, b) => a.x - b.x || a.y - b.y)) {
+    const w = NAMEW(L.n), x0 = L.end ? L.x : L.x - w, x1 = L.end ? L.x + w : L.x;
+    let dy = 0;
+    for (const t of [0, -13, 13, -26, 26, -39, 39]) { const y = L.y + t; if (y - 9 < HEAD - 4 || y + 6 > H) continue; if (!hit({ x0, x1, y0: y - 9, y1: y + 4 })) { dy = t; break; } }
+    boxes.push({ x0, x1, y0: L.y + dy - 9, y1: L.y + dy + 4 });
+    labs.append('g').attr('class', 'sline' + (state.person === L.n ? ' on' : '')).attr('data-p', L.n).style('--pc', pColor(L.n))
+      .append('text').attr('class', 'sname' + (L.end ? ' end' : '')).attr('x', L.x).attr('y', L.y + dy + 4).text(L.n)
+      .on('click', () => openPerson(L.n));
   }
   storyCursor(false);
 }
