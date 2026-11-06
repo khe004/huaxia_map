@@ -10,29 +10,41 @@ function nearestSeed([lon, lat]) {
   return best;
 }
 EVENTS.forEach(e => { e.j = nearestSeed(e.ll); });
-const ROWS = [...new Set(EVENTS.map(e => e.j))]
-  .sort((a, b) => (ZHOU_ORDER.indexOf(SEEDS[a].z) + 1 || 99) - (ZHOU_ORDER.indexOf(SEEDS[b].z) + 1 || 99) || SEEDS[a].z.localeCompare(SEEDS[b].z) || SEEDS[b].lat - SEEDS[a].lat);
-const rowOf = new Map(ROWS.map((j, k) => [j, k]));
-const COLS = EV_SORTED, colOf = new Map(COLS.map((e, k) => [e.i, k]));
+// 只画当前一条线（史事或文化）的事件与人物，切换时重算
+let ROWS, rowOf, COLS, colOf;
+function storyData() {
+  COLS = EV_SORTED; colOf = new Map(COLS.map((e, k) => [e.i, k]));
+  ROWS = [...new Set(COLS.map(e => e.j))]
+    .sort((a, b) => (ZHOU_ORDER.indexOf(SEEDS[a].z) + 1 || 99) - (ZHOU_ORDER.indexOf(SEEDS[b].z) + 1 || 99) || SEEDS[a].z.localeCompare(SEEDS[b].z) || SEEDS[b].lat - SEEDS[a].lat);
+  rowOf = new Map(ROWS.map((j, k) => [j, k]));
+}
+storyData();
+const liveOn = n => PEOPLE.get(n).live.filter(i => onLine(EVENTS[i]));
 const COLW = 46, HEAD = 94, PADX = 24;
 const PCOL = ['#d1495b', '#2f7fbf', '#e09f1f', '#2a9d8f', '#8d6cab', '#e0602f', '#5aa83c', '#c2569b', '#7a6a4f', '#3fb6d6', '#a83232', '#6b7fd7'];
 // 交汇图只画在世事件不少于 2 件的人物（与顶栏人物按钮一致），默认人选和本地保存的人选都按此过滤
-const storyable = n => PEOPLE.has(n) && PEOPLE.get(n).live.length >= 2;
-const DEFAULT_SEL = (B.storyDefault || [...PEOPLE.values()].sort((a, b) => b.live.length - a.live.length).slice(0, 10).map(p => p.n)).filter(storyable);
-const STORE = `yutu-${B.id}-story`;
-let sel = DEFAULT_SEL.slice();
-try { const v = JSON.parse(localStorage.getItem(STORE)); if (Array.isArray(v) && v.every(n => PEOPLE.has(n))) sel = v.filter(storyable); } catch (e) { /* 无本地存储时用默认 */ }
-const saveSel = () => { try { localStorage.setItem(STORE, JSON.stringify(sel)); } catch (e) { /* ignore */ } };
+const storyable = n => PEOPLE.has(n) && liveOn(n).length >= 2;
+// 默认人选：史事线用本卷的 storyDefault，文化线取文化事件最多的十人；人选按线分别记在本机
+const defaultSel = () => (LINE === 'main' && B.storyDefault ? B.storyDefault : [...PEOPLE.keys()].sort((a, b) => liveOn(b).length - liveOn(a).length).slice(0, 10)).filter(storyable);
+const storeKey = () => `yutu-${B.id}-story${LINE === 'main' ? '' : '-' + LINE}`;
+let sel;
+function loadSel() {
+  sel = defaultSel();
+  try { const v = JSON.parse(localStorage.getItem(storeKey())); if (Array.isArray(v) && v.every(n => PEOPLE.has(n))) sel = v.filter(storyable); } catch (e) { /* 无本地存储时用默认 */ }
+}
+loadSel();
+const saveSel = () => { try { localStorage.setItem(storeKey(), JSON.stringify(sel)); } catch (e) { /* ignore */ } };
+LINE_HOOKS.push(() => { storyData(); loadSel(); renderChips(); renderStory(); storyCursor(); });
 const pColor = n => PCOL[sel.indexOf(n) % PCOL.length];
 const shortT = t => { const s = t.split(' · ')[0]; return s.length > 6 ? s.slice(0, 6) : s; };
 let geom = null;
 
 function renderChips() {
   // 只计在世时的事件（身后出现的追尊、图像等不连线）
-  const list = [...PEOPLE.values()].filter(p => p.live.length >= 2).sort((a, b) => b.live.length - a.live.length);
-  sChips.innerHTML = list.map(p => {
+  const list = [...PEOPLE.values()].map(p => [p, liveOn(p.n).length]).filter(([, c]) => c >= 2).sort((a, b) => b[1] - a[1]);
+  sChips.innerHTML = list.map(([p, c]) => {
     const on = sel.includes(p.n);
-    return `<button class="schip${on ? ' on' : ''}" data-sp="${p.n}" style="${on ? `--pc:${pColor(p.n)}` : ''}">${p.n}<small>${p.live.length}</small></button>`;
+    return `<button class="schip${on ? ' on' : ''}" data-sp="${p.n}" style="${on ? `--pc:${pColor(p.n)}` : ''}">${p.n}<small>${c}</small></button>`;
   }).join('');
 }
 sChips.addEventListener('click', e => {
@@ -40,7 +52,7 @@ sChips.addEventListener('click', e => {
   const n = b.dataset.sp; sel = sel.includes(n) ? sel.filter(x => x !== n) : sel.concat(n);
   saveSel(); renderChips(); renderStory();
 });
-$('#s-reset').onclick = () => { sel = DEFAULT_SEL.slice(); saveSel(); renderChips(); renderStory(); };
+$('#s-reset').onclick = () => { sel = defaultSel(); saveSel(); renderChips(); renderStory(); };
 $('#s-clear').onclick = () => { sel = []; saveSel(); renderChips(); renderStory(); };
 
 function renderStory() {
@@ -95,7 +107,7 @@ function renderStory() {
   }
   const lines = S.append('g').attr('class', 'slines' + (state.person && sel.includes(state.person) ? ' hot' : ''));
   for (const n of sel) {
-    const evs = PEOPLE.get(n).live.map(i => EVENTS[i]).sort((a, b) => EV_STEP[a.i] - EV_STEP[b.i]);
+    const evs = liveOn(n).map(i => EVENTS[i]).sort((a, b) => EV_STEP[a.i] - EV_STEP[b.i]);
     if (!evs.length) continue;
     const P = evs.map(e => [xCol(colOf.get(e.i)), yRow(rowOf.get(e.j)) + off.get(n + '|' + e.i)]);
     let d = `M${P[0][0] - 10},${P[0][1]}L${P[0][0]},${P[0][1]}`;

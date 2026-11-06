@@ -81,6 +81,10 @@ let LINE = 'main';
 const lineOf = e => (e.k === 'cul' ? 'cul' : 'main');
 const onLine = e => lineOf(e) === LINE;
 let EV_SORTED = EV_ALL.filter(onLine);
+// 人物页签只列当前一条线上出场的人；切换线时通知人物交汇图重画
+const onLineP = p => p.ev.some(i => onLine(EVENTS[i]));
+const lineCnt = p => p.ev.filter(i => onLine(EVENTS[i])).length;
+const LINE_HOOKS = [];
 
 // ---------- calendar ----------
 const DIG = '〇一二三四五六七八九';
@@ -696,12 +700,12 @@ function renderPeople() {
 }
 function renderPeopleList() {
   const q = (state.q || '').trim();
-  const list = [...PEOPLE.values()].filter(p => !q || p.n.includes(q) || (p.zi && p.zi.includes(q)));
+  const list = [...PEOPLE.values()].filter(p => onLineP(p) && (!q || p.n.includes(q) || (p.zi && p.zi.includes(q))));
   const main = (B.peopleGroups || []).map(g => g[0]);
   const groups = d3.groups(list, p => (main.includes(p.f) ? p.f : 'other'));
   groups.sort((a, b) => (main.indexOf(a[0]) + 1 || 9) - (main.indexOf(b[0]) + 1 || 9));
   $('#plist').innerHTML = groups.map(([g, ps]) => {
-    ps.sort((a, b) => b.ev.length - a.ev.length || FORDER.indexOf(a.f) - FORDER.indexOf(b.f));
+    ps.sort((a, b) => lineCnt(b) - lineCnt(a) || FORDER.indexOf(a.f) - FORDER.indexOf(b.f));
     return `<div class="grp">${FGROUP[g] || B.otherGroup || '其他'}<small>${ps.length} 人</small></div><div class="chips">${ps.map(p => chip(p.n)).join('')}</div>`;
   }).join('') || '<div class="empty">没有找到这个人物。</div>';
 }
@@ -785,6 +789,7 @@ function setLine(l, quiet) {
   $('#ticks').classList.toggle('line-main', LINE === 'main'); $('#ticks').classList.toggle('line-cul', LINE === 'cul');
   document.querySelectorAll('#linesw button').forEach(b => b.classList.toggle('on', b.dataset.line === LINE));
   try { localStorage.setItem('yutu-line', LINE); } catch (e) {}
+  LINE_HOOKS.forEach(f => f());
   if (quiet) return;
   stop();
   if (state.view.t === 'event' && !state.person && !onLine(EVENTS[state.view.i])) { state.view = { t: 'year' }; state.stack = []; state.sel = null; }
