@@ -38,6 +38,9 @@ if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
 // 跨卷人物的统一简介（books/_people.js）：覆盖本书同名人物的字、生卒、简介；引文出处与本书默认出处相同的去掉前缀
 const common = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_people.js') + '\n;this.p = commonOf;', c); return c.p; })();
 const defSrc = ((BOOK.quoteLabel || '').match(/《(.+?)》/) || [])[1];
+// 人物别名（books/_alias.js）：卷内人物页签的筛选也认本名、号、庙号等
+const ALIAS = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_alias.js') + '\n;this.a = ALIAS;', c); return c.a; })();
+const aliasSub = Object.fromEntries(PEOPLE_RAW.filter(([n]) => ALIAS[n]).map(([n]) => [n, ALIAS[n]]));
 const commonSub = {};
 for (const [n] of PEOPLE_RAW) if (common(n, id)) commonSub[n] = common(n, id).slice(0, 3).map(v => (defSrc ? v.split(`**${defSrc}|`).join('**') : v));
 // 卒年晚于本卷第一个事件、本卷却没有一件在世事件的人物（只在身后被提及），多半是漏标了他生前参与的事件
@@ -46,7 +49,7 @@ for (const [n] of PEOPLE_RAW) if (common(n, id)) commonSub[n] = common(n, id).sl
     if (m && (m[1] ? -m[2] : +m[2]) > t0 && liveN(n) === 0) problems.push(`人物「${n}」（${life}）卒于本卷首个事件之后，却没有在世事件`); } }
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
 // 没写 CITIES、PHASES 的书补空表，引擎各处直接遍历
-const dataSrc = bookSrc + (/\bconst CITIES\b/.test(bookSrc) ? '' : '\nconst CITIES = [];') + (/\bconst PHASES\b/.test(bookSrc) ? '' : '\nconst PHASES = [];') + `\n// 跨卷人物的统一简介（构建时由 books/_people.js 注入）\nconst PEOPLE_COMMON = ${JSON.stringify(commonSub)};\nPEOPLE_RAW.forEach(p => { const c = PEOPLE_COMMON[p[0]]; if (c) [p[2], p[3], p[4]] = c; });\n`;
+const dataSrc = bookSrc + (/\bconst CITIES\b/.test(bookSrc) ? '' : '\nconst CITIES = [];') + (/\bconst PHASES\b/.test(bookSrc) ? '' : '\nconst PHASES = [];') + `\n// 跨卷人物的统一简介（构建时由 books/_people.js 注入）\nconst PEOPLE_COMMON = ${JSON.stringify(commonSub)};\nPEOPLE_RAW.forEach(p => { const c = PEOPLE_COMMON[p[0]]; if (c) [p[2], p[3], p[4]] = c; });\nconst PEOPLE_ALIAS = ${JSON.stringify(aliasSub)};\n`;
 
 const bm = `./basemaps/${BOOK.basemap}/`;
 const BASEMAP = JSON.parse(r(bm + 'basemap.json'));

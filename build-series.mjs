@@ -16,7 +16,9 @@ const plain = s => String(s).replace(/\*\*(?:[^|*]{1,6}\|)?([^*]*)\*\*/g, (m, x,
   const before = all.slice(0, i), open = (before.match(/“/g) || []).length - (before.match(/”/g) || []).length;
   return open > 0 ? x : '“' + x + '”';
 });
-const IDX = { books: [], events: [], people: {} };
+// 人物别名（本名、号、庙号、年号等）见 books/_alias.js
+const acx = {}; vm.createContext(acx); vm.runInContext(r('./books/_alias.js') + ';this.A = ALIAS;', acx);
+const IDX = { books: [], events: [], people: {}, alias: acx.A };
 // 事件纪年的写法与引擎共用 engine/cal.js
 const [CALTEXT, ERASFOR] = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./engine/cal.js') + ';this.f = [calText, erasFor];', c); return c.f; })();
 const rows = S.books.map((b, i) => {
@@ -82,7 +84,7 @@ const B = IDX.books, vol = k => '卷' + CN(k + 1);
 const fy = (y, k) => (B[k][2] != null && y < B[k][2] ? '约' : '') + (y < 0 ? '前' + -y : y);
 const KN = { war: '战事', pol: '政事', dip: '外交', cul: '文化' };
 const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, mo, t, p, m, kind, who, d, cal }));
-const PP = Object.entries(IDX.people).map(([k, [zi, life, bio, bk]]) => ({ n: k.split('\\u0001')[0], zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
+const PP = Object.entries(IDX.people).map(([k, [zi, life, bio, bk]]) => ({ n: k.split('\\u0001')[0], al: IDX.alias[k.split('\\u0001')[0]] || [], zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
 const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), cnt = $('#cnt'), volSel = $('#vol');
 // 页签：卷目 / 人物 / 事件 / 检索，当前页签与筛选记在地址的 # 后面
 const TABS = ['vols', 'people', 'events', 'search'], tabs = [...document.querySelectorAll('[role=tab]')];
@@ -162,10 +164,12 @@ const yearOf = t => { const m = t.match(/^(公元)?(前)?(\\d{1,4})[年载]?$/);
 const lifeYears = l => { const m = String(l || '').match(/^约?(前)?(\\d+)?\\??\\s*[–-]\\s*约?(前)?(\\d+)?/); return m ? [m[2] ? (m[1] ? -m[2] : +m[2]) : null, m[4] ? (m[3] ? -m[4] : +m[4]) : null] : []; };
 // 生卒年里与检索年份相同的年份加高亮（检索词写作“公元前210年”“155年”时也按年份比对，不按字面）
 const lifeHtml = (l, ys) => esc(l || '').replace(/(前)?(\\d+)/g, (m, q, d) => (ys.includes(q ? -d : +d) ? '<mark>' + m + '</mark>' : m));
+// 检索词命中别名时，在人名后注“又称……”
+const aka = (p, terms) => { const a = p.al.filter(x => terms.some(t => x.includes(t))); return a.length ? '<small>又称' + mk(a.join('、'), terms) + '</small>' : ''; };
 function scoreP(p, terms) { let s = 0; for (const t of terms) {
   const yr = yearOf(t);
-  if (p.n === t) s += 100; else if (p.n.startsWith(t)) s += 60; else if (p.n.includes(t)) s += 40; else if (yr != null && lifeYears(p.life).includes(yr)) s += 40;
-  else if (p.zi && p.zi.includes(t)) s += 30; else if (has(p.bio, t) || p.bk.some(b => b[1].includes(t))) s += 5; else return 0; } return s + Math.min(p.ne, 20) / 10; }
+  if (p.n === t) s += 100; else if (p.al.includes(t)) s += 90; else if (p.n.startsWith(t)) s += 60; else if (p.n.includes(t)) s += 40; else if (yr != null && lifeYears(p.life).includes(yr)) s += 40;
+  else if (p.al.some(a => a.includes(t))) s += 35; else if (p.zi && p.zi.includes(t)) s += 30; else if (has(p.bio, t) || p.bk.some(b => b[1].includes(t))) s += 5; else return 0; } return s + Math.min(p.ne, 20) / 10; }
 function scoreE(e, terms) { let s = 0; for (const t of terms) {
   const yr = yearOf(t);
   if (yr != null && e.y === yr) s += 40; else if (has(e.t, t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (has(e.p, t) || has(e.m, t) || has(e.cal, t)) s += 20;
@@ -181,7 +185,7 @@ function run() {
   cnt.textContent = (filt !== 'e' ? ps.length + ' 位人物' : '') + (filt === 'all' ? ' · ' : '') + (filt !== 'p' ? es.length + ' 个事件' : '');
   let hp = '', he = '';
   if (ps.length) hp = '<div><h2><span>人物</span></h2><div class="rl">' + ps.slice(0, lp).map(p => { const k0 = (v != null ? p.bk.find(b => b[0] === v) : p.bk.slice().sort((a, b) => b[2] - a[2])[0])[0];
-    return '<div class="hit" data-href="' + pHref(p.n, k0) + '"><span class="y">' + lifeHtml(p.life, terms.map(yearOf).filter(y => y != null)) + '</span><a class="t" href="' + pHref(p.n, k0) + '">' + mk(p.n, terms) + (p.zi ? '<small>字' + mk(p.zi, terms) + '</small>' : '') + '</a>'
+    return '<div class="hit" data-href="' + pHref(p.n, k0) + '"><span class="y">' + lifeHtml(p.life, terms.map(yearOf).filter(y => y != null)) + '</span><a class="t" href="' + pHref(p.n, k0) + '">' + mk(p.n, terms) + (p.zi ? '<small>字' + mk(p.zi, terms) + '</small>' : '') + aka(p, terms) + '</a>'
       + '<span class="s">' + mk(snip(p.bio, terms), terms) + '</span><span class="m">' + p.bk.map(b => { const [k, f] = b; return '<a class="vb" href="' + pHref(p.n, k) + '" title="' + esc(B[k][1]) + ' · ' + esc(f) + ' · ' + evCnt(b) + '">' + vol(k) + ' ' + esc(B[k][1]) + '</a>'; }).join('') + '</span></div>'; }).join('')
     + '</div>' + (ps.length > lp ? '<button class="more" data-more="p">显示全部 ' + ps.length + ' 位 ›</button>' : '') + '</div>';
   if (es.length) he = '<div><h2><span>事件</span></h2><div class="rl">' + es.slice(0, lim.e).map(e => '<a class="hit" href="' + evHref(e) + '"><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '"></i>' + mk(e.t, terms) + '</span>'

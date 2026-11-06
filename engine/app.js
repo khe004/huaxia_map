@@ -700,7 +700,7 @@ function renderPeople() {
 }
 function renderPeopleList() {
   const q = (state.q || '').trim();
-  const list = [...PEOPLE.values()].filter(p => onLineP(p) && (!q || p.n.includes(q) || (p.zi && p.zi.includes(q))));
+  const list = [...PEOPLE.values()].filter(p => onLineP(p) && (!q || p.n.includes(q) || (p.zi && p.zi.includes(q)) || (PEOPLE_ALIAS[p.n] || []).some(x => x.includes(q))));
   const main = (B.peopleGroups || []).map(g => g[0]);
   const groups = d3.groups(list, p => (main.includes(p.f) ? p.f : 'other'));
   groups.sort((a, b) => (main.indexOf(a[0]) + 1 || 9) - (main.indexOf(b[0]) + 1 || 9));
