@@ -21,6 +21,12 @@ for (const id of ids) {
       if (near && !(next && next.t - X < X - near.t)) out.push(`  L${li + 1} t ${m[1]} ${X}：「${near.e.t}」${near.e.y}/${near.e.mo} → t=${near.t.toFixed(3)}，阈值晚了 ${(X - near.t).toFixed(3)}`);
     }
   });
+  // 周边陆地（BOOK.outer）的切换时刻：引擎在第一个不早于它的事件处才变色，不在任何事件上的列出
+  { const c2 = {}; vm.createContext(c2); vm.runInContext(src + ';this.B=BOOK', c2);
+    for (const [n, v] of Object.entries(c2.B.outer || {})) if (Array.isArray(v)) for (const [X] of v) {
+      if (Number.isInteger(X) || ev.some(({ t }) => t >= X - 1e-9 && t - X < 0.01)) continue;
+      const next = ev.filter(({ t }) => t >= X - 1e-9).sort((a, b) => a.t - b.t)[0];
+      out.push(`  outer ${n} ${X}：不在事件上，实际在「${next ? next.e.t : '—'}」${next ? next.t.toFixed(3) : ''}变色`); } }
   if (out.length) { console.log(`== ${id}`); out.forEach(l => console.log(l)); n += out.length; }
 }
 console.log(`共 ${n} 处`);

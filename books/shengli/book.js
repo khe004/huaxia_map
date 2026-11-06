@@ -31,7 +31,7 @@ const BOOK = {
   },
   realms: { zhong: '中国（国民政府与各抗日军）', ri: '日本与伪政权', fan: '盟国与四邻' },
   looseRealms: ['zhong', 'fan'],
-  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben',
+  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Tajikistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben',
     'South Kuril Islands': [[1941, 'riben'], [1945.5833, 'eluosi']], 'North Kuril Islands': [[1941, 'riben'], [1945.5833, 'eluosi']],
     // 缅甸：1942 年五月被日军占领，1945 年五月英军收复仰光
     Myanmar: [[1942.3333, 'riben'], [1945.375, 'yingguo']] },

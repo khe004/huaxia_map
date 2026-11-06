@@ -32,7 +32,7 @@ const BOOK = {
   realms: { zhong: '北京政府', nan: '讨袁与护国', fan: '四邻' },
   looseRealms: ['fan'],
   // 底图范围以外的周边陆地按所属上色（只上色，不分种子点）：西伯利亚等俄国本土、日本本土与千岛
-  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': 'riben' },
+  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Tajikistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': 'riben' },
   calendar: {
     // 1916 年元旦至三月二十二日撤销帝制为洪宪元年，此后接续民国五年
     eras: { 民国: [[1912, '民国'], [1916, '洪宪', 1, 1], [1916, '民国', 5, 3.7]] },

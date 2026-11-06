@@ -31,7 +31,7 @@ const BOOK = {
   },
   realms: { zhong: '中国（国民政府与各抗日军）', ri: '日本与伪政权', fan: '四邻' },
   looseRealms: ['zhong', 'fan'],
-  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': 'riben' },
+  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Tajikistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': 'riben' },
   calendar: {
     eras: { 民国: [[1937, '民国', 26]] },
     spans: { 民国: [1937, 1941] },

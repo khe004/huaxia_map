@@ -48,8 +48,8 @@ const BOOK = {
   },
   realms: { zhong: '清', fan: '四邻' },
   looseRealms: ['zhong', 'fan'],
-  // 底图范围以外的周边陆地按所属上色（只上色，不分种子点）：西伯利亚等俄国本土，千岛群岛北部
-  outer: { Russia: 'eluosi', 'North Kuril Islands': 'eluosi' },
+  // 底图范围以外的周边陆地按所属上色（只上色，不分种子点）：西伯利亚等俄国本土，千岛群岛北部（1711 年起俄国哥萨克登岛征收毛皮税）
+  outer: { Russia: 'eluosi', 'North Kuril Islands': [[1711, 'eluosi']] },
   calendar: {
     eras: { 清: [[1690, '康熙', 29], [1723, '雍正'], [1736, '乾隆']] },
     spans: { 清: [1690, 1759] },

@@ -22,7 +22,7 @@ const IDX = { books: [], events: [], people: {}, alias: acx.A };
 // 事件纪年的写法与引擎共用 engine/cal.js
 const [CALTEXT, ERASFOR] = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./engine/cal.js') + ';this.f = [calText, erasFor];', c); return c.f; })();
 const rows = S.books.map((b, i) => {
-  execFileSync('node', [new URL('./build.mjs', import.meta.url).pathname, b.id, '--series'], { stdio: 'inherit' });
+  execFileSync(process.execPath, [new URL('./build.mjs', import.meta.url).pathname, b.id, '--series'], { stdio: 'inherit' });
   const c = {}; vm.createContext(c);
   vm.runInContext(r(`./books/${b.id}/book.js`) + '\n;this.__ = { BOOK, EVENTS, PEOPLE_RAW, FACTIONS };', c);
   const { BOOK, EVENTS, PEOPLE_RAW, FACTIONS } = c.__;
@@ -43,7 +43,7 @@ const rows = S.books.map((b, i) => {
     let fn = f; try { fn = FACTIONS[f].name(t).replace(/（[^）]*）/g, ''); } catch (err) {}
     // 跨卷合并只认 books/_people.js 登记的人物；未登记的同名者（如西晋刘毅与东晋刘毅）按生卒分作两人，
     // 生卒不详（如 '?–?'）的未登记者再按卷区分，免得不同时代的同名者并成一人
-    const key = cm ? (cm[3] ? n + '\u0001' + cm[1] : n) : n + '\u0001' + (/\d/.test(life) ? life : b.id);
+    const key = cm ? (cm[3] ? n + '\u0001' + cm[3].join(',') : n) : n + '\u0001' + (/\d/.test(life) ? life : b.id);
     const P = IDX.people[key] || (IDX.people[key] = [cm ? cm[0] : zi, cm ? cm[1] : life, plain(cm ? cm[2] : bio), []]);
     if (!cm && bio && !P[2]) P[2] = plain(bio);
     // [卷序, 势力名, 在世事件数, 首个在世事件的时间, 身后被提及的事件数]：人物页签按首次出场先后排列

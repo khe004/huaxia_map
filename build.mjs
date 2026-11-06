@@ -67,8 +67,9 @@ if (SERIES_MODE) {
     const es = c.e.slice().sort((u, v) => u.y - v.y || u.mo - v.mo), f = es[0], l = es[es.length - 1];
     b.first = [f.y, f.mo, f.t]; b.last = [l.y, l.mo, l.t];
     // 同名异人只计其条目适用的卷
-    for (const [n] of c.p) if (common(n, b.id)) (seen[n] = seen[n] || []).push(k);
-    for (const e of c.e) for (const n of e.who) if (common(n, b.id)) (seen['\0' + n] = seen['\0' + n] || []).push([k, e.y, e.mo, e.t, e.post && e.post.includes(n) ? 1 : 0]);
+    // 只收与本卷同一条目的那个人（同名而都跨卷的，各算各的）
+    for (const [n] of c.p) if (common(n, b.id) && common(n, b.id) === common(n, id)) (seen[n] = seen[n] || []).push(k);
+    for (const e of c.e) for (const n of e.who) if (common(n, b.id) && common(n, b.id) === common(n, id)) (seen['\0' + n] = seen['\0' + n] || []).push([k, e.y, e.mo, e.t, e.post && e.post.includes(n) ? 1 : 0]);
   });
   SERIES.people = {};
   // 只有 books/_people.js 登记的才算同一人；未登记的同名者（如西晋刘毅与东晋刘毅）各归各卷，不互相补全经历

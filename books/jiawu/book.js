@@ -45,7 +45,7 @@ const BOOK = {
   realms: { zhong: '清', fan: '四邻' },
   looseRealms: ['zhong', 'fan'],
   // 底图范围以外的周边陆地按所属上色（只上色，不分种子点）：西伯利亚等俄国本土、日本本土与千岛
-  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': 'riben' },
+  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Tajikistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': 'riben' },
   calendar: {
     eras: { 清: [[1886, '光绪', 12]] },
     spans: { 清: [1886, 1901] },

@@ -235,7 +235,9 @@ if (UNITS.objects.nb) {
   // 与周边陆地相邻的一段：周边陆地按 BOOK.outer 上色且与拼块同属一势力时不画国界（renderTerritory 里按时刻更新）
   const outerBorder = root.append('path').attr('class', 'fborder');
   const outerEdge = (st, T) => path(topojson.mesh(UNITS, ALL, (a, b) => {
-    if (a === b || inS(a) === inS(b)) return false;
+    if (a === b || (inS(a) && inS(b))) return false;
+    // 两块周边陆地之间：有一边上色、两边势力不同时画国界（如俄国与日本的千岛）
+    if (!inS(a) && !inS(b)) { const fa = a.properties && outerOf(a.properties.n, T), fb = b.properties && outerOf(b.properties.n, T); return (fa || fb) ? fa !== fb : false; }
     const u = inS(a) ? a : b, o = inS(a) ? b : a;
     return !(o.properties && st[u.properties.j] === outerOf(o.properties.n, T));
   }));
@@ -802,7 +804,7 @@ if (HAS_CUL) {
 { let l = 'main'; try { l = localStorage.getItem('yutu-line') || 'main'; } catch (e) {} setLine(l === 'cul' ? 'cul' : 'main', true); }
 
 // 主题切换时重算填充色
-const refill = () => { FILL = {}; cells.interrupt().attr('fill', d => fillOf(curSt()[d.properties.j])); };
+const refill = () => { FILL = {}; cells.interrupt().attr('fill', d => fillOf(curSt()[d.properties.j])); outerCells.interrupt().attr('fill', d => { const f = outerOf(d.properties.n, curT()); return f ? fillOf(f) : 'transparent'; }); };
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', refill);
 new MutationObserver(refill).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 

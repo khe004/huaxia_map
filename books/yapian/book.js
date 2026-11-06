@@ -44,8 +44,8 @@ const BOOK = {
   },
   realms: { zhong: '清', fan: '四邻' },
   looseRealms: ['zhong', 'fan'],
-  // 底图范围以外的周边陆地按所属上色（只上色，不分种子点）：西伯利亚等俄国本土
-  outer: { Russia: 'eluosi', 'North Kuril Islands': 'eluosi' },
+  // 底图范围以外的周边陆地按所属上色（只上色，不分种子点）：西伯利亚等俄国本土；哈萨克中玉兹、小玉兹的汗位 1822、1824 年先后被俄国废除，草原归俄国管辖
+  outer: { Russia: 'eluosi', 'North Kuril Islands': 'eluosi', Kazakhstan: [[1822, 'eluosi']], Baikonur: [[1822, 'eluosi']] },
   calendar: {
     eras: { 清: [[1800, '嘉庆', 5], [1821, '道光']] },
     spans: { 清: [1800, 1850] },

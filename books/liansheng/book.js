@@ -31,7 +31,7 @@ const BOOK = {
   },
   realms: { bei: '北洋各系', nan: '南方各省', fan: '四邻' },
   looseRealms: ['bei', 'nan', 'fan'],
-  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': 'riben' },
+  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Tajikistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': 'riben' },
   calendar: {
     eras: { 民国: [[1920, '民国', 9]] },
     spans: { 民国: [1920, 1925] },

@@ -32,7 +32,7 @@ const BOOK = {
   },
   realms: { zhong: '中华民国政府与各地方', hong: '中国共产党', fan: '四邻' },
   looseRealms: ['zhong', 'fan'],
-  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'eluosi', 'North Kuril Islands': 'eluosi', Myanmar: [[1945, 'yingguo'], [1948.0083, 'miandian']] },
+  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Tajikistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'eluosi', 'North Kuril Islands': 'eluosi', Myanmar: [[1945, 'yingguo'], [1948, 'miandian']] },
   calendar: {
     eras: { 民国: [[1945, '民国', 34]] },
     spans: { 民国: [1945, 1949] },

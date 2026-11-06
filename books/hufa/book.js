@@ -30,7 +30,7 @@ const BOOK = {
   },
   realms: { bei: '北洋各系', nan: '护法各省', fan: '四邻' },
   looseRealms: ['bei', 'nan', 'fan'],
-  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': 'riben' },
+  outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Uzbekistan: 'eluosi', Tajikistan: 'eluosi', Turkmenistan: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': 'riben' },
   calendar: {
     // 1917 年七月一日至十二日张勋复辟，用宣统九年，只写进事件
     eras: { 民国: [[1916, '民国', 5]] },

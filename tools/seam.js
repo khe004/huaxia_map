@@ -1,4 +1,5 @@
 // 用法：node tools/seam.js。比较合集中相邻两卷交界处的疆域（上卷末事件 vs 下卷首事件）：
+// 底图范围外的周边陆地（BOOK.outer）按国名比较所属势力名；
 // 按现代地级拼块对齐（与引擎一样经 UNIT_OVERRIDES 与最近种子点归属，见 tools/land.js），分不到地块的种子点不比较；按下卷的种子点名列出
 const fs=require('fs'),vm=require('vm'),path=require('path');
 const R=path.join(__dirname,'..');
@@ -27,5 +28,11 @@ for(let k=0;k+1<S.books.length;k++){
   const diff={};
   for(const [u,a] of sa){const b=sb.get(u); if(!b) continue; const key=a.nm+' → '+b.nm; if(a.nm!==b.nm){const l=(diff[key]=diff[key]||[]); if(!l.includes(b.seed)) l.push(b.seed);}}
   console.log(`\n== ${S.books[k].id} (${ta.toFixed(2)}) → ${S.books[k+1].id} (${tb.toFixed(2)})`);
+  // 周边陆地（BOOK.outer）：按国名比较两卷交界时刻的势力名，一边上色一边不上色也列出
+  const oOf=(X,n,t)=>{const v=(X.BOOK.outer||{})[n];if(!v)return null;if(typeof v==='string')return v;let f=null;for(const[t0,g]of v)if(t0<=t+1e-9)f=g;return f;};
+  const oNm=(X,f,t)=>{if(!f)return '（不上色）';const F=X.FACTIONS[f];return F?(F.name?F.name(t):f).replace(/（[^）]*）/g,''):f;};
+  for(const n of new Set([...Object.keys(A.BOOK.outer||{}),...Object.keys(B.BOOK.outer||{})])){
+    if(!A.BOOK.outer||!B.BOOK.outer) continue;
+    const a=oNm(A,oOf(A,n,ta),ta),b=oNm(B,oOf(B,n,tb),tb); if(a!==b){const l=(diff['周边 '+a+' → '+b]=diff['周边 '+a+' → '+b]||[]); l.push(n);} }
   for(const [kk,v] of Object.entries(diff)) console.log('  '+kk+'：'+v.join(' '));
 }
