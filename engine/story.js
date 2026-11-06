@@ -124,7 +124,7 @@ function renderStory() {
     g.append('text').attr('class', 'sname end').attr('x', last[0] + 13).attr('y', last[1] + 4).text(n);
     g.on('mouseenter', () => { lines.classed('hover', true); g.classed('hov', true); })
       .on('mouseleave', () => { lines.classed('hover', false); g.classed('hov', false); hideTip(); })
-      .on('mousemove', ev => showTip(ev, `<b>${n}</b><div class="s">${PEOPLE.get(n).life} · 共 ${evs.length} 个事件</div>`))
+      .on('mousemove', ev => showTip(ev, `<b>${esc(n)}</b><div class="s">${esc(PEOPLE.get(n).life)} · 共 ${evs.length} 个事件</div>`))
       .on('click', () => openPerson(n));
   }
 
@@ -136,7 +136,7 @@ function renderStory() {
     const lo = os.length ? Math.min(...os) : 0, hi = os.length ? Math.max(...os) : 0;
     const g = nodes.append('g').attr('class', 'snode ' + e.k + (state.sel === e.i ? ' sel' : '')).attr('data-e', e.i);
     g.append('rect').attr('x', x - 6).attr('y', y + lo - 6).attr('width', 12).attr('height', hi - lo + 12).attr('rx', 6);
-    g.on('mousemove', ev => showTip(ev, `<b>${e.t}</b><div class="s">${fmtYear(e.y)} 年 · ${e.p}（${e.m}）· ${SEEDS[e.j].z}${SEEDS[e.j].n}</div><div>${e.who.map(w => sel.includes(w) && !isPost(e, w) ? `<span style="color:${pColor(w)}">●</span>${w}` : w).join('、')}</div>`))
+    g.on('mousemove', ev => showTip(ev, `<b>${esc(e.t)}</b><div class="s">${fmtYear(e.y)} 年 · ${esc(e.p)}（${esc(e.m)}）· ${esc(SEEDS[e.j].z + SEEDS[e.j].n)}</div><div>${e.who.map(w => sel.includes(w) && !isPost(e, w) ? `<span style="color:${pColor(w)}">●</span>${w}` : w).join('、')}</div>`))
       .on('mouseleave', hideTip).on('click', () => openEvent(e.i));
   }
   storyCursor(false);
@@ -144,8 +144,10 @@ function renderStory() {
 function storyCursor(scroll = true) {
   if (story.hidden || !geom) return;
   const st = STEPS[state.step];
-  let k = st.ev != null ? colOf.get(st.ev) : COLS.findIndex(e => EV_STEP[e.i] > state.step);
-  const between = st.ev == null;
+  // 当前一步的事件不在交汇图上（另一条线的事件、交汇图未选的人物）时，光标落在其后的第一列之前
+  const onCol = st.ev != null && colOf.has(st.ev);
+  let k = onCol ? colOf.get(st.ev) : COLS.findIndex(e => EV_STEP[e.i] > state.step);
+  const between = !onCol;
   if (k < 0) k = COLS.length;
   const x = geom.xCol(k) - COLW / 2 - (between ? COLW / 2 : 0);
   d3.select('#s-cursor').attr('x', between ? x + COLW / 2 - 2 : x).attr('width', between ? 4 : COLW);
@@ -168,7 +170,7 @@ function setMode(m) {
   $('#mapwrap').hidden = m !== 'map';
   story.hidden = m !== 'story';
   $('.toggles').hidden = m !== 'map';
-  document.querySelectorAll('#viewsw button').forEach(b => b.classList.toggle('on', b.dataset.mode === m));
+  document.querySelectorAll('#viewsw button').forEach(b => { b.classList.toggle('on', b.dataset.mode === m); b.setAttribute('aria-pressed', b.dataset.mode === m); });
   hideTip();
   // 切到交汇图时，地图上已选中的人物加入交汇图
   if (m === 'story') { if (state.person && !sel.includes(state.person) && storyable(state.person)) { sel = sel.concat(state.person); saveSel(); } renderChips(); renderStory(); storyCursor(); }

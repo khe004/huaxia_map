@@ -14,11 +14,13 @@ const pcx = {}; vm.createContext(pcx); vm.runInContext(r('./books/_people.js') +
 // 引文 **…** 改为引号：已在引号里的（如 “**…**。”、“诸将易得耳。**…**。”）不再加，免得引号重复或不成对
 const plain = s => String(s).replace(/\*\*(?:[^|*]{1,6}\|)?([^*]*)\*\*/g, (m, x, i, all) => {
   const before = all.slice(0, i), open = (before.match(/“/g) || []).length - (before.match(/”/g) || []).length;
-  return open > 0 ? x : '“' + x + '”';
+  // 引文里本身带引号的（“时号“李铁枪””），外加引号时里层换成单引号
+  return open > 0 ? x : '“' + x.replace(/“/g, '‘').replace(/”/g, '’') + '”';
 });
 // 人物别名（本名、号、庙号、年号等）见 books/_alias.js
-const acx = {}; vm.createContext(acx); vm.runInContext(r('./books/_alias.js') + ';this.A = ALIAS;', acx);
-const IDX = { books: [], events: [], people: {}, alias: acx.A };
+const acx = {}; vm.createContext(acx); vm.runInContext(r('./books/_alias.js') + ';this.A = ALIAS; this.aliasOf = aliasOf;', acx);
+// alias 在各卷人物收齐后按人物的键（同名异人各自一条）填入
+const IDX = { books: [], events: [], people: {}, alias: {} };
 // 事件纪年的写法与引擎共用 engine/cal.js
 const [CALTEXT, ERASFOR] = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./engine/cal.js') + ';this.f = [calText, erasFor];', c); return c.f; })();
 const rows = S.books.map((b, i) => {
@@ -45,6 +47,7 @@ const rows = S.books.map((b, i) => {
     // 生卒不详（如 '?–?'）的未登记者再按卷区分，免得不同时代的同名者并成一人
     const key = cm ? (cm[3] ? n + '\u0001' + cm[3].join(',') : n) : n + '\u0001' + (/\d/.test(life) ? life : b.id);
     const P = IDX.people[key] || (IDX.people[key] = [cm ? cm[0] : zi, cm ? cm[1] : life, plain(cm ? cm[2] : bio), []]);
+    if (!IDX.alias[key]) { const al = acx.aliasOf(n, P[1]); if (al.length) IDX.alias[key] = al; }
     if (!cm && bio && !P[2]) P[2] = plain(bio);
     // [卷序, 势力名, 在世事件数, 首个在世事件的时间, 身后被提及的事件数]：人物页签按首次出场先后排列
     P[3].push([i, fn, es.length, es.length ? +t.toFixed(3) : null, postOf.get(n) || 0]);
@@ -84,7 +87,7 @@ const B = IDX.books, vol = k => '卷' + CN(k + 1);
 const fy = (y, k) => (B[k][2] != null && y < B[k][2] ? '约' : '') + (y < 0 ? '前' + -y : y);
 const KN = { war: '战事', pol: '政事', dip: '外交', cul: '文化' };
 const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, mo, t, p, m, kind, who, d, cal }));
-const PP = Object.entries(IDX.people).map(([k, [zi, life, bio, bk]]) => ({ n: k.split('\\u0001')[0], al: IDX.alias[k.split('\\u0001')[0]] || [], zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
+const PP = Object.entries(IDX.people).map(([k, [zi, life, bio, bk]]) => ({ n: k.split('\\u0001')[0], al: IDX.alias[k] || [], zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
 const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), cnt = $('#cnt'), volSel = $('#vol');
 // 页签：卷目 / 人物 / 事件 / 检索，当前页签与筛选记在地址的 # 后面
 const TABS = ['vols', 'people', 'events', 'search'], tabs = [...document.querySelectorAll('[role=tab]')];
@@ -380,5 +383,5 @@ console.log('dist/series/index.html', S.books.length, '卷');
 // 合并或改名的卷（series.json 的 moved）：旧目录放一个跳转页，旧链接仍能打开
 for (const [from, to] of Object.entries(S.moved || {})) {
   mkdirSync(new URL(`./dist/series/${from}/`, import.meta.url), { recursive: true });
-  writeFileSync(new URL(`./dist/series/${from}/index.html`, import.meta.url), `<!doctype html><meta charset="utf-8"><title>跳转</title><meta http-equiv="refresh" content="0; url=../${to}/index.html"><script>location.replace('../${to}/index.html' + location.hash)</script><a href="../${to}/index.html">本卷已并入新卷，点此前往</a>\n`);
+  writeFileSync(new URL(`./dist/series/${from}/index.html`, import.meta.url), `<!doctype html><meta charset="utf-8"><title>跳转</title><meta http-equiv="refresh" content="0; url=../${to}/index.html"><script>location.replace('../${to}/index.html' + location.search + location.hash)</script><a href="../${to}/index.html">本卷已并入新卷，点此前往</a>\n`);
 }

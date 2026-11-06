@@ -194,7 +194,7 @@ function musicOff() {
     // 淡出后断开已排程的音符（最多提前约 1.2 秒排到的小节），并挂起音频上下文，停止后台运算
     if (music.bus) music.old = [music.bus, music.wet];
     music.bus = music.wet = null; clearTimeout(music.sleep);
-    music.sleep = setTimeout(() => { (music.old || []).forEach(n => n.disconnect()); music.old = null; if (!music.on) music.ctx.suspend(); }, 1500);
+    music.sleep = setTimeout(() => { (music.old || []).forEach(n => n.disconnect()); music.old = null; if (!music.on || music.file) music.ctx.suspend(); }, 1500);
   }
   music.on = false; renderMusicBtn();
 }
@@ -204,16 +204,24 @@ function renderMusicBtn() {
   b.setAttribute('aria-pressed', music.on);
   b.textContent = music.on ? '♪ 背景音 · 开' : '♪ 背景音 · 关';
   $('#music-src').textContent = music.file ? '自选音频 ✓' : '自选音频';
+  if (!music.file) $('#music-src').title = '选择本机的音频文件循环播放，文件只在你的浏览器里播放，不会上传';
 }
 $('#music').onclick = () => (music.on ? musicOff() : musicOn());
-$('#music-src').onclick = () => $('#music-file').click();
+// 已在用自选音频时再点一下：换回原创合成的背景音（再点可重新选文件）
+$('#music-src').onclick = () => {
+  if (!music.file) return $('#music-file').click();
+  const was = music.on; musicOff();
+  if (music.audio) { music.audio.pause(); music.audio = null; }
+  URL.revokeObjectURL(music.file); music.file = null; $('#music-file').value = '';
+  renderMusicBtn(); if (was) musicOn();
+};
 $('#music-file').addEventListener('change', e => {
   const f = e.target.files[0]; if (!f) return;
   musicOff();
   if (music.audio) { music.audio.pause(); music.audio = null; }
   if (music.file) URL.revokeObjectURL(music.file);
   music.file = URL.createObjectURL(f);
-  $('#music-src').title = `正在使用：${f.name}（仅在本机播放）`;
   musicOn();
+  $('#music-src').title = `正在使用：${f.name}（仅在本机播放）；再点一下换回原创合成的背景音`;
 });
 renderMusicBtn();

@@ -23,7 +23,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      # 数据校验（tools/check.sh），有问题就不发布
+      - run: sh tools/check.sh
       - run: node build-series.mjs
+      # 独立的三国卷（不在合集里）也构建一遍，确认能通过构建检查
+      - run: node build.mjs sanguo
       # 目录页按 artifact 片段输出（发布时由 artifact 套上文档骨架），挂到 Pages 上要自己补 doctype
       - run: sed -i '1i <!doctype html>\n<html lang="zh-CN">' dist/series/index.html
       - uses: actions/upload-pages-artifact@v3

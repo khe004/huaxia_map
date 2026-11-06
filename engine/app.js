@@ -249,7 +249,8 @@ root.append('path').attr('class', 'natline').attr('d', path(GEO.cnout));
 
 // 水系：河流取自 OpenStreetMap（长江、黄河等主要河流，至入海口），湖泊取自 Natural Earth
 rewind(GEO.lk);
-root.append('g').selectAll('path').data(GEO.lk.features).join('path').attr('class', 'lake').attr('d', path);
+// 明清才形成的大湖（洪泽湖、微山湖，属性 y0 为大致形成年代）：本卷在此之前的不画
+root.append('g').selectAll('path').data(GEO.lk.features.filter(f => !(f.properties.y0 > B.range[1]))).join('path').attr('class', 'lake').attr('d', path);
 root.append('g').selectAll('path').data(GEO.rv.features).join('path')
   .attr('class', d => 'river' + (d.properties.m ? ' major' : '')).attr('d', path)
   .append('title').text(d => d.properties.n);
@@ -268,7 +269,7 @@ const zhouLbl = gLabels.append('g').selectAll('text').data(ZHOU_LABELS).join('te
 gLabels.append('g').selectAll('text').data(SEEDS.filter(s => HAS_LAND.has(byName.get(s.n)))).join('text')
   .attr('class', 'lbl jun-lbl').attr('text-anchor', 'middle').attr('transform', d => `translate(${proj([d.lon, d.lat])})`).attr('dy', 13).text(d => d.n);
 gLabels.append('g').selectAll('text').data(BASEMAP.countryLabels || []).join('text')
-  .attr('class', 'lbl country-lbl').attr('text-anchor', 'middle').attr('transform', d => `translate(${proj([d[1], d[2]])})`).text(d => d[0]);
+  .attr('class', 'lbl country-lbl').attr('text-anchor', 'middle').attr('transform', d => `translate(${proj([d[1], d[2]])})`).text(d => '今' + d[0]);
 
 const gCity = root.append('g');
 const cityG = gCity.selectAll('g').data(CITIES).join('g').attr('class', 'city')
@@ -276,7 +277,7 @@ const cityG = gCity.selectAll('g').data(CITIES).join('g').attr('class', 'city')
 const cityInner = cityG.append('g').attr('class', 'sc');
 const cityDot = cityInner.append('circle');
 const cityText = cityInner.append('text').attr('class', 'lbl').attr('x', 5).attr('y', -4);
-cityG.on('mousemove', (ev, d) => showTip(ev, `<b>${cityName(d, curT())}</b><div class="s">${d.m}</div>`)).on('mouseleave', hideTip);
+cityG.on('mousemove', (ev, d) => showTip(ev, `<b>${esc(cityName(d, curT()))}</b><div class="s">${esc(d.m)}</div>`)).on('mouseleave', hideTip);
 // 城邑名随时间变化，按当前一步的时刻 t（年 + (月 − 1) / 12，与 FACTIONS 的阈值同一口径）判断，阈值写成对应事件的 t 即落在该事件上；
 // 整数年份从该年年初一步起生效（当年有正月事件时，年初一步取 y − 1e-6，则落在正月事件上）；不晚于卷首 Y0 的从第一步起就显示（与开局快照一致）。
 // 第一个阈值之前、或名字写作空串时不显示该城
@@ -352,8 +353,8 @@ function showTip(ev, html) {
 function hideTip() { tip.hidden = true; }
 cells.on('mousemove', (ev, d) => {
   const j = d.properties.j, s = SEEDS[j], f = curSt()[j];
-  const today = d.properties.p === d.properties.n || /^(北京|天津|上海|重庆)$/.test(d.properties.p) ? `今${d.properties.p}${d.properties.p === d.properties.n ? '' : d.properties.n}` : `今${d.properties.p}${d.properties.n}`;
-  showTip(ev, `<b>${s.n}</b> <span class="s">· ${s.z}</span><div>属 <span style="color:${fColor(f)}">●</span> ${fName(f, curT())}</div><div class="s">${today}</div>`);
+  const today = `今${d.properties.p}${d.properties.p === d.properties.n ? '' : d.properties.n}`;
+  showTip(ev, `<b>${esc(s.n)}</b> <span class="s">· ${esc(s.z)}</span><div>属 <span style="color:${fColor(f)}">●</span> ${fName(f, curT())}</div><div class="s">${today}</div>`);
 }).on('mouseleave', hideTip);
 outerCells.on('mousemove', (ev, d) => {
   const f = outerOf(d.properties.n, curT()); if (!f) return hideTip();
@@ -424,7 +425,7 @@ function renderEvents() {
     s.append('path').attr('class', 'mk');
     s.append('text');
     g.on('click', (ev, d) => { ev.stopPropagation(); openEvent(d.i, true); })
-      .on('mousemove', (ev, d) => showTip(ev, `<b>${d.t}</b><div class="s">${fmtYear(d.y)} 年 · ${d.p}（${d.m}）</div>`))
+      .on('mousemove', (ev, d) => showTip(ev, `<b>${esc(d.t)}</b><div class="s">${fmtYear(d.y)} 年 · ${esc(d.p)}（${esc(d.m)}）</div>`))
       .on('mouseleave', hideTip);
     return g;
   });
@@ -588,7 +589,7 @@ function renderStamp() {
 const pbody = $('#pbody');
 const fdot = f => `<i style="background:${fColor(f)}"></i>`;
 // post：身后出现在事件中（追尊、图像、平反等），此人当时已故
-const chip = (n, post) => { const p = PEOPLE.get(n); return `<button class="chip${post ? ' post' : ''}" data-person="${n}"${post ? ' title="此时已故，身后出现在这一事件中"' : ''}>${fdot(p.f)}${n}${p.zi ? `<small>${p.zi}</small>` : ''}${post ? '<em>身后</em>' : ''}</button>`; };
+const chip = (n, post) => { const p = PEOPLE.get(n); return `<button class="chip${post ? ' post' : ''}" data-person="${esc(n)}"${post ? ' title="此时已故，身后出现在这一事件中"' : ''}>${fdot(p.f)}${esc(n)}${p.zi ? `<small>${esc(p.zi)}</small>` : ''}${post ? '<em>身后</em>' : ''}</button>`; };
 // 出处：chapters（章回体，回数 + 回目）或 sections（篇目名）
 const SRC = B.source || { type: 'sections', heading: '出处' };
 function chapterNum(n) {
@@ -620,13 +621,15 @@ const SRC_FULL = { 要录: '建炎以来系年要录', 长编: '续资治通鉴�
 const rich = t => esc(t).replace(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g, (_, src, q) => src
   ? `<b class="yw yw2" title="《${(B.srcFull || {})[src] || SRC_FULL[src] || src}》原文">${q}</b>` : `<b class="yw" title="${esc(B.quoteLabel || '原文')}">${q}</b>`);
 const tagOf = e => (e.src ? (B.tags || {})[e.src] || e.src : '');
-const evItem = (e, on) => `<button class="item${on ? ' on' : ''}" data-event="${e.i}"><span class="y">${fmtYear(e.y)}</span><span class="t"><i class="${e.k}"></i>${e.t}</span><span class="s">${[e.p + ' · ' + e.m, srcShort(e.refs), tagOf(e)].filter(Boolean).join(' · ')}</span></button>`;
+const evItem = (e, on) => `<button class="item${on ? ' on' : ''}" data-event="${e.i}"><span class="y">${fmtYear(e.y)}</span><span class="t"><i class="${e.k}"></i>${esc(e.t)}</span><span class="s">${esc([e.p + ' · ' + e.m, srcShort(e.refs), tagOf(e)].filter(Boolean).join(' · '))}</span></button>`;
 
-function go(view) { state.stack.push({ view: state.view, person: state.person, sel: state.sel }); state.view = view; }
+function go(view) { state.stack.push({ view: state.view, person: state.person, sel: state.sel, line: LINE }); state.view = view; }
 function back() {
   const s = state.stack.pop();
   if (!s) { state.view = { t: state.tab }; state.person = null; state.sel = null; }
   else { state.view = s.view; state.person = s.person; state.sel = s.sel; }
+  // 打开事件时自动换了线的，返回时换回原来的线
+  if (s && s.line && s.line !== LINE) { setLine(s.line, true); renderStamp(); markBookEnd(); }
   renderEvents(); renderPanel(); renderStory();
 }
 function openEvent(i, fromMap) {
@@ -659,7 +662,7 @@ pbody.addEventListener('click', e => {
 pbody.addEventListener('input', e => { if (e.target.id === 'psearch') { state.q = e.target.value; renderPeopleList(); } });
 
 function renderPanel() {
-  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === state.tab));
+  document.querySelectorAll('#tabs button').forEach(b => { b.classList.toggle('on', b.dataset.tab === state.tab); b.setAttribute('aria-pressed', b.dataset.tab === state.tab); });
   const v = state.view;
   if (v.t === 'year') return renderYear();
   if (v.t === 'events') return renderEventList();
@@ -689,7 +692,11 @@ function renderEventList() {
   let html = '';
   for (const [a, b, n] of PHASES) {
     const evs = EV_SORTED.filter(e => e.y >= a && e.y <= b);
-    html += `<div class="grp">${n}<small>${fmtYear(a)}–${fmtYear(b)}</small></div><div class="list">${evs.map(e => evItem(e, e.y === state.year)).join('')}</div>`;
+    // 这条线在本阶段没有事件（如文化线）：不列空的阶段标题
+    if (!evs.length) continue;
+    // 高亮当前这一步的事件；停在年初（不在事件上）时高亮当年各事件
+    const cur = STEPS[state.step].ev;
+    html += `<div class="grp">${n}<small>${fmtYear(a)}–${fmtYear(b)}</small></div><div class="list">${evs.map(e => evItem(e, cur != null && onLine(EVENTS[cur]) ? e.i === cur : e.y === state.year)).join('')}</div>`;
   }
   pbody.innerHTML = html;
   const on = pbody.querySelector('.item.on'); if (on) on.scrollIntoView({ block: 'center' });
@@ -697,7 +704,7 @@ function renderEventList() {
 const FORDER = Object.keys(FACTIONS);
 const FGROUP = Object.fromEntries(B.peopleGroups || []);
 function renderPeople() {
-  pbody.innerHTML = `<input class="search" id="psearch" type="search" placeholder="${esc(B.searchHint || '搜索人物')}" value="${state.q || ''}"><div id="plist" style="display:grid;gap:12px"></div>`;
+  pbody.innerHTML = `<input class="search" id="psearch" type="search" placeholder="${esc(B.searchHint || '搜索人物')}" value="${esc(state.q || '')}"><div id="plist" style="display:grid;gap:12px"></div>`;
   renderPeopleList();
 }
 function renderPeopleList() {
@@ -752,7 +759,8 @@ function renderPerson(n) {
   const liveEvs = evs.filter(e => !isPost(e, n)), tOf = e => e.y + (e.mo - 1) / 12,
     // 势力名按最后一个在世事件的时刻取（年中改号的，如杨行密死后淮南改称吴）
     fy = liveEvs.length ? tOf(liveEvs[liveEvs.length - 1]) : evs.length ? tOf(evs[0]) : state.year;
-  const pad = Math.max(10, (Y1 - Y0) * .3), lo = Y0 - pad, hi = Y1 + pad * .5, sc = v => (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo) * 100;
+  // 按天文纪年（公元前 1 年 = 0 年）换算，跨公元前后的生卒条不多出一个不存在的 0 年
+  const ast = v => (v < 0 ? v + 1 : v), pad = Math.max(10, (Y1 - Y0) * .3), lo = Y0 - pad, hi = Y1 + pad * .5, sc = v => (Math.max(ast(lo), Math.min(ast(hi), ast(v))) - ast(lo)) / (ast(hi) - ast(lo)) * 100;
   // 夏历十二月去世折成公历次年一二月，事件年份可能比卒年晚一年，寿命条画到最后一个在世事件为止（最多延长一年；演义等虚构情节不计）
   const hist = p.live.filter(i => !EVENTS[i].src), lastLive = hist.length ? Math.max(...hist.map(i => EVENTS[i].y)) : null;
   // 卒年不详的，寿命条画到最后一个在世事件
@@ -784,13 +792,14 @@ const tg = (id, cls) => { const el = $(id); const f = () => { svg.classed(cls, !
 // 文化事件（文学、学术、宗教、艺术、科技）可以从地图与时间轴上隐去，只看战事、政事、外交；本卷没有文化事件时不显示这个开关
 tg('#tg-terrain', 'hide-terrain'); tg('#tg-modern', 'hide-modern'); tg('#tg-zhou', 'hide-zhou'); tg('#tg-city', 'hide-city');
 $('#music').title = B.musicTitle || '原创合成的背景音';
-// 史事 / 文化 两条线的切换；所选的线记在本机，翻到下一卷时沿用
+// 史事 / 文化 两条线的切换；读者手动选的线记在本机，翻到下一卷时沿用。
+// 打开另一条线上的事件、深链跳转时自动换线（quiet）只换当前页面，不改记下的选择
 function setLine(l, quiet) {
   LINE = HAS_CUL ? l : 'main';
   EV_SORTED = EV_ALL.filter(onLine);
   $('#ticks').classList.toggle('line-main', LINE === 'main'); $('#ticks').classList.toggle('line-cul', LINE === 'cul');
-  document.querySelectorAll('#linesw button').forEach(b => b.classList.toggle('on', b.dataset.line === LINE));
-  try { localStorage.setItem('yutu-line', LINE); } catch (e) {}
+  document.querySelectorAll('#linesw button').forEach(b => { b.classList.toggle('on', b.dataset.line === LINE); b.setAttribute('aria-pressed', b.dataset.line === LINE); });
+  if (!quiet) try { localStorage.setItem('yutu-line', LINE); } catch (e) {}
   LINE_HOOKS.forEach(f => f());
   if (quiet) return;
   stop();

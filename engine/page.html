@@ -342,9 +342,9 @@ button { font: inherit; color: inherit; }
       <button class="mbtn sub" id="music-src" title="选择本机的音频文件循环播放，文件只在你的浏览器里播放，不会上传">自选音频</button>
       <input type="file" id="music-file" accept="audio/*" hidden>
     </div>
-    <div class="viewsw" id="viewsw" role="tablist">
-      <button data-mode="map" class="on">势力地图</button>
-      <button data-mode="story">人物交汇</button>
+    <div class="viewsw" id="viewsw" role="group" aria-label="视图">
+      <button data-mode="map" class="on" aria-pressed="true">势力地图</button>
+      <button data-mode="story" aria-pressed="false">人物交汇</button>
     </div>
     <div class="toggles">
       <label><input type="checkbox" id="tg-terrain" checked> 地形</label>
@@ -384,7 +384,7 @@ button { font: inherit; color: inherit; }
       <button class="btn primary" id="play">▶ 播放</button>
       <button class="btn" id="prevEv">‹ 上一事件</button>
       <button class="btn" id="nextEv">下一事件 ›</button>
-      <div class="viewsw linesw" id="linesw" hidden title="时间轴、播放与上下翻页只走一条线：史事（战事、政事、外交）或文化"><button data-line="main" class="on">史事</button><button data-line="cul">文化</button></div>
+      <div class="viewsw linesw" id="linesw" role="group" aria-label="史事 / 文化" hidden title="时间轴、播放与上下翻页只走一条线：史事（战事、政事、外交）或文化"><button data-line="main" class="on">史事</button><button data-line="cul">文化</button></div>
       <span class="tl-hint">拖动时间轴逐年、逐事件推进；点下方圆点直达某个事件</span>
       <nav class="series" id="series" hidden></nav>
       <a class="btn nextbook" id="nextBook" hidden></a>
@@ -398,7 +398,7 @@ button { font: inherit; color: inherit; }
   </footer>
 
   <aside class="panel">
-    <nav class="tabs" id="tabs">
+    <nav class="tabs" id="tabs" aria-label="右栏">
       <button data-tab="year" class="on">本年</button>
       <button data-tab="events">大事记</button>
       <button data-tab="people">人物</button>
@@ -407,8 +407,8 @@ button { font: inherit; color: inherit; }
   </aside>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js" integrity="sha512-M7nHCiNUOwFt6Us3r8alutZLm9qMt4s9951uo8jqO4UwJ1hziseL6O3ndFyigx6+LREfZqnhHxYjKRJ8ZQ69DQ==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js" integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67" crossorigin="anonymous"></script>
 <script>
 const BASEMAP = /*BASEMAP*/null;
 const SERIES = /*SERIES*/null;

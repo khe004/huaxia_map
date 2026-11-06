@@ -3,10 +3,14 @@
 // 只有一家纪年时不加国号；多家并列时加国号（鲁庄公十年 · 周庄王十三年），s 已以国号开头的不重复。
 // 各家在某年的纪年：引擎 eras() 与目录页 erasOf() 共用。C.eras 每项 [起年, 年号, 起年记作第几年 = 1, 改元的公历月份]；
 // 同一年先后改元的（嗣圣、文明、光宅），这一年合写作“嗣圣、文明、光宅元年”；C.zai 让天宝三载至至德三载写“载”
-const cnNumC = n => { const D = '〇一二三四五六七八九'; if (n === 1) return '元'; if (n < 10) return D[n]; const t = Math.floor(n / 10), o = n % 10; return (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
+const cnNumC = n => { const D = '〇一二三四五六七八九'; if (n === 1) return '元'; if (n < 10) return D[n];
+  // 百以上（如周赧王、昭王纪年以外少见，备用）：一百零五、一百二十
+  if (n >= 100) { const h = Math.floor(n / 100), r = n % 100; return D[h] + '百' + (r === 0 ? '' : r < 10 ? '〇' + D[r] : (r < 20 ? '一' : '') + cnNumC(r)); }
+  const t = Math.floor(n / 10), o = n % 10; return (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
 const zaiOfC = (C, y, k) => { const z = Array.isArray(C.zai) ? C.zai : (C.zai || {})[k]; return z && y >= z[0] && y <= z[1] ? '载' : '年'; };
 // 不立年号的一家（中统以前的蒙古）：C.eras 写 [起年, '#干支']，按公历年的干支记作“丙寅年”
-const ganzhiC = y => { const g = ((y - 4) % 60 + 60) % 60; return '甲乙丙丁戊己庚辛壬癸'[g % 10] + '子丑寅卯辰巳午未申酉戌亥'[g % 12]; };
+// 公元前的年份先换成天文纪年（前 1 年 = 0 年），公历没有 0 年
+const ganzhiC = y => { const g = (((y < 0 ? y + 1 : y) - 4) % 60 + 60) % 60; return '甲乙丙丁戊己庚辛壬癸'[g % 10] + '子丑寅卯辰巳午未申酉戌亥'[g % 12]; };
 const eraLabel = (C, k, it, y, all) => {
   if (it[1] === '#干支') return ganzhiC(y) + '年';
   const n = y - it[0] + (it[2] || 1) - (it[0] < 0 && y > 0 ? 1 : 0);
@@ -40,7 +44,9 @@ function calText(e, C, range, eras) {
       if (sp0 && sp0[2] && sp0[1] === e.y && e.mo >= sp0[2]) return null;
       if (!cur || cur[0] !== e.y || (cur[2] || 1) > 1 || !cur[3] || e.mo >= cur[3]) return x;
       const prev = prevEra(list, cur, e.y, e.mo), sp = (C.spans || {})[x.d];
-      return prev && prev[1] && !(sp && sp[0] === e.y && sp[0] > range[0]) ? { d: x.d, s: eraLabel(C, x.d, prev, e.y, null) } : null;
+      // 正月改元（第四项不大于 2）之前的一两个月是夏历上一年的岁末，旧年号按上一年记（中平六年十二月，不是“中平七年”）
+      const py = cur[3] <= 2 ? (e.y === 1 ? -1 : e.y - 1) : e.y;
+      return prev && prev[1] && !(sp && sp[0] === e.y && sp[0] > range[0]) ? { d: x.d, s: eraLabel(C, x.d, prev, py, null) } : null;
     }).filter(Boolean);
     return !es.length ? '' : es.length === 1 ? es[0].s : es.map(eraFmt).join(' · ');
   }
@@ -54,7 +60,7 @@ function calText(e, C, range, eras) {
   const N = '〇一二三四五六七八九', d1 = c => Math.max(0, N.indexOf(c || '〇'));
   const num = s => (s === '元' ? 1 : s.includes('十') ? (d1(s.split('十')[0]) || 1) * 10 + d1(s.split('十')[1]) : d1(s));
   // 上一年：公历无 0 年，公元 1 年的上一年是前 1 年（-1）
-  const prevY = e.y === 1 ? -1 : e.y - 1;
+  const prevY = e.y === 1 ? -1 : e.y - 1, nextY = e.y === -1 ? 1 : e.y + 1;
   let own = null, yr = e.y, best = 0, ownSt = -Infinity, byGz = false;
   // cal 可以带国号（“魏正始十年”“后赵建武四年”）：去掉与该家国号相同的前缀再匹配年号名
   for (const d of Object.keys(C.eras || {})) for (const [st, name, n0 = 1] of C.eras[d]) {
@@ -67,13 +73,13 @@ function calText(e, C, range, eras) {
     if (num(m[1]) < n0) continue;
     let y = st + num(m[1]) - n0; if (st < 0 && y >= 0) y++;
     // 周正的正月（夏历十一月）落在公历上一年末：年号所在年份比事件的公历年晚一年
-    if ((y === e.y || y === prevY || y === e.y + 1) && !(name.length === best && st <= ownSt)) { own = d; yr = y; best = name.length; ownSt = st; }
+    if ((y === e.y || y === prevY || y === nextY) && !(name.length === best && st <= ownSt)) { own = d; yr = y; best = name.length; ownSt = st; }
   }
   // 以干支记年的 cal（蒙古“十二年丁丑秋八月”“岁壬戌”“己未九月”）：由干支推出年份，归不立年号、按干支记年的一家（'#干支'）；
   // 那一年这一家还没开始干支记年的（1206 年以前），不归哪一家，其他各家照补
   if (!own) {
     const gm = e.cal.match(/^(?:岁|(?:元|[〇一二三四五六七八九十]+)年)?([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])/);
-    const gy = gm && [e.y, prevY, e.y + 1].find(y => ganzhiC(y) === gm[1]);
+    const gy = gm && [e.y, prevY, nextY].find(y => ganzhiC(y) === gm[1]);
     if (gy != null) {
       yr = gy; own = ''; byGz = true;
       for (const d of Object.keys(C.eras || {})) { const it = C.eras[d].filter(x => x[0] <= gy).pop(); if (it && it[1] === '#干支') own = d; }

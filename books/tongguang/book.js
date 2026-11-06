@@ -49,7 +49,7 @@ const BOOK = {
   outer: { Russia: 'eluosi', Kazakhstan: 'eluosi', Baikonur: 'eluosi', Japan: 'riben', 'South Kuril Islands': 'riben', 'North Kuril Islands': [[1865, 'eluosi'], [1875.33, 'riben']],
     Uzbekistan: [[1876.08, 'eluosi']], Tajikistan: [[1876.08, 'eluosi']], Turkmenistan: [[1881.08, 'eluosi']] },
   calendar: {
-    eras: { 清: [[1865, '同治', 4], [1875, '光绪']] },
+    eras: { 清: [[1865, '同治', 4], [1875, '光绪', 1, 2]] },
     spans: { 清: [1865, 1885] },
     axis: ['清'],
   },
@@ -96,7 +96,7 @@ const SNAPSHOTS = [
   // 开局：卷六十九《太平天国》末（1864 年天京陷落、新疆回变、塔城界约）的形势；清为底色
   [1865, 1, [
     ['yingguo', '香港'],
-    ['eluosi', '丁零 东丁零 鬲昆 江东 伯力 滨海 库页 七河 热海 碎叶 赤谷'],
+    ['eluosi', '丁零 东丁零 鬲昆 江东 伯力 滨海 库页 七河 热海 碎叶 赤谷 呼揭'],
     ['huibian', '龟兹 焉耆 金满 疏勒 莎车 于阗'],
     ['duwenxiu', '叶榆 永昌'],
     ['xifan', '逻些 羊同 苏毗 吐蕃东'],

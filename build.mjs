@@ -34,13 +34,18 @@ const liveN = n => EVENTS.filter(e => e.who.includes(n) && !(e.post || []).inclu
   if (m) for (const [, k] of m[1].matchAll(/^  (\w+)\s*:/gm)) seen.has(k) ? problems.push(`BOOK 的「${k}」重复定义`) : seen.add(k); }
 // 阶段按闭区间 [起年, 止年] 归入事件，相邻阶段不能共用同一年，否则该年的事件在大事记里出现两次
 PHASES.forEach((ph, i) => { if (i && ph[0] <= PHASES[i - 1][1]) problems.push(`阶段「${PHASES[i - 1][2]}」与「${ph[2]}」在 ${ph[0]} 年重叠`); });
+// 不落在任何阶段里的事件不会出现在大事记中（阶段之间留了空档）
+if (PHASES.length) EVENTS.forEach(e => { if (!PHASES.some(([a, b]) => e.y >= a && e.y <= b)) problems.push(`事件「${e.t}」（${e.y} 年）不在任何阶段内，大事记里看不到`); });
+// 引擎的时间步要求月份不小于 1（夏历十二月折成次年的写 1.x）
+EVENTS.forEach(e => { if (!(e.mo >= 1)) problems.push(`事件「${e.t}」的月份 ${e.mo} 小于 1`); });
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
 // 跨卷人物的统一简介（books/_people.js）：覆盖本书同名人物的字、生卒、简介；引文出处与本书默认出处相同的去掉前缀
 const common = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_people.js') + '\n;this.p = commonOf;', c); return c.p; })();
 const defSrc = ((BOOK.quoteLabel || '').match(/《(.+?)》/) || [])[1];
 // 人物别名（books/_alias.js）：卷内人物页签的筛选也认本名、号、庙号等
-const ALIAS = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_alias.js') + '\n;this.a = ALIAS;', c); return c.a; })();
-const aliasSub = Object.fromEntries(PEOPLE_RAW.filter(([n]) => ALIAS[n]).map(([n]) => [n, ALIAS[n]]));
+const aliasOf = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_alias.js') + '\n;this.a = aliasOf;', c); return c.a; })();
+// 同名异人按生年取别名（books/_alias.js 的“名|生年”键）
+const aliasSub = Object.fromEntries(PEOPLE_RAW.map(([n, , , life]) => [n, aliasOf(n, common(n, id) ? common(n, id)[1] : life)]).filter(([, al]) => al.length));
 const commonSub = {};
 for (const [n] of PEOPLE_RAW) if (common(n, id)) commonSub[n] = common(n, id).slice(0, 3).map(v => (defSrc ? v.split(`**${defSrc}|`).join('**') : v));
 // 卒年晚于本卷第一个事件、本卷却没有一件在世事件的人物（只在身后被提及），多半是漏标了他生前参与的事件
@@ -76,14 +81,16 @@ if (SERIES_MODE) {
   for (const n of Object.keys(seen)) if (n[0] !== '\0' && common(n, id) && new Set(seen[n]).size > 1) SERIES.people[n] = seen['\0' + n] || [];
   BASEMAP.terrain = BASEMAP.terrain.map(t => ({ ...t, href: '../' + t.href }));
 }
+// 嵌进 <script> 的数据与代码：</script 写成 <\/script（在字符串里等价），免得提前结束脚本
+const inScript = s => s.replace(/<\/(script)/gi, '<\\/$1');
 const escAttr = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const html = r('./engine/page.html')
   .replace(/\{\{(\w+)\}\}/g, (_, k) => escAttr(({ title: BOOK.title, brand: BOOK.brand, seal: BOOK.seal || '', subtitle: BOOK.subtitle || '', regionToggle: BOOK.regions?.toggle || '古政区' })[k] ?? ''))
-  .replace('/*BASEMAP*/null', () => JSON.stringify(BASEMAP))
-  .replace('/*SERIES*/null', () => JSON.stringify(SERIES))
+  .replace('/*BASEMAP*/null', () => inScript(JSON.stringify(BASEMAP)))
+  .replace('/*SERIES*/null', () => inScript(JSON.stringify(SERIES)))
   .replace('/*GEO*/null', () => r(bm + 'geo.json').trim())
   .replace('/*UNITS*/null', () => r(bm + 'units.topo.json').trim())
-  .replace('/*DATA*/', () => dataSrc)
+  .replace('/*DATA*/', () => inScript(dataSrc))
   .replace('/*APP*/', () => r('./engine/app.js').replace('/*STORY*/', () => r('./engine/story.js')).replace('/*CAL*/', () => r('./engine/cal.js')).replace('/*MUSIC*/', () => r('./engine/music.js')));
 const out = new URL(SERIES_MODE ? `./dist/series/${id}/` : `./dist/${id}/`, import.meta.url);
 mkdirSync(out, { recursive: true });
