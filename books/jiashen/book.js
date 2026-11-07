@@ -80,7 +80,7 @@ const FACTIONS = {
   anda:      { color: '#b5651d', realm: 'fan', mapName: () => '土默特', name: () => '土默特余部（青海）' },
   wala:      { color: '#6b4c8a', realm: 'fan', mapName: () => '瓦剌', name: () => '瓦剌' },
   tulufan:   { color: '#7a4a2a', realm: 'fan', mapName: () => '吐鲁番', name: () => '吐鲁番' },
-  xifan:     { color: '#a34a5a', realm: 'fan', mapName: () => '乌思藏', name: () => '乌思藏、朵甘（受明官号）' },
+  xifan:     { of: 'ming', color: '#a34a5a', realm: 'fan', mapName: () => '乌思藏', name: () => '乌思藏、朵甘（受明官号）' },
   haidu:     { color: '#6d8a4e', realm: 'fan', mapName: () => '别失八里', name: () => '别失八里（亦力把里）' },
   timur:     { color: '#d9822b', realm: 'fan', mapName: () => '撒马儿罕', name: () => '帖木儿后王（撒马儿罕、哈烈）' },
   taifeng:   { color: '#4f5a8f', realm: 'fan', mapName: () => '朝鲜', name: t => (t < 1637.0833 ? '朝鲜（李氏）' : '朝鲜（李氏，臣服于清）') },

@@ -84,7 +84,7 @@ const FACTIONS = {
   naiyan:     { color: '#b5651d', realm: 'fan', mapName: () => '乃颜', name: () => '东道诸王（乃颜）' },
   haidu:      { color: '#6d8a4e', realm: 'fan', mapName: t => (t < 1301.66 ? '海都' : '都哇'), name: t => (t < 1301.66 ? '西北诸王（海都）' : t < 1306.66 ? '西北诸王（都哇、察八儿）' : '西北诸王（都哇）') },
   beisong:    { color: '#8e2b4e', realm: 'zhong', mapName: () => '宋', name: () => '宋遗民与江南起事' },
-  tuguan:     { color: '#9c6b4e', realm: 'fan', mapName: () => '西南诸蛮', name: () => '西南诸蛮' },
+  tuguan:     { of: 'menggu', color: '#9c6b4e', realm: 'fan', mapName: () => '西南诸蛮', name: () => '西南诸蛮' },
   taifeng:    { color: '#4f5a8f', realm: 'fan', mapName: () => '高丽', name: () => '高丽' },
   annan:      { color: '#c9a0dc', realm: 'fan', mapName: () => '交州', name: () => '交州（陈氏）' },
   zhancheng:  { color: '#d4a03c', realm: 'fan', mapName: () => '占城', name: () => '占城' },

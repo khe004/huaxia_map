@@ -77,7 +77,7 @@ const FACTIONS = {
   yingguo:   { color: '#7f1d4e', realm: 'fan', mapName: () => '英国', name: () => '英国' },
   yingfa:    { color: '#9b59b6', realm: 'fan', mapName: () => '英法', name: () => '英法联军' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: () => '俄罗斯', name: () => '俄罗斯' },
-  xifan:     { color: '#a34a5a', realm: 'fan', mapName: () => '西藏', name: () => '西藏（噶厦，驻藏大臣）' },
+  xifan:     { of: 'houjin', color: '#a34a5a', realm: 'fan', mapName: () => '西藏', name: () => '西藏（噶厦，驻藏大臣）' },
   timur:     { color: '#d9822b', realm: 'fan', mapName: () => '浩罕', name: () => '布哈拉、浩罕诸部' },
   taifeng:   { color: '#4f5a8f', realm: 'fan', mapName: () => '朝鲜', name: () => '朝鲜（李氏，臣服于清）' },
   liuqiu:    { color: '#c07aa0', realm: 'fan', mapName: () => '琉球', name: () => '琉球（尚氏）' },

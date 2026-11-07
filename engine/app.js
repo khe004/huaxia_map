@@ -109,9 +109,10 @@ const fName = (f, y) => FACTIONS[f].name(y);
 // 所属：FACTIONS[f].realm（字符串或 t => 字符串）。同一所属的势力之间只画细边界，图例和面板按 BOOK.realms 分组
 const realmOf = (f, t) => { const r = FACTIONS[f] && FACTIONS[f].realm; return (typeof r === 'function' ? r(t) : r) || null; };
 // B.looseRealms 中的所属只用于图例分组，彼此之间仍画粗线（如互相攻伐的群雄）
-// FACTIONS 的 of：附属于另一势力（如唐的羁縻府州 of: 'tang'），与所属势力之间不画势力界线，只留郡界
-const subOf = f => FACTIONS[f] && FACTIONS[f].of;
-const nested = (a, b) => subOf(a) === b || subOf(b) === a || (subOf(a) != null && subOf(a) === subOf(b));
+// FACTIONS 的 of：附属于另一势力（唐的羁縻府州、明的羁縻卫所、清的藩部等），与所属势力之间不画势力界线，只留郡界；粗线只画在真正的邻国之间
+// of 可以写成按时刻取值的函数（如西藏 1720 年起附属于清）；附属关系不论所属（realm）是否相同都只留郡界
+const subOf = (f, t) => { const o = FACTIONS[f] && FACTIONS[f].of; return (typeof o === 'function' ? o(t) : o) || null; };
+const nested = (a, b, t) => { const x = subOf(a, t), y = subOf(b, t); return x === b || y === a || (x != null && x === y); };
 const sameRealm = (a, b, t) => { const r = realmOf(a, t); return r != null && r === realmOf(b, t) && !(B.looseRealms || []).includes(r); };
 // 把 [[势力, 数]] 按 BOOK.realms 的顺序分组，返回 [[所属名或 null, 小计, [[势力, 数]…]]…]
 function groupByRealm(counts, t) {
@@ -376,8 +377,9 @@ function renderTerritory() {
   outerCells.transition().duration(450).attr('fill', d => { const f = outerOf(d.properties.n, T); return f ? fillOf(f) : 'transparent'; });
   if (OUTER_BORDER) OUTER_BORDER(st, T);
   const fa = (a, b) => a !== b && st[a.properties.j] !== st[b.properties.j];
-  facBorder.attr('d', meshBy((a, b) => fa(a, b) && !sameRealm(st[a.properties.j], st[b.properties.j], T)));
-  facBorderIn.attr('d', meshBy((a, b) => fa(a, b) && sameRealm(st[a.properties.j], st[b.properties.j], T) && !nested(st[a.properties.j], st[b.properties.j])));
+  const nest = (a, b) => nested(st[a.properties.j], st[b.properties.j], T);
+  facBorder.attr('d', meshBy((a, b) => fa(a, b) && !nest(a, b) && !sameRealm(st[a.properties.j], st[b.properties.j], T)));
+  facBorderIn.attr('d', meshBy((a, b) => fa(a, b) && !nest(a, b) && sameRealm(st[a.properties.j], st[b.properties.j], T)));
 
   // faction labels at the medoid of each faction's commanderies
   const evPts = EVENTS.filter(e => e.y === y && EV_STEP[e.i] <= state.step && onLine(e)).map(e => proj(e.ll));

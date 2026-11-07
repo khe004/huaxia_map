@@ -80,7 +80,7 @@ const FACTIONS = {
   deguo:     { color: '#6e6e6e', realm: 'fan', mapName: () => '德国', name: () => '德国' },
   putaoya:   { color: '#2a9d8f', realm: 'fan', mapName: () => '葡萄牙', name: () => '葡萄牙' },
   menggu:    { color: '#1b2a49', realm: 'fan', mapName: () => '外蒙古', name: () => '大蒙古国（库伦）' },
-  xifan:     { color: '#a34a5a', realm: 'fan', mapName: () => '西藏', name: () => '西藏（噶厦，驻藏大臣）' },
+  xifan:     { of: 'houjin', color: '#a34a5a', realm: 'fan', mapName: () => '西藏', name: () => '西藏（噶厦，驻藏大臣）' },
   taifeng:   { color: '#4f5a8f', realm: 'fan', mapName: () => '大韩', name: () => '大韩帝国' },
 };
 

@@ -77,7 +77,7 @@ const FACTIONS = {
   houjin:    { color: '#e3c34a', realm: 'zhong', mapName: () => '清', name: t => (t < 1796.0833 ? '清（弘历 · 北京）' : t < 1799.0833 ? '清（颙琰 · 北京，弘历训政）' : '清（颙琰 · 北京）') },
   linshuangwen: { color: '#c0392b', realm: 'zhong', mapName: () => '林爽文', name: () => '林爽文（大里杙）' },
   eluosi:    { color: '#5e8fb8', realm: 'fan', mapName: () => '俄罗斯', name: () => '俄罗斯' },
-  xifan:     { color: '#a34a5a', realm: 'fan', mapName: () => '西藏', name: () => '西藏（噶厦，驻藏大臣）' },
+  xifan:     { of: 'houjin', color: '#a34a5a', realm: 'fan', mapName: () => '西藏', name: () => '西藏（噶厦，驻藏大臣）' },
   timur:     { color: '#d9822b', realm: 'fan', mapName: () => '浩罕', name: () => '布哈拉、浩罕诸部' },
   taifeng:   { color: '#4f5a8f', realm: 'fan', mapName: () => '朝鲜', name: () => '朝鲜（李氏，臣服于清）' },
   liuqiu:    { color: '#c07aa0', realm: 'fan', mapName: () => '琉球', name: () => '琉球（尚氏）' },
