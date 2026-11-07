@@ -74,7 +74,7 @@ const BOOK = {
 
 const FACTIONS = {
   tang:       { color: '#d4a017', realm: 'tang', mapName: () => '唐', name: t => (t < 626.666 ? '唐（高祖李渊）' : '唐（太宗李世民）') },
-  jimi:       { color: '#f3e7b3', realm: 'tang', mapName: () => '羁縻府州', name: () => '唐羁縻府州' },
+  jimi:       { color: '#f3e7b3', realm: 'tang', of: 'tang', mapName: () => '羁縻府州', name: () => '唐羁縻府州' },
   limi:       { color: '#c0392b', realm: 'pan', mapName: () => '李密', name: () => '李密（魏公 · 瓦岗军）' },
   sui:        { color: '#5b4a8a', realm: 'pan', mapName: () => '隋', name: () => '隋（皇泰主杨侗 · 东都）' },
   zheng:      { color: '#a569bd', realm: 'pan', mapName: () => '郑', name: () => '郑（王世充）' },

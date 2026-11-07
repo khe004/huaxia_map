@@ -83,7 +83,7 @@ const BOOK = {
 const FACTIONS = {
   tang:       { color: '#d4a017', realm: 'tang', mapName: () => '唐',
     name: t => (t < 710.5 ? '唐（中宗李显）' : t < 710.541 ? '唐（韦后临朝）' : t < 712.666 ? '唐（睿宗李旦）' : '唐（玄宗李隆基）') },
-  jimi:       { color: '#f3e7b3', realm: 'tang', mapName: () => '羁縻府州', name: () => '唐羁縻府州' },
+  jimi:       { color: '#f3e7b3', realm: 'tang', of: 'tang', mapName: () => '羁縻府州', name: () => '唐羁縻府州' },
   houtujue:   { color: '#e2eef6', realm: 'fan', mapName: () => '后突厥', name: t => (t < 716.5 ? '后突厥（默啜）' : '后突厥') },
   huihu:      { color: '#9b7bb8', realm: 'fan', mapName: () => '回纥', name: () => '回纥' },
   tuqishi:    { color: '#5f9e88', realm: 'fan', mapName: () => '突骑施', name: () => '突骑施' },
@@ -145,7 +145,7 @@ const SNAPSHOTS = [
     ['dayuan', '贵山 郁成 大宛西'], ['kangju', '卑阗 康居北 康居东 苏薤'], ['yuezhi', '月氏王庭 监氏 妫水北'],
     ['sanhan', '带方 马韩 辰韩 弁韩'], ['bohai', '沃沮 盖马 夫余'],
     ['shiwei', '鲜卑山'], ['houtujue', '阴山北 单于庭 姑衍 左地 浚稽山 弓卢水 阿尔泰'], ['dingling', '丁零 坚昆 呼揭 东丁零 鬲昆'],
-    ['tubo', '鄯善 逻些 羊同 苏毗 吐蕃东 海西 西海 河曲 江源'], ['xiyu', '捐毒 休循'],
+    ['tubo', '逻些 羊同 苏毗 吐蕃东 海西 西海 河曲 江源'], ['xiyu', '捐毒 休循'],
   ]],
   // 张仁愿筑三受降城，夺取漠南之地
   [708, 4, [['tang', '阴山北']]],

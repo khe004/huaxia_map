@@ -109,6 +109,9 @@ const fName = (f, y) => FACTIONS[f].name(y);
 // 所属：FACTIONS[f].realm（字符串或 t => 字符串）。同一所属的势力之间只画细边界，图例和面板按 BOOK.realms 分组
 const realmOf = (f, t) => { const r = FACTIONS[f] && FACTIONS[f].realm; return (typeof r === 'function' ? r(t) : r) || null; };
 // B.looseRealms 中的所属只用于图例分组，彼此之间仍画粗线（如互相攻伐的群雄）
+// FACTIONS 的 of：附属于另一势力（如唐的羁縻府州 of: 'tang'），与所属势力之间不画势力界线，只留郡界
+const subOf = f => FACTIONS[f] && FACTIONS[f].of;
+const nested = (a, b) => subOf(a) === b || subOf(b) === a || (subOf(a) != null && subOf(a) === subOf(b));
 const sameRealm = (a, b, t) => { const r = realmOf(a, t); return r != null && r === realmOf(b, t) && !(B.looseRealms || []).includes(r); };
 // 把 [[势力, 数]] 按 BOOK.realms 的顺序分组，返回 [[所属名或 null, 小计, [[势力, 数]…]]…]
 function groupByRealm(counts, t) {
@@ -374,7 +377,7 @@ function renderTerritory() {
   if (OUTER_BORDER) OUTER_BORDER(st, T);
   const fa = (a, b) => a !== b && st[a.properties.j] !== st[b.properties.j];
   facBorder.attr('d', meshBy((a, b) => fa(a, b) && !sameRealm(st[a.properties.j], st[b.properties.j], T)));
-  facBorderIn.attr('d', meshBy((a, b) => fa(a, b) && sameRealm(st[a.properties.j], st[b.properties.j], T)));
+  facBorderIn.attr('d', meshBy((a, b) => fa(a, b) && sameRealm(st[a.properties.j], st[b.properties.j], T) && !nested(st[a.properties.j], st[b.properties.j])));
 
   // faction labels at the medoid of each faction's commanderies
   const evPts = EVENTS.filter(e => e.y === y && EV_STEP[e.i] <= state.step && onLine(e)).map(e => proj(e.ll));

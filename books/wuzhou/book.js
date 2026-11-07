@@ -81,7 +81,7 @@ const BOOK = {
 const FACTIONS = {
   tang:       { color: '#d4a017', realm: 'tang', mapName: t => (t >= 690.75 && t < 705.083 ? '周' : '唐'),
     name: t => (t < 684 ? '唐（高宗李治）' : t < 684.166 ? '唐（中宗李显 · 武太后）' : t < 690.75 ? '唐（睿宗李旦 · 武太后临朝）' : t < 705.083 ? '周（则天皇帝武曌）' : '唐（中宗李显）') },
-  jimi:       { color: '#f3e7b3', realm: 'tang', mapName: () => '羁縻府州', name: () => '唐羁縻府州' },
+  jimi:       { color: '#f3e7b3', realm: 'tang', of: 'tang', mapName: () => '羁縻府州', name: () => '唐羁縻府州' },
   houtujue:   { color: '#e2eef6', realm: 'fan', mapName: () => '后突厥', name: t => (t < 692 ? '后突厥（骨咄禄）' : '后突厥（默啜）') },
   wusun:      { color: '#5f9e88', realm: 'fan', mapName: () => '西突厥', name: t => (t < 651.583 ? '西突厥' : '西突厥（沙钵罗可汗贺鲁）') },
   tubo:       { color: '#a0522d', realm: 'fan', mapName: () => '吐蕃', name: t => (t < 650 ? '吐蕃' : t < 667 ? '吐蕃（禄东赞专政）' : t < 699.166 ? '吐蕃（论钦陵专政）' : '吐蕃') },
@@ -151,7 +151,8 @@ const SNAPSHOTS = [
   // 苏定方灭百济，置熊津等五都督府
   [660, 9, [['jimi', '#baiji']]],
   // 吐蕃兼并吐谷浑
-  [663, 6, [['tubo', '#qiang']]],
+  // 吐蕃灭吐谷浑，据青海；鄯善、且末一带（后置石城镇、播仙镇）仍归唐
+  [663, 6, [['tubo', '#qiang'], ['tang', '鄯善']]],
   // 李勣拔平壤，灭高句丽，置安东都护府
   [668, 10, [['jimi', '#gouli']]],
   // 吐蕃陷西域十八州，罢安西四镇

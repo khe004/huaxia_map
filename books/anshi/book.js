@@ -83,7 +83,7 @@ const BOOK = {
 const FACTIONS = {
   tang:       { color: '#d4a017', realm: 'tang', mapName: () => '唐',
     name: t => (t < 756.583 ? '唐（玄宗李隆基）' : t < 762.333 ? '唐（肃宗李亨）' : t < 779.416 ? '唐（代宗李豫）' : '唐（德宗李适）') },
-  jimi:       { color: '#f3e7b3', realm: 'tang', mapName: () => '羁縻府州', name: () => '唐羁縻府州' },
+  jimi:       { color: '#f3e7b3', realm: 'tang', of: 'tang', mapName: () => '羁縻府州', name: () => '唐羁縻府州' },
   yan:        { color: '#7a1f3d', realm: 'yan', mapName: t => (t < 756.083 ? '安禄山' : '燕'),
     name: t => (t < 756.083 ? '安禄山叛军' : t < 757.083 ? '燕（安禄山）' : t < 759.25 ? '燕（安庆绪）' : t < 761.25 ? '燕（史思明）' : '燕（史朝义）') },
   hebei:      { color: '#4f7f4f', realm: 'tang', mapName: () => '河朔三镇', name: () => '河朔三镇' },
@@ -149,7 +149,7 @@ const SNAPSHOTS = [
     ['shiwei', '鲜卑山'],
     ['huihu', '单于庭 姑衍 左地 右地 浚稽山 弓卢水 阿尔泰'],
     ['dingling', '丁零 坚昆 呼揭 东丁零 鬲昆'],
-    ['tubo', '鄯善 逻些 羊同 苏毗 吐蕃东 海西 西海 河曲 江源'],
+    ['tubo', '逻些 羊同 苏毗 吐蕃东 海西 西海 河曲 江源'],
     ['xiyu', '捐毒 休循'],
     ['dayuan', '贵山 郁成 大宛西'],
     ['dashi', '卑阗 康居北 康居东 苏薤 月氏王庭 监氏 妫水北'],
