@@ -1,0 +1,941 @@
+{
+ "_people": {
+  "date": "2026-11-08",
+  "quotes": 125,
+  "found": 125,
+  "other": 125,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "anshi": {
+  "date": "2026-11-08",
+  "quotes": 89,
+  "found": 86,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "述怀|麻鞋见天子，衣袖露两肘",
+   "祭侄文稿|贼臣不救，孤城围逼，父陷子死，巢倾卵覆",
+   "祭侄文稿|天不悔祸，谁为荼毒"
+  ],
+  "unmatched": [
+   "祭侄文稿"
+  ]
+ },
+ "bawang": {
+  "date": "2026-11-08",
+  "quotes": 69,
+  "found": 69,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "beifa": {
+  "date": "2026-11-08",
+  "quotes": 24,
+  "found": 22,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "是中国革命运动中的健将",
+   "实由共党挑拨之阴谋所致"
+  ],
+  "unmatched": [
+   "唁廖仲恺",
+   "下野宣言"
+  ]
+ },
+ "buyuer": {
+  "date": "2026-11-08",
+  "quotes": 138,
+  "found": 138,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "caishi": {
+  "date": "2026-11-08",
+  "quotes": 176,
+  "found": 176,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "chanyuan": {
+  "date": "2026-11-08",
+  "quotes": 102,
+  "found": 98,
+  "other": 0,
+  "split": 1,
+  "missing": [
+   "山园小梅|疏影横斜水清浅，暗香浮动月黄昏",
+   "梦溪笔谈|庆历中，有布衣毕昇，又为活版。其法用胶泥刻字，薄如钱唇，每字为一印，火烧令坚",
+   "梦溪笔谈|若止印三、二本，未为简易；若印数十百千本，则极为神速",
+   "岳阳楼记|庆历四年春，滕子京谪守巴陵郡。越明年，政通人和，百废具兴，乃重修岳阳楼"
+  ],
+  "unmatched": [
+   "山园小梅"
+  ]
+ },
+ "chibi": {
+  "date": "2026-11-08",
+  "quotes": 79,
+  "found": 79,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "chuhan": {
+  "date": "2026-11-08",
+  "quotes": 141,
+  "found": 141,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "danggu": {
+  "date": "2026-11-08",
+  "quotes": 76,
+  "found": 76,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "daye": {
+  "date": "2026-11-08",
+  "quotes": 73,
+  "found": 73,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "diaoyu": {
+  "date": "2026-11-08",
+  "quotes": 132,
+  "found": 131,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "数书九章|一曰大衍，以奇零求总数，为九类之纲"
+  ],
+  "unmatched": [
+   "数书九章"
+  ]
+ },
+ "dujiang": {
+  "date": "2026-11-08",
+  "quotes": 11,
+  "found": 8,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "均郑重要示决不容再有内战",
+   "总统在动员戡乱时期，为避免国家或人民遭遇紧急危难，或应付财政经济上重大变故，得经行政院会议之决议，为紧急处分",
+   "违背人民意志，破坏停战协定及政治协商会议的决议"
+  ],
+  "unmatched": []
+ },
+ "duomen": {
+  "date": "2026-11-08",
+  "quotes": 70,
+  "found": 69,
+  "other": 1,
+  "split": 0,
+  "missing": [
+   "冒功者四千余人"
+  ],
+  "unmatched": []
+ },
+ "feishui": {
+  "date": "2026-11-08",
+  "quotes": 41,
+  "found": 41,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "gengxu": {
+  "date": "2026-11-08",
+  "quotes": 77,
+  "found": 76,
+  "other": 1,
+  "split": 0,
+  "missing": [
+   "复据哈密，侵肃州"
+  ],
+  "unmatched": [
+   "临江仙"
+  ]
+ },
+ "guangwu": {
+  "date": "2026-11-08",
+  "quotes": 126,
+  "found": 123,
+  "other": 1,
+  "split": 0,
+  "missing": [
+   "征侧者，麊泠县雒将之女也。嫁为朱䳒人诗索妻，甚雄勇",
+   "臣闻夫妇之好，父不能得之于子，况臣能得之于君乎",
+   "臣不读谶"
+  ],
+  "unmatched": []
+ },
+ "guijin": {
+  "date": "2026-11-08",
+  "quotes": 41,
+  "found": 39,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "咏怀诗|夜中不能寐，起坐弹鸣琴。薄帷鉴明月，清风吹我衿",
+   "思旧赋|于时日薄虞渊，寒冰凄然，邻人有吹笛者，发声寥亮。追思曩昔游宴之好，感音而叹"
+  ],
+  "unmatched": []
+ },
+ "haidu": {
+  "date": "2026-11-08",
+  "quotes": 169,
+  "found": 167,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "观潮|浙江之潮，天下之伟观也。自既望以至十八日为盛",
+   "观潮|玉城雪岭际天而来，大声如雷霆，震撼激射，吞天沃日，势极雄豪"
+  ],
+  "unmatched": []
+ },
+ "hanchu": {
+  "date": "2026-11-08",
+  "quotes": 103,
+  "found": 102,
+  "other": 0,
+  "split": 1,
+  "missing": [
+   "臣口不能言，然臣期期知其不可"
+  ],
+  "unmatched": []
+ },
+ "hanwu": {
+  "date": "2026-11-08",
+  "quotes": 182,
+  "found": 179,
+  "other": 1,
+  "split": 1,
+  "missing": [
+   "汉书|臣朔年二十二，长九尺三寸",
+   "布衣权至使将军为言，此其家不贫",
+   "长歌行|少壮不努力，老大徒伤悲"
+  ],
+  "unmatched": [
+   "长歌行"
+  ]
+ },
+ "hezong": {
+  "date": "2026-11-08",
+  "quotes": 108,
+  "found": 108,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "hongjin": {
+  "date": "2026-11-08",
+  "quotes": 115,
+  "found": 115,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "hongxian": {
+  "date": "2026-11-08",
+  "quotes": 68,
+  "found": 60,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "本总统当践誓言，辞职引退",
+   "富于经验，民国统一，赖有建设之才",
+   "临时政府地点设于南京，为各省代表所议定，不能更改",
+   "世凯深愿竭其能力，发扬共和之精神，涤荡专制之瑕秽，谨守宪法，依国民之愿望",
+   "俟召集国会，选定第一期大总统，世凯即行辞职",
+   "开会礼成，不惟本大总统以为吾国数千年有史以来未有之光荣",
+   "突然与五国银行团协议二千五百万磅之借款",
+   "几酿成暴民专制之局"
+  ],
+  "unmatched": [
+   "解散国会原因文",
+   "为宋案告外国"
+  ]
+ },
+ "houjing": {
+  "date": "2026-11-08",
+  "quotes": 39,
+  "found": 39,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "huanwen": {
+  "date": "2026-11-08",
+  "quotes": 78,
+  "found": 78,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "hufa": {
+  "date": "2026-11-08",
+  "quotes": 26,
+  "found": 24,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "夫安福亦一政党耳，凭借军阀势力，为祸竟至十年之久",
+   "学生破门而入，满屋子搜索这三位“卖国贼”"
+  ],
+  "unmatched": []
+ },
+ "huichang": {
+  "date": "2026-11-08",
+  "quotes": 65,
+  "found": 62,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "竹枝词|杨柳青青江水平，闻郎江上唱歌声。东边日出西边雨，道是无晴却有晴",
+   "清明|清明时节雨纷纷，路上行人欲断魂",
+   "乐游原|夕阳无限好，只是近黄昏"
+  ],
+  "unmatched": [
+   "竹枝词",
+   "清明",
+   "乐游原"
+  ]
+ },
+ "jiashen": {
+  "date": "2026-11-08",
+  "quotes": 47,
+  "found": 47,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "jiawu": {
+  "date": "2026-11-08",
+  "quotes": 57,
+  "found": 57,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": [
+   "盛世危言",
+   "大生纱厂"
+  ]
+ },
+ "jinchu": {
+  "date": "2026-11-08",
+  "quotes": 131,
+  "found": 131,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "jingkang": {
+  "date": "2026-11-08",
+  "quotes": 199,
+  "found": 196,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "醉花阴|莫道不销魂，帘卷西风，人比黄花瘦",
+   "营造法式|契勘熙宁中敕，令将作监编修《营造法式》，至元祐六年方成书",
+   "萍洲可谈|舟师识地理，夜则观星，昼则观日，阴晦观指南针"
+  ],
+  "unmatched": [
+   "醉花阴",
+   "瑞鹤图",
+   "千里江山图",
+   "清明上河图"
+  ]
+ },
+ "jingnan": {
+  "date": "2026-11-08",
+  "quotes": 108,
+  "found": 108,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "jinsong": {
+  "date": "2026-11-08",
+  "quotes": 55,
+  "found": 55,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "jiuyiba": {
+  "date": "2026-11-08",
+  "quotes": 9,
+  "found": 7,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "中国哈尔滨当局于七月十日晨搜查中东铁路",
+   "不图中正借训政之名，行个人独裁之实"
+  ],
+  "unmatched": [
+   "苏联中东路牒文",
+   "广州国民政府成立宣言"
+  ]
+ },
+ "kaixi": {
+  "date": "2026-11-08",
+  "quotes": 270,
+  "found": 269,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "雁丘词|问世间，情是何物，直教生死相许"
+  ],
+  "unmatched": [
+   "雁丘词"
+  ]
+ },
+ "kaiyuan": {
+  "date": "2026-11-08",
+  "quotes": 113,
+  "found": 106,
+  "other": 0,
+  "split": 2,
+  "missing": [
+   "九月九日|独在异乡为异客，每逢佳节倍思亲。遥知兄弟登高处，遍插茱萸少一人",
+   "春晓|春眠不觉晓，处处闻啼鸟。夜来风雨声，花落知多少",
+   "名画记|因写蜀道山水，始创山水之体，自为一家",
+   "名画记|吴生之画，下笔有神，是张僧繇后身也",
+   "望岳|岱宗夫如何，齐鲁青未了。造化钟神秀，阴阳割昏晓",
+   "芙蓉楼|寒雨连江夜入吴，平明送客楚山孤。洛阳亲友如相问，一片冰心在玉壶",
+   "回乡偶书|少小离家老大回，乡音无改鬓毛衰。儿童相见不相识，笑问客从何处来"
+  ],
+  "unmatched": []
+ },
+ "kangzhan": {
+  "date": "2026-11-08",
+  "quotes": 7,
+  "found": 7,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "liangjin": {
+  "date": "2026-11-08",
+  "quotes": 33,
+  "found": 33,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "liansheng": {
+  "date": "2026-11-08",
+  "quotes": 23,
+  "found": 21,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "二月七日长辛店和汉口的大惨杀",
+   "誓当巩固共和，导扬民志"
+  ],
+  "unmatched": [
+   "告工人阶级与国民",
+   "临时执政宣言书"
+  ]
+ },
+ "liuzhen": {
+  "date": "2026-11-08",
+  "quotes": 53,
+  "found": 53,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "miejin": {
+  "date": "2026-11-08",
+  "quotes": 192,
+  "found": 191,
+  "other": 0,
+  "split": 1,
+  "missing": [
+   "示儿|死去元知万事空，但悲不见九州同。王师北定中原日，家祭无忘告乃翁"
+  ],
+  "unmatched": [
+   "示儿"
+  ]
+ },
+ "mingzhang": {
+  "date": "2026-11-08",
+  "quotes": 107,
+  "found": 105,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "得出者四百余家",
+   "匈奴不犯边塞，而无故劳师远涉，损费国用，徼功万里，非社稷之计"
+  ],
+  "unmatched": []
+ },
+ "nanpo": {
+  "date": "2026-11-08",
+  "quotes": 118,
+  "found": 117,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "墨梅|我家洗砚池头树，个个花开淡墨痕。不要人夸好颜色，只留清气满乾坤"
+  ],
+  "unmatched": [
+   "富春山居图"
+  ]
+ },
+ "ningyuan": {
+  "date": "2026-11-08",
+  "quotes": 72,
+  "found": 72,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": [
+   "三言"
+  ]
+ },
+ "pingzhun": {
+  "date": "2026-11-08",
+  "quotes": 88,
+  "found": 88,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "poyang": {
+  "date": "2026-11-08",
+  "quotes": 130,
+  "found": 130,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "qihuan": {
+  "date": "2026-11-08",
+  "quotes": 79,
+  "found": 79,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "qinbing": {
+  "date": "2026-11-08",
+  "quotes": 129,
+  "found": 127,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "华阳国志|旱则引水浸润，雨则杜塞水门",
+   "华阳国志|蜀沃野千里，号为陆海"
+  ],
+  "unmatched": []
+ },
+ "qunxiong": {
+  "date": "2026-11-08",
+  "quotes": 67,
+  "found": 67,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "sanfan": {
+  "date": "2026-11-08",
+  "quotes": 79,
+  "found": 79,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "sanguo": {
+  "date": "2026-11-08",
+  "quotes": 0,
+  "found": 0,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "sanjin": {
+  "date": "2026-11-08",
+  "quotes": 73,
+  "found": 72,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "公输|公输般九设攻城之机变，子墨子九距之，公输般之攻械尽，子墨子之守圉有余"
+  ],
+  "unmatched": [
+   "公输"
+  ]
+ },
+ "sanzheng": {
+  "date": "2026-11-08",
+  "quotes": 70,
+  "found": 68,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "几何原本序|《几何原本》者，度数之宗",
+   "游天台山日记|癸丑之三月晦，自宁海出西门。云散日朗，人意山光，俱有喜态"
+  ],
+  "unmatched": [
+   "几何原本序"
+  ]
+ },
+ "shanggu": {
+  "date": "2026-11-08",
+  "quotes": 119,
+  "found": 118,
+  "other": 1,
+  "split": 0,
+  "missing": [
+   "吕尚盖尝穷困，年老矣，以渔钓奸周西伯"
+  ],
+  "unmatched": [
+   "考古"
+  ]
+ },
+ "shaoxing": {
+  "date": "2026-11-08",
+  "quotes": 209,
+  "found": 205,
+  "other": 1,
+  "split": 0,
+  "missing": [
+   "乌江|生当作人杰，死亦为鬼雄",
+   "要录|以左道惑众，自号「天大圣」",
+   "要录|法分贵贱贫富，非善法也。我行法，当等贵贱，均贫富",
+   "满江红|靖康耻，犹未雪；臣子恨，何时灭"
+  ],
+  "unmatched": [
+   "满江红"
+  ]
+ },
+ "shengli": {
+  "date": "2026-11-08",
+  "quotes": 10,
+  "found": 9,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "兹特正式对日宣战，昭告中外，所有一切条约、协定、合同，有涉及中、日间之关系者，一律废止"
+  ],
+  "unmatched": [
+   "对日宣战布告"
+  ]
+ },
+ "shiquan": {
+  "date": "2026-11-08",
+  "quotes": 48,
+  "found": 48,
+  "other": 0,
+  "split": 1,
+  "missing": [],
+  "unmatched": []
+ },
+ "shizong": {
+  "date": "2026-11-08",
+  "quotes": 82,
+  "found": 82,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "suibing": {
+  "date": "2026-11-08",
+  "quotes": 39,
+  "found": 39,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "taiping": {
+  "date": "2026-11-08",
+  "quotes": 49,
+  "found": 49,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "tangmo": {
+  "date": "2026-11-08",
+  "quotes": 52,
+  "found": 52,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "tongguang": {
+  "date": "2026-11-08",
+  "quotes": 42,
+  "found": 42,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": [
+   "循环日报"
+  ]
+ },
+ "tumu": {
+  "date": "2026-11-08",
+  "quotes": 75,
+  "found": 75,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "waiqi": {
+  "date": "2026-11-08",
+  "quotes": 80,
+  "found": 78,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "以此颇为正直所羞",
+   "吾不就狱，众无所恃"
+  ],
+  "unmatched": []
+ },
+ "wuyue": {
+  "date": "2026-11-08",
+  "quotes": 90,
+  "found": 90,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "wuzhou": {
+  "date": "2026-11-08",
+  "quotes": 65,
+  "found": 65,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": [
+   "讨武曌檄"
+  ]
+ },
+ "xian": {
+  "date": "2026-11-08",
+  "quotes": 8,
+  "found": 4,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "当与日本帝国，协力同心，以期永固",
+   "叛逆溥仪、借助外力、盘踞东北、僭窃伪号、由执政而称帝",
+   "以地事敌，犹抱薪救火，薪不尽、火不灭",
+   "黄河以北、寸土不容与人"
+  ],
+  "unmatched": [
+   "康德帝即位诏书",
+   "讨伐溥逆通电",
+   "促中央抗日电"
+  ]
+ },
+ "xiannan": {
+  "date": "2026-11-08",
+  "quotes": 78,
+  "found": 78,
+  "other": 0,
+  "split": 2,
+  "missing": [],
+  "unmatched": [
+   "夜宴图"
+  ]
+ },
+ "xiaowen": {
+  "date": "2026-11-08",
+  "quotes": 50,
+  "found": 50,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "xinhai": {
+  "date": "2026-11-08",
+  "quotes": 49,
+  "found": 46,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "与妻书|意映卿卿如晤：吾今以此书与汝永别矣！",
+   "与妻书|吾至爱汝，即此爱汝一念，使吾勇于就死也",
+   "与妻书|吾充吾爱汝之心，助天下人爱其所爱，所以敢先汝而死，不顾汝也"
+  ],
+  "unmatched": []
+ },
+ "xining": {
+  "date": "2026-11-08",
+  "quotes": 182,
+  "found": 179,
+  "other": 2,
+  "split": 0,
+  "missing": [
+   "梦溪笔谈|鄜、延境内有石油，旧说「高奴县出脂水」，即此也",
+   "梦溪笔谈|此物后必大行于世",
+   "赤壁赋|寄蜉蝣于天地，渺沧海之一粟"
+  ],
+  "unmatched": [
+   "水调歌头",
+   "赤壁赋"
+  ]
+ },
+ "xinmang": {
+  "date": "2026-11-08",
+  "quotes": 55,
+  "found": 55,
+  "other": 2,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "yanyun": {
+  "date": "2026-11-08",
+  "quotes": 57,
+  "found": 57,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "yapian": {
+  "date": "2026-11-08",
+  "quotes": 47,
+  "found": 47,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": [
+   "瀛环志略"
+  ]
+ },
+ "yashan": {
+  "date": "2026-11-08",
+  "quotes": 234,
+  "found": 234,
+  "other": 0,
+  "split": 2,
+  "missing": [],
+  "unmatched": []
+ },
+ "yongjia": {
+  "date": "2026-11-08",
+  "quotes": 74,
+  "found": 74,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "yongli": {
+  "date": "2026-11-08",
+  "quotes": 64,
+  "found": 63,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "湖心亭看雪|湖上影子，惟长堤一痕，湖心亭一点，与余舟一芥，舟中人两三粒而已"
+  ],
+  "unmatched": []
+ },
+ "yuanhe": {
+  "date": "2026-11-08",
+  "quotes": 90,
+  "found": 89,
+  "other": 0,
+  "split": 1,
+  "missing": [
+   "玄都观|玄都观里桃千树，尽是刘郎去后栽"
+  ],
+  "unmatched": [
+   "玄都观"
+  ]
+ },
+ "yuanjia": {
+  "date": "2026-11-08",
+  "quotes": 69,
+  "found": 69,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ },
+ "zhaoxuan": {
+  "date": "2026-11-08",
+  "quotes": 90,
+  "found": 88,
+  "other": 0,
+  "split": 0,
+  "missing": [
+   "宜修孝文明政，示以俭约宽和，顺天心，说民意",
+   "举贤良，议罢酒榷、盐、铁，皆自延年发之"
+  ],
+  "unmatched": []
+ },
+ "zhengheng": {
+  "date": "2026-11-08",
+  "quotes": 59,
+  "found": 58,
+  "other": 1,
+  "split": 0,
+  "missing": [
+   "徵上大将军陆逊辅太子登，掌武昌留事"
+  ],
+  "unmatched": []
+ },
+ "zhenguan": {
+  "date": "2026-11-08",
+  "quotes": 87,
+  "found": 87,
+  "other": 0,
+  "split": 0,
+  "missing": [],
+  "unmatched": []
+ }
+}
