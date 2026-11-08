@@ -122,3 +122,7 @@ node build-series.mjs        # 生成 dist/series/，用浏览器打开 dist/ser
 推送到 `main` 后，GitHub Actions 会自动构建并发布到上面的网址（`.github/workflows/pages.yml`）。
 
 引擎本身、`book.js` 的数据格式和各种检查脚本，见 [ENGINE.md](ENGINE.md)；后续的计划和调试记录见 [ROADMAP.md](ROADMAP.md)。
+
+## 许可
+
+代码用 MIT 许可；各卷文字与数据、底图的加工结果用 CC BY-SA 4.0，署名写“华夏舆图”；底图中取自 OpenStreetMap 的河道仍按 ODbL。古籍与公有领域文献的引文不在此列。详见 [LICENSE](LICENSE)。

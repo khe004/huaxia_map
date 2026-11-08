@@ -1,0 +1,53 @@
+华夏舆图 · 许可说明
+====================
+
+本仓库的内容分三部分，各用一种许可。
+
+一、代码：MIT 许可
+------------------
+范围：engine/、tools/、build.mjs、build-series.mjs、.github/ 等程序文件。全文见本文件末尾。
+
+二、文字与编排数据：CC BY-SA 4.0
+--------------------------------
+范围：books/ 下各卷的事件、人物简介、疆域快照、种子点与城邑等数据，以及 README.md、ENGINE.md、ROADMAP.md 的文字。
+许可：知识共享 署名-相同方式共享 4.0 国际（Creative Commons Attribution-ShareAlike 4.0 International），
+https://creativecommons.org/licenses/by-sa/4.0/legalcode.zh-hans
+署名请写：华夏舆图（https://github.com/khe004/huaxia_map）。
+
+书中加粗、带下划线的引文出自古籍与已进入公有领域的当时文献，原文本身不属于本仓库的著作，不受上述许可约束。
+
+三、底图：CC BY-SA 4.0，另守原始数据的许可
+--------------------------------------------
+范围：basemaps/ 下的拼块、水系与地形图。本仓库对它们所做的切分、合并、简化与渲染按 CC BY-SA 4.0 授权，
+同时须遵守所用原始数据的许可与署名要求：
+
+- DataV 行政区划（阿里云 DataV.GeoAtlas）
+- geoBoundaries（https://www.geoboundaries.org/，CC BY 4.0，部分国家另有许可）
+- Natural Earth（公有领域）
+- OpenStreetMap（© OpenStreetMap 贡献者，ODbL 1.0，https://www.openstreetmap.org/copyright）：
+  basemaps/china/geo.json 中取自 OpenStreetMap 的河道属于其衍生数据库，仍按 ODbL 1.0 授权
+- AWS Terrarium 高程瓦片（Mapzen / AWS 开放数据，含 SRTM、GMTED、ETOPO1 等来源）
+
+--------------------------------------------------------------------
+
+MIT License
+
+Copyright (c) 2026 khe004
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
