@@ -60,20 +60,27 @@ for (const y of YEARS) {
   EVENTS.filter(e => e.y === y).sort((a, b) => a.mo - b.mo || a.i - b.i)
     .forEach(e => { EV_STEP[e.i] = STEPS.length; STEPS.push({ y, t: tOf(y, e.mo), ev: e.i }); });
 }
-const STATES = [];
+// 快照的依据与存疑：[年, 月, [[势力, 范围, 注?], …], 注?]，注写成字符串（依据）或 { ref: 依据, q: 存疑说明 }；
+// 范围一项的注与整条快照的注合并，前者优先。存疑的地块在地图上加斜线纹
+const snapNote = (si, pi) => {
+  const s = SNAPSHOTS[si], o = n => (n == null ? {} : typeof n === 'string' ? { ref: n } : n);
+  const n = { ...o(s[3]), ...o(s[2][pi][2]) };
+  return n.ref || n.q ? n : null;
+};
+// STATES：每一步各种子点的势力；PROVS：此刻的归属来自哪条快照的哪一项（快照序号 × 256 + 项序号，-1 为 baseFaction）；SNAP_STEP：每条快照生效的那一步
+const STATES = [], PROVS = [], SNAP_STEP = [];
 {
-  let cur = SEEDS.map(s => (s.z === 'x' ? 'x' : B.baseFaction));
+  let cur = SEEDS.map(s => (s.z === 'x' ? 'x' : B.baseFaction)), prov = new Int32Array(SEEDS.length).fill(-1);
+  const apply = si => SNAPSHOTS[si][2].forEach(([f, tok], pi) => resolve(tok, cur).forEach(i => { cur[i] = f; prov[i] = si * 256 + pi; }));
   // 第一条快照是开局形势：不论写的是几月，都从卷首第一步起生效（否则卷首年初一步全图退回 baseFaction 底色）
-  if (SNAPSHOTS.length) for (const [f, tok] of SNAPSHOTS[0][2]) resolve(tok, cur).forEach(i => { cur[i] = f; });
+  if (SNAPSHOTS.length) { apply(0); SNAP_STEP[0] = 0; }
   let si = SNAPSHOTS.length ? 1 : 0;
   for (const st of STEPS) {
-    while (si < SNAPSHOTS.length && tOf(SNAPSHOTS[si][0], SNAPSHOTS[si][1]) <= st.t + 1e-9) {
-      for (const [f, tok] of SNAPSHOTS[si][2]) resolve(tok, cur).forEach(i => { cur[i] = f; });
-      si++;
-    }
-    STATES.push(cur.slice());
+    while (si < SNAPSHOTS.length && tOf(SNAPSHOTS[si][0], SNAPSHOTS[si][1]) <= st.t + 1e-9) { apply(si); SNAP_STEP[si] = STATES.length; si++; }
+    STATES.push(cur.slice()); PROVS.push(prov.slice());
   }
 }
+const QSET = PROVS.map(pr => { const q = new Set(); pr.forEach((c, i) => { if (c >= 0) { const n = snapNote(c >> 8, c & 255); if (n && n.q) q.add(i); } }); return q; });
 const EV_ALL = EVENTS.slice().sort((a, b) => EV_STEP[a.i] - EV_STEP[b.i]);
 // 两条事件线：史事（战事、政事、外交）与文化。时间轴圆点、地图标记、播放、上下翻页与本年大事只走当前一条线，疆域照常逐年推进
 const HAS_CUL = EVENTS.some(e => e.k === 'cul');
@@ -232,6 +239,10 @@ rewind({ features: OUTF });
 const outerCells = root.append('g').selectAll('path').data(OUTF).join('path').attr('class', 'cell').attr('fill', 'transparent').attr('d', path);
 const gTerr = root.append('g');
 const cells = gTerr.selectAll('path').data(UF.features).join('path').attr('class', 'cell').attr('d', path);
+// 存疑的地块：势力色上叠一层斜线纹（线宽随缩放保持不变）
+const hatch = svg.append('defs').append('pattern').attr('id', 'yutu-hatch').attr('patternUnits', 'userSpaceOnUse').attr('width', 7).attr('height', 7);
+hatch.append('path').attr('d', 'M-1,1 l2,-2 M0,7 l7,-7 M6,8 l2,-2').attr('class', 'hatch-ln');
+const qCells = root.append('g').attr('class', 'qcells').selectAll('path').data(UF.features).join('path').attr('d', path).attr('fill', 'url(#yutu-hatch)').style('display', 'none');
 // 势力着色之上只叠中性的局部明暗（已去掉大范围明暗），同一势力内颜色保持一致
 terrainLayer(root, 'relief');
 root.append('path').attr('class', 'junline').attr('d', meshBy((a, b) => a !== b && a.properties.j !== b.properties.j));
@@ -329,7 +340,7 @@ const PAN = (() => {
 })();
 const zoom = d3.zoom().scaleExtent([0.4, 9]).translateExtent(PAN)
   .on('zoom', e => {
-    root.attr('transform', e.transform); K = e.transform.k;
+    root.attr('transform', e.transform); K = e.transform.k; hatch.attr('patternTransform', `scale(${1 / K})`);
     root.selectAll('.sc').attr('transform', `scale(${1 / K})`);
     gFac.selectAll('text').attr('transform', d => `translate(${d.p}) scale(${1 / Math.sqrt(K)})`);
     zhouLbl.style('font-size', `${15 / Math.sqrt(K)}px`);
@@ -362,10 +373,17 @@ function showTip(ev, html) {
   tip.style.left = x + 'px'; tip.style.top = y + 'px';
 }
 function hideTip() { tip.hidden = true; }
+// 地块此刻的归属从何而来：哪一年哪个事件起、依据什么、是否存疑
+function provHtml(j) {
+  const c = PROVS[state.step][j]; if (c < 0) return '';
+  const si = c >> 8, s = SNAPSHOTS[si], n = snapNote(si, c & 255), k = SNAP_STEP[si], e = k ? STEPS[k].ev : null;
+  const when = si ? `自${fmtYear(s[0])}年${Math.floor(s[1])}月${e != null ? ` · ${esc(EVENTS[e].t)}` : ''}` : '卷首形势';
+  return `<div class="s">${when}</div>${n && n.ref ? `<div class="s">依据：${esc(n.ref)}</div>` : ''}${n && n.q ? `<div class="tq">存疑：${esc(n.q)}</div>` : ''}`;
+}
 cells.on('mousemove', (ev, d) => {
   const j = d.properties.j, s = SEEDS[j], f = curSt()[j];
   const today = `今${d.properties.p}${d.properties.p === d.properties.n ? '' : d.properties.n}`;
-  showTip(ev, `<b>${esc(s.n)}</b> <span class="s">· ${esc(s.z)}</span><div>属 <span style="color:${fColor(f)}">●</span> ${fName(f, curT())}</div><div class="s">${today}</div>`);
+  showTip(ev, `<b>${esc(s.n)}</b> <span class="s">· ${esc(s.z)}</span><div>属 <span style="color:${fColor(f)}">●</span> ${fName(f, curT())}</div>${provHtml(j)}<div class="s">${today}</div>`);
 }).on('mouseleave', hideTip);
 outerCells.on('mousemove', (ev, d) => {
   const f = outerOf(d.properties.n, curT()); if (!f) return hideTip();
@@ -381,6 +399,8 @@ const curT = () => STEPS[state.step].t;
 function renderTerritory() {
   const y = state.year, st = curSt(), T = curT();
   cells.transition().duration(450).attr('fill', d => fillOf(st[d.properties.j]));
+  const Q = QSET[state.step];
+  qCells.style('display', d => (Q.has(d.properties.j) && HAS_LAND.has(d.properties.j) ? null : 'none'));
   outerCells.transition().duration(450).attr('fill', d => { const f = outerOf(d.properties.n, T); return f ? fillOf(f) : 'transparent'; });
   if (OUTER_BORDER) OUTER_BORDER(st, T);
   const fa = (a, b) => a !== b && st[a.properties.j] !== st[b.properties.j];
@@ -413,6 +433,7 @@ function renderTerritory() {
   // 只占着周边陆地（BOOK.outer）的势力也列进图例
   for (const n of Object.keys(OUTER)) { const f = outerOf(n, T); if (f && !counts.some(c => c[0] === f)) counts.push([f, 0]); }
   $('#legend').innerHTML = groupByRealm(counts, T).map(([rn, , fs], gi) => (rn ? `${gi ? '<b class="br"></b>' : ''}<span class="rg">${rn}</span>` : '') + fs.map(([f]) => `<span><i style="background:${fColor(f)}"></i>${fName(f, T)}</span>`).join('')).join('') +
+    (Q.size ? '<span class="qn"><i class="hatch"></i>斜线：归属存疑或只是名义</span>' : '') +
     (B.regions?.legendNote ? `<span class="note">· ${B.regions.legendNote}</span>` : '');
   cityText.text(d => cityName(d, T));
   cityG.style('display', d => (cityName(d, T) ? null : 'none')).classed('cap', d => cityCap(d, T));
@@ -584,6 +605,22 @@ function setStep(k, toYearView) {
   storyCursor();
   markBookEnd();
   if (state.view.t === 'year' || state.view.t === 'events' || swap) renderPanel();
+  syncURL();
+}
+// 阅读位置写进地址栏，可以直接复制当前这一步：事件写 ?ev=，人物页写 ?p=（沿行迹浏览时两个都写），年初一步写 ?y=。
+// 防抖，免得播放、拖动时频繁改写（Safari 限制 replaceState 的次数）；沙箱里改不了地址栏时静默跳过
+let urlTimer = 0;
+function syncURL() {
+  clearTimeout(urlTimer);
+  urlTimer = setTimeout(() => {
+    try {
+      const q = new URLSearchParams(location.search); ['at', 'ev', 'p', 'y'].forEach(k => q.delete(k));
+      const ev = state.view.t === 'event' ? state.view.i : state.view.t === 'person' ? null : STEPS[state.step].ev;
+      if (ev != null) q.set('ev', EVENTS[ev].t); else if (state.view.t !== 'person') q.set('y', state.year);
+      if (state.person) q.set('p', state.person);
+      history.replaceState(history.state, '', location.pathname + '?' + q.toString() + location.hash);
+    } catch (e) {}
+  }, 250);
 }
 function markTimeline() {
   const y = state.year, ev = STEPS[state.step].ev;
@@ -642,7 +679,7 @@ function back() {
   else { state.view = s.view; state.person = s.person; state.sel = s.sel; }
   // 打开事件时自动换了线的，返回时换回原来的线
   if (s && s.line && s.line !== LINE) { setLine(s.line, true); renderStamp(); markBookEnd(); }
-  renderEvents(); renderPanel(); renderStory();
+  renderEvents(); renderPanel(); renderStory(); syncURL();
 }
 function openEvent(i, fromMap) {
   const e = EVENTS[i];
@@ -652,15 +689,15 @@ function openEvent(i, fromMap) {
   if (!onLine(e)) { setLine(lineOf(e), true); renderStamp(); markBookEnd(); }
   if (state.person && !PEOPLE.get(state.person).ev.includes(i)) state.person = null;
   if (EV_STEP[i] !== state.step) { state.step = EV_STEP[i]; state.year = e.y; range.value = state.step; renderStamp(); renderTerritory(); markTimeline(); }
-  renderEvents(); renderPanel(); focusPoint(proj(e.ll)); storyCursor();
+  renderEvents(); renderPanel(); focusPoint(proj(e.ll)); storyCursor(); syncURL();
 }
 function openPerson(n) {
   go({ t: 'person', n }); state.person = n; state.sel = null;
-  renderEvents(); renderPanel(); storyFocus(n);
+  renderEvents(); renderPanel(); storyFocus(n); syncURL();
 }
 function setTab(t) {
   state.tab = t; state.stack = []; state.person = null; state.sel = null; state.view = { t };
-  renderEvents(); renderPanel(); renderStory();
+  renderEvents(); renderPanel(); renderStory(); syncURL();
 }
 $('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setTab(b.dataset.tab); });
 pbody.addEventListener('click', e => {
@@ -730,6 +767,18 @@ function renderPeopleList() {
     return `<div class="grp">${FGROUP[g] || B.otherGroup || '其他'}<small>${ps.length} 人</small></div><div class="chips">${ps.map(p => chip(p.n)).join('')}</div>`;
   }).join('') || '<div class="empty">没有找到这个人物。</div>';
 }
+// 这一步的疆域变动：按新归属的势力列出改变归属的郡，附上快照的依据与存疑说明
+function mapChangeBlock(k) {
+  if (!k) return '';
+  const a = STATES[k - 1], b = STATES[k], by = new Map();
+  b.forEach((f, j) => { if (f !== a[j] && f !== 'x' && HAS_LAND.has(j)) { if (!by.has(f)) by.set(f, []); by.get(f).push(SEEDS[j].n); } });
+  if (!by.size) return '';
+  const notes = [];
+  SNAPSHOTS.forEach((s, si) => { if (si && SNAP_STEP[si] === k) s[2].forEach((_, pi) => { const n = snapNote(si, pi); if (n && !notes.some(m => m.ref === n.ref && m.q === n.q)) notes.push(n); }); });
+  const T = STEPS[k].t, list = ns => esc(ns.length > 12 ? ns.slice(0, 12).join('、') + ` 等 ${ns.length} 处` : ns.join('、'));
+  return `<h3>疆域变动</h3><div class="mapchg">${[...by].map(([f, ns]) => `<div>${fdot(f)}<b>${fName(f, T)}</b>　${list(ns)}</div>`).join('')}` +
+    notes.map(n => (n.ref ? `<div class="s">依据：${esc(n.ref)}</div>` : '') + (n.q ? `<div class="tq">存疑：${esc(n.q)}</div>` : '')).join('') + '</div>';
+}
 function renderEvent(i) {
   const e = EVENTS[i];
   const backLabel = state.stack.length && state.stack[state.stack.length - 1].view.t === 'person' ? `‹ 返回 ${state.stack[state.stack.length - 1].view.n}` : '‹ 返回';
@@ -744,6 +793,7 @@ function renderEvent(i) {
     <div class="meta"><span>${e.p}（${e.m}）</span><span class="tag">${KIND[e.k] || '政事'}</span>${e.src ? `<span class="tag yy">${tagOf(e)}</span>` : ''}</div>
     <p>${rich(e.d)}</p>
     ${srcBlock(e.refs)}
+    ${mapChangeBlock(EV_STEP[i])}
     <h3>参与人物 <span>${e.who.length} 人</span></h3>
     <div class="chips">${e.who.map(n => chip(n, isPost(e, n))).join('')}</div>
     <div class="pnav">${pv != null ? `<button class="btn" data-event="${pv}">‹ ${EVENTS[pv].t}</button>` : '<span></span>'}${nx != null ? `<button class="btn" data-event="${nx}">${EVENTS[nx].t} ›</button>` : ''}</div>
@@ -865,5 +915,7 @@ if (B.view) {
     if (first != null) setStep(EV_STEP[first]);
     setTab('people'); openPerson(pn);
   }
+  // 只带 ?y=年份：跳到该年年初
+  else if (q.get('y') && !isNaN(+q.get('y'))) setYear(+q.get('y'), true);
 }
 })();

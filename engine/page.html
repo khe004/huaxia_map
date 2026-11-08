@@ -155,6 +155,16 @@ button { font: inherit; color: inherit; }
 .tip { position: fixed; z-index: 50; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 6px 9px; font-size: 12.5px; box-shadow: 0 4px 14px rgb(0 0 0 / .14); max-width: 240px; }
 .tip b { font-family: var(--f-serif); }
 .tip .s { color: var(--muted); }
+.tip .tq { color: var(--seal); }
+.mapchg { font-size: 13px; line-height: 1.75; }
+.mapchg i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; margin-right: 5px; }
+.mapchg .s { color: var(--muted); font-size: 12px; }
+.mapchg .tq { color: var(--seal); font-size: 12px; }
+/* 存疑的地块：斜线纹 */
+.qcells { pointer-events: none; }
+.hatch-ln { stroke: var(--ink); stroke-width: 1.1; stroke-opacity: .42; }
+.legend .qn { color: var(--muted); }
+.legend i.hatch { background: repeating-linear-gradient(-45deg, var(--muted) 0 1.2px, transparent 1.2px 4px); border: 1px solid var(--line); }
 
 /* view switch */
 .top { align-items: center; }
