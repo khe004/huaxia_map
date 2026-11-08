@@ -112,7 +112,7 @@ const FACTIONS = {
   dingling:   { color: '#7d8a99', realm: 'fan', mapName: () => '铁勒', name: () => '铁勒诸部' },
   xiyu:       { color: '#d8b26e', realm: 'fan', mapName: () => '西域', name: () => '于阗 · 疏勒诸国' },
   dashi:      { color: '#3d5a80', realm: 'fan', mapName: () => '萨曼', name: () => '萨曼王朝（大食）' },
-  shiwei:     { color: '#c98a4f', realm: 'fan', mapName: () => '室韦', name: () => '室韦' },
+  shiwei:     { of: 'qidan', color: '#c98a4f', realm: 'fan', mapName: () => '室韦', name: () => '室韦' },
   dayuan:     { color: '#9aa860', realm: 'fan', name: () => '拔汗那' },
   taifeng:    { color: '#4f5a8f', realm: 'fan', name: () => '高丽' },
   houbaiji:   { color: '#bfa27f', realm: 'fan', name: () => '后百济' },

@@ -76,6 +76,7 @@ const FACTIONS = {
   wala:      { color: '#6b4c8a', realm: 'fan', mapName: () => '瓦剌', name: t => (t < 1439.4166 ? '瓦剌（脱懽）' : '瓦剌（也先，奉脱脱不花为可汗）') },
   wulianghai:{ of: 'ming', color: '#cc7a8a', realm: 'fan', mapName: () => '兀良哈', name: () => '兀良哈三卫（泰宁、朵颜、福余）' },
   nvzhen:    { of: 'ming', color: '#4a9a9a', realm: 'fan', mapName: () => '女真', name: () => '女真诸部' },
+  guanxi:    { of: 'ming', color: '#8fa35a', realm: 'fan', mapName: () => '关西诸卫', name: () => '关西诸卫（沙州、赤斤蒙古等）' },
   hami:      { of: 'ming', color: '#c49a6c', realm: 'fan', mapName: () => '哈密', name: () => '哈密（忠顺王）' },
   xifan:     { of: 'ming', color: '#a34a5a', realm: 'fan', mapName: () => '乌思藏', name: () => '乌思藏、朵甘（受明官号）' },
   haidu:     { color: '#6d8a4e', realm: 'fan', mapName: () => '别失八里', name: () => '别失八里（亦力把里）' },
@@ -93,7 +94,8 @@ const UNIT_OVERRIDES = { 秦皇岛市: '渔阳', 抚顺市: '建州', 本溪市:
 const SNAPSHOTS = [
   // 开局：卷五十七《靖难之役》末（1424 年七月朱棣死于榆木川）的形势；明为底色
   [1424, 8, [
-    ['menggu', '敦煌 居延 阴山北 单于庭 姑衍 左地 弓卢水 斡难 捕鱼儿海 丁零 东丁零 薛灵哥'],
+    ['guanxi', '敦煌'],
+    ['menggu', '居延 阴山北 单于庭 姑衍 左地 弓卢水 斡难 捕鱼儿海 丁零 东丁零 薛灵哥'],
     ['wulianghai', '右北平 东胡故地 赤峰 乌桓山 鲜卑山'],
     ['taifeng', '乐浪 带方 濊 马韩 辰韩 弁韩'],
     ['nvzhen', '建州 四郡 六镇 沃沮 高句丽 盖马 夫余 宁江 按出虎 水达达 奴儿干 滨海 骨嵬'],

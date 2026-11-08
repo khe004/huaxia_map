@@ -77,7 +77,7 @@ const FACTIONS = {
   wu:         { color: '#c4433a', name: t => (t < 258.75 ? '吴（孙亮）' : t < 264.58 ? '吴（孙休）' : '吴（孙皓）'), mapName: () => '吴' },
   shouchun:   { color: '#e8a33d', name: t => (t < 256 ? '毌丘俭、文钦（寿春）' : '诸葛诞（寿春）'), mapName: t => (t < 256 ? '毌丘俭' : '诸葛诞') },
   tufa:       { color: '#b05a7a', name: () => '秃发树机能', mapName: () => '树机能' },
-  xiyu:       { color: '#d8b26e', name: () => '西域诸国', mapName: () => '西域' },
+  xiyu:       { of: t => (t < 266 ? 'wei' : 'jin'), color: '#d8b26e', name: () => '西域诸国', mapName: () => '西域' },
   mobei:      { color: '#e2eef6', name: () => '塞外诸部（无统一政权）', mapName: () => '塞外诸部', hideLabel: () => true },
   tuoba:      { color: '#7a6446', name: () => '鲜卑拓跋部（力微）', mapName: () => '拓跋' },
   yuwen:      { color: '#8c9a6a', name: () => '鲜卑宇文部', mapName: () => '宇文' },

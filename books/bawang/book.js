@@ -87,7 +87,7 @@ const FACTIONS = {
     mapName: t => (t < 304.07 ? '流民' : t < 304.87 ? '李雄' : '成') },
   han:        { color: '#8e4b3a', realm: 'pan', name: t => (t < 304.83 ? '刘渊（大单于）' : '汉（刘渊）'), mapName: t => (t < 304.83 ? '刘渊' : '汉') },
   chenmin:    { color: '#d9714e', realm: 'pan', name: () => '陈敏（江东）', mapName: () => '陈敏' },
-  xiyu:       { color: '#d8b26e', name: () => '西域诸国', mapName: () => '西域' },
+  xiyu:       { of: 'jin', color: '#d8b26e', name: () => '西域诸国', mapName: () => '西域' },
   mobei:      { color: '#e2eef6', name: () => '塞外诸部（无统一政权）', mapName: () => '塞外诸部', hideLabel: () => true },
   tuoba:      { color: '#7a6446', name: () => '鲜卑拓跋部', mapName: () => '拓跋' },
   yuwen:      { color: '#8c9a6a', name: () => '鲜卑宇文部', mapName: () => '宇文' },

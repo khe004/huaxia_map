@@ -81,7 +81,7 @@ const FACTIONS = {
   nanzhong:   { color: '#b55597', name: () => '南中叛乱（雍闿、高定）', mapName: () => '南中' },
   gongsun:    { color: '#9a8ae0', name: t => (t < 227.999 ? '公孙恭（辽东）' : t < 237 ? '公孙渊（辽东）' : '燕（公孙渊）'), mapName: () => '公孙渊' },
   xianbei:    { color: '#7a6446', name: () => '鲜卑轲比能部', mapName: () => '轲比能' },
-  xiyu:       { color: '#d8b26e', name: () => '西域诸国（通魏）', mapName: () => '西域' },
+  xiyu:       { of: t => (t >= 222.1 ? 'wei' : null), color: '#d8b26e', name: () => '西域诸国（通魏）', mapName: () => '西域' },
   mobei:      { color: '#e2eef6', name: () => '塞外诸部（无统一政权）', mapName: () => '塞外诸部', hideLabel: () => true },
   budugen:    { color: '#dd88aa', name: () => '鲜卑步度根部', mapName: () => '步度根' },
   tuoba:      { color: '#5e4a33', name: () => '鲜卑拓跋部（力微）', mapName: () => '拓跋' },
