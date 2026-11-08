@@ -11,7 +11,8 @@
 // 依赖：mapshaper（见 tools/package.json）
 // 省区“西伯利亚”（伊尔库茨克州与克拉斯诺亚尔斯克南部）是事后用 tools/siberia.js 增补的，重新生成时要再跑一次；
 // 之后依次跑 tools/topo-retopo.js（按量化网格重建共用弧段）、tools/topo-sliver.js（夹在拼块之间的周边陆地细缝并入拼块）、
-// tools/topo-stitch.js（中俄、中蒙等两套数据源界线不重合处，把一侧的独用弧换成另一侧的弧链），免得同属一方的两岸之间残留国界线
+// tools/topo-stitch.js（中俄、中蒙等两套数据源界线不重合处，把一侧的独用弧换成另一侧的弧链），免得同属一方的两岸之间残留国界线；
+// 省区“缅甸”是用 tools/myanmar.js 从周边陆地切出的，在 siberia.js 之后、topo-retopo.js 之前跑
 const fs = require('fs'), path = require('path'), os = require('os'), { execFileSync } = require('child_process');
 const [dir, neFile, out] = process.argv.slice(2);
 if (!dir || !neFile || !out) { console.error('用法：node tools/units.js <数据目录> <Natural Earth 国界.geojson> <输出文件>'); process.exit(2); }

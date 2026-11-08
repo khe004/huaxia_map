@@ -11,11 +11,12 @@ const solo=i=>use.get(i<0?~i:i).size===1;
 const at=new Map();G.forEach((g,k)=>rings(g).forEach(r=>r.forEach(i=>{const s=st(i);(at.get(s)||at.set(s,[]).get(s)).push([k,r])})));
 let fixed=0;
 for(let k=0;k<NU;k++)for(const r of rings(G[k]))for(let t=0;t<r.length;t++){const a=r[t];if(!solo(a))continue;const S=st(a),E=en(a);
-  const cands=(at.get(E)||[]).filter(([j])=>j!==k);let done=false;
-  for(const [j,R] of cands){const p=R.findIndex(i=>st(i)===E);if(p<0)continue;const chain=[];let ok=false;
-    for(let q=0;q<R.length&&q<80;q++){const i=R[(p+q)%R.length];if(!solo(i))break;chain.push(i);if(en(i)===S){ok=true;break}}
-    if(!ok)continue;const pa=A(a),pc=chain.flatMap(i=>A(i));const d=Math.hypot(pa[0][0]-pa[pa.length-1][0],pa[0][1]-pa[pa.length-1][1]);
-    if(len(pc)>3*Math.max(len(pa),d)+30)continue;
-    const rep=chain.slice().reverse().map(i=>~i);r.splice(t,1,...rep);t+=rep.length-1;recount();fixed++;done=true;break}
+  // 从 E 沿其他几何（可跨几块）的独用弧走到 S
+  const path=[];const seen=new Set();let ok=false;
+  const dfs=(v,depth)=>{if(v===S&&path.length){ok=true;return true}if(depth>80)return false;
+    for(const [j,R] of (at.get(v)||[])){if(j===k)continue;for(const i of R){if(st(i)!==v||!solo(i)||seen.has(i))continue;seen.add(i);path.push(i);if(dfs(en(i),depth+1))return true;path.pop()}}return false};
+  dfs(E,0);
+  if(ok){const pa=A(a),pc=path.flatMap(i=>A(i));const d=Math.hypot(pa[0][0]-pa[pa.length-1][0],pa[0][1]-pa[pa.length-1][1]);
+    if(len(pc)<=3*Math.max(len(pa),d)+30){const rep=path.slice().reverse().map(i=>~i);r.splice(t,1,...rep);t+=rep.length-1;recount();fixed++}}
 }
 fs.writeFileSync(OUT,JSON.stringify(T));console.log('缝合',fixed,'段');
