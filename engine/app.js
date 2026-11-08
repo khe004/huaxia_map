@@ -115,11 +115,18 @@ const subOf = (f, t) => { const o = FACTIONS[f] && FACTIONS[f].of; return (typeo
 const nested = (a, b, t) => { const x = subOf(a, t), y = subOf(b, t); return x === b || y === a || (x != null && x === y); };
 const sameRealm = (a, b, t) => { const r = realmOf(a, t); return r != null && r === realmOf(b, t) && !(B.looseRealms || []).includes(r); };
 // 把 [[势力, 数]] 按 BOOK.realms 的顺序分组，返回 [[所属名或 null, 小计, [[势力, 数]…]]…]
+// 附属势力（of）单列一组“羁縻 · 藩属”（BOOK.vassalRealm 可改名），排在宗主所在的组之后，不与粗线以外的四邻混在一起
 function groupByRealm(counts, t) {
   if (!B.realms) return [[null, 0, counts]];
-  const keys = Object.keys(B.realms), out = keys.map(k => [B.realms[k], 0, []]), rest = [B.otherRealm || '周边', 0, []];
-  for (const fc of counts) { const k = keys.indexOf(realmOf(fc[0], t)); const g = k >= 0 ? out[k] : rest; g[2].push(fc); g[1] += fc[1]; }
-  return [...out, rest].filter(g => g[2].length);
+  const keys = Object.keys(B.realms), out = keys.map(k => [B.realms[k], 0, []]), rest = [B.otherRealm || '周边', 0, []], vas = [B.vassalRealm || '羁縻 · 藩属', 0, []];
+  let host = -1;
+  for (const fc of counts) {
+    if (subOf(fc[0], t)) { vas[2].push(fc); vas[1] += fc[1]; if (host < 0) { let s = subOf(fc[0], t); while (subOf(s, t)) s = subOf(s, t); host = keys.indexOf(realmOf(s, t)); } continue; }
+    const k = keys.indexOf(realmOf(fc[0], t)); const g = k >= 0 ? out[k] : rest; g[2].push(fc); g[1] += fc[1];
+  }
+  const all = [...out, rest];
+  all.splice(host >= 0 ? host + 1 : 1, 0, vas);
+  return all.filter(g => g[2].length);
 }
 // 地图上的势力名：可用 FACTIONS[f].mapName(t) 单独指定；BOOK.shortMapLabels 时去掉括号里的说明（如“齐（刘肥）”只标“齐”）
 const mapName = (f, y) => FACTIONS[f].mapName ? FACTIONS[f].mapName(y) : B.shortMapLabels ? fName(f, y).replace(/（[^）]*）/g, '') : fName(f, y);
