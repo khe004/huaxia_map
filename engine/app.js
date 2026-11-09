@@ -6,7 +6,8 @@ const [W, H] = BASEMAP.size, [Y0, Y1] = B.range;
 const SER = SERIES && SERIES.books.findIndex(b => b.id === B.id) >= 0 ? SERIES : null;
 const serIdx = SER ? SER.books.findIndex(b => b.id === B.id) : -1;
 const $ = s => document.querySelector(s);
-const KIND = { war: '战事', pol: '政事', dip: '外交', cul: '文化' };
+// 民生：户口、赋役、财政、灾荒、移民等经济社会之事，与战事、政事、外交同在史事一线
+const KIND = { war: '战事', pol: '政事', dip: '外交', eco: '民生', cul: '文化' };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
 // 年份：公元前用负数，没有公元 0 年
@@ -484,7 +485,7 @@ function renderEvents() {
   });
   sel.select('path.mk').attr('d', d => {
     const cur = focusP || d.y === y; const r = cur ? 6.5 : 3.2;
-    return d.k === 'war' ? `M0,${-r * 1.15}L${r * 1.15},0L0,${r * 1.15}L${-r * 1.15},0Z` : d.k === 'dip' ? d3.symbol(d3.symbolSquare, 3.2 * r * r)() : d.k === 'cul' ? d3.symbol(d3.symbolTriangle, 3.6 * r * r)() : d3.symbol(d3.symbolCircle, Math.PI * r * r)();
+    return d.k === 'war' ? `M0,${-r * 1.15}L${r * 1.15},0L0,${r * 1.15}L${-r * 1.15},0Z` : d.k === 'dip' ? d3.symbol(d3.symbolSquare, 3.2 * r * r)() : d.k === 'cul' ? d3.symbol(d3.symbolTriangle, 3.6 * r * r)() : d.k === 'eco' ? d3.symbol(d3.symbolCross, 3.4 * r * r)() : d3.symbol(d3.symbolCircle, Math.PI * r * r)();
   });
   sel.sort((a, b) => (a.y === y) - (b.y === y) || (state.sel === a.i) - (state.sel === b.i));
   renderPersonPath();

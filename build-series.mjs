@@ -85,7 +85,7 @@ const CN = n => { const D = '〇一二三四五六七八九', t = Math.floor(n /
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const B = IDX.books, vol = k => '卷' + CN(k + 1);
 const fy = (y, k) => (B[k][2] != null && y < B[k][2] ? '约' : '') + (y < 0 ? '前' + -y : y);
-const KN = { war: '战事', pol: '政事', dip: '外交', cul: '文化' };
+const KN = { war: '战事', pol: '政事', dip: '外交', eco: '民生', cul: '文化' };
 const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, mo, t, p, m, kind, who, d, cal }));
 const PP = Object.entries(IDX.people).map(([k, [zi, life, bio, bk]]) => ({ n: k.split('\\u0001')[0], al: IDX.alias[k] || [], zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
 const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), cnt = $('#cnt'), volSel = $('#vol');
@@ -227,15 +227,15 @@ const html = `<meta charset="utf-8">
 <style>
 :root {
   --bg: #e6e8e1; --panel: #f7f7f2; --chip: #ebece5; --ink: #1c2125; --ink2: #49525a; --muted: #747d84; --line: #b3bbba;
-  --seal: #b3322a; --land: #f3f2eb; --hl: #d8941c; --dip: #2a7068; --cul: #7a4fa8;
+  --seal: #b3322a; --land: #f3f2eb; --hl: #d8941c; --dip: #2a7068; --eco: #9a6b14; --cul: #7a4fa8;
   --f-display: "Ma Shan Zheng", "STKaiti", "KaiTi", serif;
   --f-serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
   --f-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --bg: #0f1317; --panel: #141920; --chip: #1f262c; --ink: #e8e5db; --ink2: #bcb9af; --muted: #868b8e; --line: #343d44; --seal: #e3624f; --land: #232a30; --hl: #f0b43c; --dip: #5fb3a6; --cul: #b394e0; color-scheme: dark; }
+  :root:not([data-theme="light"]) { --bg: #0f1317; --panel: #141920; --chip: #1f262c; --ink: #e8e5db; --ink2: #bcb9af; --muted: #868b8e; --line: #343d44; --seal: #e3624f; --land: #232a30; --hl: #f0b43c; --dip: #5fb3a6; --eco: #d9a640; --cul: #b394e0; color-scheme: dark; }
 }
-:root[data-theme="dark"] { --bg: #0f1317; --panel: #141920; --chip: #1f262c; --ink: #e8e5db; --ink2: #bcb9af; --muted: #868b8e; --line: #343d44; --seal: #e3624f; --land: #232a30; --hl: #f0b43c; --dip: #5fb3a6; --cul: #b394e0; color-scheme: dark; }
+:root[data-theme="dark"] { --bg: #0f1317; --panel: #141920; --chip: #1f262c; --ink: #e8e5db; --ink2: #bcb9af; --muted: #868b8e; --line: #343d44; --seal: #e3624f; --land: #232a30; --hl: #f0b43c; --dip: #5fb3a6; --eco: #d9a640; --cul: #b394e0; color-scheme: dark; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-sans); font-size: 14px; }
 :focus-visible { outline: 2px solid var(--hl); outline-offset: 2px; }
 main { max-width: 760px; margin: 0 auto; padding: 40px max(16px, env(safe-area-inset-left, 0px)) 56px; }
@@ -291,6 +291,7 @@ li.era-start:not(:first-child) { margin-top: 14px; }
 .k { display: inline-block; width: 7px; height: 7px; margin-right: 8px; vertical-align: 2px; background: var(--ink); border-radius: 50%; }
 .k.war { background: var(--seal); border-radius: 0; transform: rotate(45deg); }
 .k.dip { background: var(--dip); border-radius: 0; }
+.k.eco { background: var(--eco); border-radius: 0; clip-path: polygon(35% 0, 65% 0, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0 65%, 0 35%, 35% 35%); }
 .k.cul { background: var(--cul); border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
 .sbox { position: relative; }
 .sbox input { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; padding: 11px 14px 11px 38px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); }
@@ -318,6 +319,7 @@ div.hit { cursor: pointer; }
 .hit .k { display: inline-block; width: 7px; height: 7px; margin-right: 6px; vertical-align: 2px; background: var(--ink); border-radius: 50%; }
 .hit .k.war { background: var(--seal); border-radius: 0; transform: rotate(45deg); }
 .hit .k.dip { background: var(--dip); border-radius: 0; }
+.hit .k.eco { background: var(--eco); border-radius: 0; clip-path: polygon(35% 0, 65% 0, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0 65%, 0 35%, 35% 35%); }
 .hit .k.cul { background: var(--cul); border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
 .k.cul { background: var(--cul); border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
 .hit .vb { border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; color: var(--ink2); text-decoration: none; font-size: 12px; }
@@ -353,7 +355,7 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
     <div id="plist"></div>
   </section>
   <section class="panel" id="events" role="tabpanel" aria-labelledby="t-events" hidden>
-    <div class="sopts"><span id="ekind" class="seg"><button type="button" data-k="all" aria-pressed="true">全部</button><button type="button" data-k="war" aria-pressed="false"><i class="k war"></i>战事</button><button type="button" data-k="pol" aria-pressed="false"><i class="k pol"></i>政事</button><button type="button" data-k="dip" aria-pressed="false"><i class="k dip"></i>外交</button><button type="button" data-k="cul" aria-pressed="false"><i class="k cul"></i>文化</button></span><select id="evol" aria-label="限定卷"><option value="">全部卷</option>${S.books.map((b, i) => `<option value="${i}">卷${cn(i + 1)} ${esc(IDX.books[i][1])}</option>`).join('')}</select><span class="cnt" id="ecnt"></span></div>
+    <div class="sopts"><span id="ekind" class="seg"><button type="button" data-k="all" aria-pressed="true">全部</button><button type="button" data-k="war" aria-pressed="false"><i class="k war"></i>战事</button><button type="button" data-k="pol" aria-pressed="false"><i class="k pol"></i>政事</button><button type="button" data-k="dip" aria-pressed="false"><i class="k dip"></i>外交</button><button type="button" data-k="eco" aria-pressed="false"><i class="k eco"></i>民生</button><button type="button" data-k="cul" aria-pressed="false"><i class="k cul"></i>文化</button></span><select id="evol" aria-label="限定卷"><option value="">全部卷</option>${S.books.map((b, i) => `<option value="${i}">卷${cn(i + 1)} ${esc(IDX.books[i][1])}</option>`).join('')}</select><span class="cnt" id="ecnt"></span></div>
     <div id="elist"></div>
   </section>
   <section class="panel search" id="search" role="tabpanel" aria-labelledby="t-search" hidden>
