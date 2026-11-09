@@ -796,6 +796,10 @@ function mapChangeBlock(k) {
   return `<h3>疆域变动</h3><div class="mapchg">${[...by].map(([f, ns]) => `<div>${fdot(f)}<b>${fName(f, T)}</b>　${list(ns)}</div>`).join('')}` +
     notes.map(n => (n.ref ? `<div class="s">依据：${esc(n.ref)}</div>` : '') + (n.q ? `<div class="tq">存疑：${esc(n.q)}</div>` : '')).join('') + '</div>';
 }
+// 纠错：在 GitHub 新开一条问题，预填卷名、条目与这一条的页面地址（地址栏的同步有延迟，这里直接拼 ?ev= / ?p=）
+const ISSUE_URL = 'https://github.com/khe004/huaxia_map/issues/new';
+const fixLink = (what, lines, q) => `<div class="fixrow"><a class="fixlink" target="_blank" rel="noopener" title="在 GitHub 上报告这一条的错误" href="${ISSUE_URL}?${new URLSearchParams({ title: `【${B.brand}】${what}`,
+  body: [`卷：${B.brand}`, ...lines, `页面：${location.origin}${location.pathname}?${q}`, '', '问题：', '', '依据（请写明出处）：', ''].join('\n') }).toString().replace(/"/g, '%22')}">纠错</a></div>`;
 function renderEvent(i) {
   const e = EVENTS[i];
   const backLabel = state.stack.length && state.stack[state.stack.length - 1].view.t === 'person' ? `‹ 返回 ${state.stack[state.stack.length - 1].view.n}` : '‹ 返回';
@@ -811,6 +815,7 @@ function renderEvent(i) {
     <p>${rich(e.d)}</p>
     ${srcBlock(e.refs)}
     ${mapChangeBlock(EV_STEP[i])}
+    ${fixLink(e.t, [`事件：${e.t}（${fmtYearFull(e.y)}${e.cal ? ' · ' + e.cal : ''}）`], 'ev=' + encodeURIComponent(e.t))}
     <h3>参与人物 <span>${e.who.length} 人</span></h3>
     <div class="chips">${e.who.map(n => chip(n, isPost(e, n))).join('')}</div>
     <div class="pnav">${pv != null ? `<button class="btn" data-event="${pv}">‹ ${EVENTS[pv].t}</button>` : '<span></span>'}${nx != null ? `<button class="btn" data-event="${nx}">${EVENTS[nx].t} ›</button>` : ''}</div>
@@ -857,6 +862,7 @@ function renderPerson(n) {
     <div class="meta"><span class="chip" style="cursor:default">${fdot(p.f)}${fName(p.f, fy)}</span><span>${p.life}</span></div>
     ${life}
     <p>${rich(p.bio)}</p>
+    ${fixLink(n, [`人物：${n}（${p.life || '生卒不详'}）`], 'p=' + encodeURIComponent(n))}
     <h3>经历事件 <span>${p.live.length} 件${evs.length > p.live.length ? `，身后 ${evs.length - p.live.length} 件` : ''}${others.length ? `，另有 ${others.length} 件见其他卷` : ''}${p.live.length ? ' · 地图上以金色虚线连出行迹，序号与金圈一致' : ''}</span></h3>
     <div class="list">${(() => { let k = 0; return merged.map(x => {
       // 序号只给本卷在世时的事件，与地图上金圈的序号一致；他卷事件与身后事件不编号

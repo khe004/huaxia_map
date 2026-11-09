@@ -91,7 +91,7 @@ const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, m
 const PP = Object.entries(IDX.people).map(([k, [zi, life, bio, bk]]) => ({ n: k.split('\\u0001')[0], al: IDX.alias[k] || [], zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
 const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), cnt = $('#cnt'), volSel = $('#vol');
 // 页签：卷目 / 人物 / 事件 / 检索，当前页签与筛选记在地址的 # 后面
-const TABS = ['vols', 'overview', 'people', 'events', 'search'], tabs = [...document.querySelectorAll('[role=tab]')];
+const TABS = ['vols', 'overview', 'people', 'events', 'search', 'about'], tabs = [...document.querySelectorAll('[role=tab]')];
 const pf = { v: '', x: false }, ef = { v: '', k: 'all' }, done = {};
 function setHash(tab) {
   let h = tab === 'vols' ? '' : 'tab=' + tab;
@@ -219,6 +219,10 @@ if (t0 === 'events') { ef.v = $('#evol').value = hp.get('v') ?? ''; const k = hp
 show(t0, true); if (t0 === 'search') run();
 })();`;
 // 目录页发布为 artifact 的主页面，发布时会套上文档骨架（doctype 等），这里只写片段；编码与 viewport 仍写上，便于本地直接打开
+// 目录页“凡例”（engine/about.html）：引文核对的总数取自 tools/quotes-log.json
+const ABOUT = (() => { const L = JSON.parse(r('./tools/quotes-log.json')), ids = new Set(S.books.map(b => b.id)); let q = 0, f = 0;
+  for (const [k, v] of Object.entries(L)) if (ids.has(k) || k === '_people') { q += v.quotes; f += v.found; }
+  return r('./engine/about.html').replace(/<!--[\s\S]*?-->\n?/, '').replace('{{books}}', cn(S.books.length)).replace('{{q_all}}', q).replace('{{q_found}}', f).replace('{{q_miss}}', q - f); })();
 // 目录页“总览”：历代疆域总览与朝代条带（engine/overview.mjs）
 const OV = overview(S, r), DY = dynasties(r);
 const html = `<meta charset="utf-8">
@@ -271,6 +275,13 @@ li.era-start:not(:first-child) { margin-top: 14px; }
 .tabs button[aria-selected="true"] { color: var(--seal); border-bottom-color: var(--seal); }
 .panel { margin-top: 18px; }
 .panel[hidden] { display: none; }
+.about { max-width: 760px; line-height: 1.85; }
+.about .lead { font-size: 15px; color: var(--ink2); }
+.about h3 { margin: 22px 0 6px; font-family: var(--f-serif); font-size: 16px; }
+.about ul { margin: 0; padding-left: 1.3em; }
+.about li { display: list-item; margin: 4px 0; padding: 0; border: 0; grid-template-columns: none; }
+.about a { color: var(--seal); }
+.about code { font-size: 12.5px; background: var(--chip); padding: 1px 4px; border-radius: 3px; }
 .ov .ovhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 8px; }
 .ov .ovhead b { font-family: var(--f-serif); font-size: 26px; font-weight: 900; }
 .ov .ovhead span { color: var(--ink2); }
@@ -387,7 +398,7 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
   <p class="sub">${esc(S.subtitle)}</p>
   <a class="start" href="${S.books[0].id}/index.html?at=start">从卷一读起 ›</a>
   <div class="tabs" id="tabs" role="tablist" aria-label="目录">
-    <button type="button" role="tab" id="t-vols" data-tab="vols" aria-controls="vols" aria-selected="true">卷目</button><button type="button" role="tab" id="t-overview" data-tab="overview" aria-controls="overview" aria-selected="false" tabindex="-1">总览</button><button type="button" role="tab" id="t-people" data-tab="people" aria-controls="people" aria-selected="false" tabindex="-1">人物</button><button type="button" role="tab" id="t-events" data-tab="events" aria-controls="events" aria-selected="false" tabindex="-1">事件</button><button type="button" role="tab" id="t-search" data-tab="search" aria-controls="search" aria-selected="false" tabindex="-1">检索</button>
+    <button type="button" role="tab" id="t-vols" data-tab="vols" aria-controls="vols" aria-selected="true">卷目</button><button type="button" role="tab" id="t-overview" data-tab="overview" aria-controls="overview" aria-selected="false" tabindex="-1">总览</button><button type="button" role="tab" id="t-people" data-tab="people" aria-controls="people" aria-selected="false" tabindex="-1">人物</button><button type="button" role="tab" id="t-events" data-tab="events" aria-controls="events" aria-selected="false" tabindex="-1">事件</button><button type="button" role="tab" id="t-search" data-tab="search" aria-controls="search" aria-selected="false" tabindex="-1">检索</button><button type="button" role="tab" id="t-about" data-tab="about" aria-controls="about" aria-selected="false" tabindex="-1">凡例</button>
   </div>
   <section class="panel ov" id="overview" role="tabpanel" aria-labelledby="t-overview" hidden>
     <div class="ovhead"><b id="ovy"></b><span id="ovn"></span><a id="ovgo" href="#">到这一卷的这一年 ›</a></div>
@@ -415,6 +426,9 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
     </div>
     <p class="empty" id="shint">可以输入人名、字、古地名、今地名、公元年份（如 208、前 209）、王年或年号（如 周显王、建安十三年）或事件中的词，多个词用空格隔开。在其他页签按 / 也能跳到这里。</p>
     <div class="res" id="res" hidden></div>
+  </section>
+  <section class="panel" id="about" role="tabpanel" aria-labelledby="t-about" hidden>
+${ABOUT}
   </section>
   <div class="panel vols" id="vols" role="tabpanel" aria-labelledby="t-vols">
   <ol>
