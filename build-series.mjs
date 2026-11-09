@@ -3,6 +3,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import vm from 'node:vm';
+import { overview, dynasties } from './engine/overview.mjs';
 const r = f => readFileSync(new URL(f, import.meta.url), 'utf8');
 const S = JSON.parse(r('./series.json'));
 const cn = n => { const D = '〇一二三四五六七八九', t = Math.floor(n / 10), o = n % 10; return n < 10 ? D[n] : (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
@@ -90,7 +91,7 @@ const EV = IDX.events.map(([k, y, mo, t, p, m, kind, who, d, cal]) => ({ k, y, m
 const PP = Object.entries(IDX.people).map(([k, [zi, life, bio, bk]]) => ({ n: k.split('\\u0001')[0], al: IDX.alias[k] || [], zi, life, bio, bk, ne: bk.reduce((a, b) => a + b[2], 0) }));
 const $ = s => document.querySelector(s), q = $('#q'), res = $('#res'), opts = $('#sopts'), cnt = $('#cnt'), volSel = $('#vol');
 // 页签：卷目 / 人物 / 事件 / 检索，当前页签与筛选记在地址的 # 后面
-const TABS = ['vols', 'people', 'events', 'search'], tabs = [...document.querySelectorAll('[role=tab]')];
+const TABS = ['vols', 'overview', 'people', 'events', 'search'], tabs = [...document.querySelectorAll('[role=tab]')];
 const pf = { v: '', x: false }, ef = { v: '', k: 'all' }, done = {};
 function setHash(tab) {
   let h = tab === 'vols' ? '' : 'tab=' + tab;
@@ -100,6 +101,7 @@ function setHash(tab) {
 }
 function show(tab, keep) {
   tabs.forEach(b => { const on = b.dataset.tab === tab; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; $('#' + b.getAttribute('aria-controls')).hidden = !on; });
+  if (tab === 'overview' && !done.o) { done.o = 1; renderO(); }
   if (tab === 'people' && !done.p) { done.p = 1; renderP(); }
   if (tab === 'events' && !done.e) { done.e = 1; renderE(); }
   if (!keep) { if (tab === 'search') run(); else setHash(tab); }
@@ -217,6 +219,8 @@ if (t0 === 'events') { ef.v = $('#evol').value = hp.get('v') ?? ''; const k = hp
 show(t0, true); if (t0 === 'search') run();
 })();`;
 // 目录页发布为 artifact 的主页面，发布时会套上文档骨架（doctype 等），这里只写片段；编码与 viewport 仍写上，便于本地直接打开
+// 目录页“总览”：历代疆域总览与朝代条带（engine/overview.mjs）
+const OV = overview(S, r), DY = dynasties(r);
 const html = `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(S.title)}</title>
@@ -267,6 +271,41 @@ li.era-start:not(:first-child) { margin-top: 14px; }
 .tabs button[aria-selected="true"] { color: var(--seal); border-bottom-color: var(--seal); }
 .panel { margin-top: 18px; }
 .panel[hidden] { display: none; }
+.ov .ovhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 8px; }
+.ov .ovhead b { font-family: var(--f-serif); font-size: 26px; font-weight: 900; }
+.ov .ovhead span { color: var(--ink2); }
+.ov .ovhead .rep { color: var(--seal); font-weight: 700; margin-right: 8px; }
+.ov .ovhead span > span:not(.rep) { color: var(--muted); margin-right: 8px; }
+.ov .ovhead a { margin-left: auto; color: var(--seal); text-decoration: none; font-weight: 500; }
+.ovwrap { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+#ovmap { display: block; width: 100%; height: auto; }
+.ovnb { fill: var(--chip); stroke: none; }
+.ovu path { fill: var(--land); stroke: var(--land); stroke-width: .4; }
+.ovl text { text-anchor: middle; fill: var(--ink); font-family: var(--f-serif); font-weight: 700; paint-order: stroke; stroke: var(--panel); stroke-width: 3px; stroke-opacity: .8; pointer-events: none; }
+.ovl text.big { font-family: var(--f-display); font-weight: 400; letter-spacing: 2px; }
+.ovleg { display: flex; flex-wrap: wrap; gap: 3px 12px; padding: 7px 10px; font-size: 12px; border-top: 1px solid var(--line); }
+.ovleg span { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.ovleg i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.ovctl { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.ovctl input { flex: 1; min-width: 0; accent-color: var(--seal); }
+.ovctl button, .ovrep button { font: inherit; color: var(--ink); background: var(--chip); border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+.ovctl #ovplay { min-width: 84px; }
+.ovrep { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.ovrep button { font-size: 12.5px; padding: 3px 8px; }
+.ovrep button small { color: var(--muted); margin-left: 4px; }
+.ovrep button.on { background: var(--seal); border-color: var(--seal); color: #fff; }
+.ovrep button.on small { color: #fff; opacity: .8; }
+.ovh { margin: 22px 0 6px; font-family: var(--f-serif); font-size: 15px; }
+.ovstrip { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; }
+.ovstrip svg { display: block; }
+.ovstrip .tk { stroke: var(--line); stroke-width: 1; }
+.ovstrip .tkl { font-size: 10.5px; fill: var(--muted); }
+.ovstrip .db rect { fill: var(--g); opacity: .85; }
+.ovstrip .db:hover rect { opacity: 1; }
+.ovstrip .db text { font-size: 11.5px; fill: #fff; text-anchor: middle; pointer-events: none; font-weight: 500; }
+.ovstrip .db.p { --g: var(--muted); } .ovstrip .db.z { --g: var(--seal); } .ovstrip .db.n { --g: var(--dip); } .ovstrip .db.b { --g: #3c5aa6; } .ovstrip .db.x { --g: #7a4fa8; }
+.ovstrip .cur { stroke: var(--hl); stroke-width: 2; }
+@media (max-width: 640px) { .ov .ovhead a { margin-left: 0; } }
 .vols ol { margin-top: 0; }
 .panel > .sopts:first-child { margin: 0 0 6px; }
 .seg { display: inline-flex; gap: 6px; flex-wrap: wrap; }
@@ -348,8 +387,17 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
   <p class="sub">${esc(S.subtitle)}</p>
   <a class="start" href="${S.books[0].id}/index.html?at=start">从卷一读起 ›</a>
   <div class="tabs" id="tabs" role="tablist" aria-label="目录">
-    <button type="button" role="tab" id="t-vols" data-tab="vols" aria-controls="vols" aria-selected="true">卷目</button><button type="button" role="tab" id="t-people" data-tab="people" aria-controls="people" aria-selected="false" tabindex="-1">人物</button><button type="button" role="tab" id="t-events" data-tab="events" aria-controls="events" aria-selected="false" tabindex="-1">事件</button><button type="button" role="tab" id="t-search" data-tab="search" aria-controls="search" aria-selected="false" tabindex="-1">检索</button>
+    <button type="button" role="tab" id="t-vols" data-tab="vols" aria-controls="vols" aria-selected="true">卷目</button><button type="button" role="tab" id="t-overview" data-tab="overview" aria-controls="overview" aria-selected="false" tabindex="-1">总览</button><button type="button" role="tab" id="t-people" data-tab="people" aria-controls="people" aria-selected="false" tabindex="-1">人物</button><button type="button" role="tab" id="t-events" data-tab="events" aria-controls="events" aria-selected="false" tabindex="-1">事件</button><button type="button" role="tab" id="t-search" data-tab="search" aria-controls="search" aria-selected="false" tabindex="-1">检索</button>
   </div>
+  <section class="panel ov" id="overview" role="tabpanel" aria-labelledby="t-overview" hidden>
+    <div class="ovhead"><b id="ovy"></b><span id="ovn"></span><a id="ovgo" href="#">到这一卷的这一年 ›</a></div>
+    <div class="ovwrap"><svg id="ovmap" viewBox="-170 -110 1250 990" role="img" aria-label="历代疆域总览"></svg><div class="ovleg" id="ovleg"></div></div>
+    <div class="ovctl"><button type="button" id="ovplay" aria-pressed="false">▶ 播放</button><button type="button" id="ovprev" aria-label="上一帧">‹</button><input type="range" id="ovr" min="0" value="0" aria-label="年代"><button type="button" id="ovnext" aria-label="下一帧">›</button></div>
+    <div class="ovrep" id="ovrep" aria-label="谭图各册总图的年份"></div>
+    <h3 class="ovh">历代纪年</h3>
+    <div class="ovstrip" id="ovstrip"></div>
+    <p class="note">疆域取各卷卷末的一刻，另加谭其骧《中国历史地图集》各册总图的年份（标“总图之年”），按该年所在一卷的疆域快照上色，与各卷地图同一画法；总览只画今中国及周边，葱岭以西、漠北远处多在画面之外。点条带上的朝代跳到它年代里的一帧，“到这一卷的这一年”打开该卷并停在这一年。条带年代按通行说法，十六国、十国只画总的起讫。</p>
+  </section>
   <section class="panel" id="people" role="tabpanel" aria-labelledby="t-people" hidden>
     <div class="sopts"><select id="pvol" aria-label="限定卷"><option value="">全部卷（按首次出场分组）</option>${S.books.map((b, i) => `<option value="${i}">卷${cn(i + 1)} ${esc(IDX.books[i][1])}</option>`).join('')}</select><button type="button" id="pcross" aria-pressed="false">只看跨卷人物</button><span class="cnt" id="pcnt"></span></div>
     <div id="plist"></div>
@@ -375,6 +423,11 @@ ${rows.join('\n')}
   <p class="note">每卷页头有上一卷、下一卷和目录的链接。读到一卷的最后一个事件，时间轴右侧的“下一卷”按钮会亮起，点它从下一卷的开头接着读。</p>
   </div>
 </main>
+<script>
+const OV = ${JSON.stringify(OV).replace(/</g, '\\u003c')};
+const DY = ${JSON.stringify(DY)};
+${r('./engine/overview-client.js')}
+</script>
 <script>
 const IDX = ${JSON.stringify(IDX).replace(/</g, '\\u003c')};
 ${searchJs}

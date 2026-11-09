@@ -23,17 +23,35 @@ function units() {
   });
   return UNITS;
 }
-// X：书的 { BOOK, SEEDS_RAW, UNIT_OVERRIDES }；返回 { seeds, assign: [{ n, p, j }], hasLand: Set(种子序号) }
+// X：书的 { BOOK, SEEDS_RAW, UNIT_OVERRIDES }；返回 { seeds, assign: [{ n, p, j, i }], hasLand: Set(种子序号) }，i 为拼块在 units() 中的序号
 function land(X) {
   const seeds = X.SEEDS_RAW.split(/\s{2,}|\n+/).map(s => s.trim()).filter(Boolean).map(s => { const [z, n, c] = s.split('|'); const [lon, lat] = c.split(',').map(Number); return { z, n, lon, lat }; });
   const by = new Map(); seeds.forEach((s, i) => by.set(s.n, i));
   const SC = X.BOOK.scope || {}, O = X.UNIT_OVERRIDES || {};
   const inScope = u => (SC.provinces || []).includes(u.p) || ((SC.partial || {})[u.p] ? SC.partial[u.p].includes(u.n) : (SC.minLat || {})[u.p] != null && u.c[1] >= SC.minLat[u.p]);
-  const assign = units().filter(inScope).map(u => {
+  const assign = units().map((u, i) => ({ ...u, i })).filter(inScope).map(u => {
     let j = O[u.n] != null && by.has(O[u.n]) ? by.get(O[u.n]) : -1;
     if (j < 0) { let bd = Infinity; seeds.forEach((s, i) => { const dx = (s.lon - u.c[0]) * Math.cos(u.c[1] * Math.PI / 180), dy = s.lat - u.c[1], d = dx * dx + dy * dy; if (d < bd) { bd = d; j = i; } }); }
-    return { n: u.n, p: u.p, j };
+    return { n: u.n, p: u.p, j, i: u.i };
   });
   return { seeds, assign, hasLand: new Set(assign.map(a => a.j)) };
 }
-module.exports = { land };
+// 某一时刻（年 + (月 − 1) / 12）各种子点所属的势力键：与引擎一致，第一条快照是开局形势，不论写的是几月都从卷首生效
+// X 另需 SNAPSHOTS；记号：* 全部、@州 某州全部种子、#势力 当前属该势力的种子、种子名
+function stateAt(X, t) {
+  const { seeds } = land(X), by = new Map(); seeds.forEach((s, i) => by.set(s.n, i));
+  const cur = seeds.map(s => (s.z === 'x' ? 'x' : X.BOOK.baseFaction));
+  for (const [j, [y, m, list]] of X.SNAPSHOTS.entries()) {
+    if (j > 0 && y + (m - 1) / 12 > t + 1e-9) break;
+    for (const [f, tok] of list) for (const k of tok.split(/\s+/).filter(Boolean)) {
+      let idx = [];
+      if (k === '*') seeds.forEach((s, i) => s.z !== 'x' && idx.push(i));
+      else if (k[0] === '@') seeds.forEach((s, i) => s.z === k.slice(1) && idx.push(i));
+      else if (k[0] === '#') cur.forEach((g, i) => g === k.slice(1) && idx.push(i));
+      else if (by.has(k)) idx = [by.get(k)];
+      idx.forEach(i => { cur[i] = f; });
+    }
+  }
+  return cur;
+}
+module.exports = { land, stateAt, units };
