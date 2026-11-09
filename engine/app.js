@@ -276,6 +276,20 @@ root.append('g').selectAll('path').data(GEO.lk.features.filter(f => !(f.properti
 root.append('g').selectAll('path').data(GEO.rv.features).join('path')
   .attr('class', d => 'river' + (d.properties.m ? ' major' : '')).attr('d', path)
   .append('title').text(d => d.properties.n);
+// 线状图层（books/_lines.js，构建时按本卷年代注入 LINES）：长城与边墙、运河、道路、丝路、航线，按当前时刻显示 y[0] ≤ t < y[1] + 1 的各条，可在页头关掉
+const LK = { wall: '长城', canal: '运河', road: '道路', silk: '丝路', sea: '航线' };
+const lineName = (l, t) => { if (typeof l.n === 'string') return l.n; let n = l.n[0][1]; for (const [yy, nn] of l.n) if (yy <= t + 1e-9) n = nn; return n; };
+const yrTxt = y => (y < 0 ? '前' + -y : '' + y);
+const lineOn = (l, t) => l.y[0] <= t + 1e-9 && t < l.y[1] + 1;
+const lineG = root.append('g').attr('class', 'lines').selectAll('g').data(LINES).join('g').attr('class', d => 'ln ln-' + d.k);
+lineG.each(function (d) {
+  const g = d3.select(this), dd = path({ type: 'MultiLineString', coordinates: d.p });
+  // 粗而透明的一条承接鼠标；长城在实线上再叠一层短齿
+  g.append('path').attr('class', 'ln-hit').attr('d', dd);
+  g.append('path').attr('class', 'ln-base').attr('d', dd);
+  if (d.k === 'wall') g.append('path').attr('class', 'ln-tick').attr('d', dd);
+});
+lineG.on('mousemove', (ev, d) => showTip(ev, `<b>${esc(lineName(d, curT()))}</b><div class="s">${LK[d.k]} · ${yrTxt(d.y[0])}–${d.y[1] >= 1949 ? '' : yrTxt(d.y[1])}</div><div class="tq">${esc(d.d)}</div>${d.r ? `<div class="s">依据：${esc(d.r)}</div>` : ''}`)).on('mouseleave', hideTip);
 const gModern = root.append('g').attr('class', 'modern');
 gModern.selectAll('path').data(GEO.cn.features).join('path').attr('d', path);
 
@@ -403,6 +417,7 @@ function renderTerritory() {
   qCells.style('display', d => (Q.has(d.properties.j) && HAS_LAND.has(d.properties.j) ? null : 'none'));
   outerCells.transition().duration(450).attr('fill', d => { const f = outerOf(d.properties.n, T); return f ? fillOf(f) : 'transparent'; });
   if (OUTER_BORDER) OUTER_BORDER(st, T);
+  lineG.style('display', d => (lineOn(d, T) ? null : 'none'));
   const fa = (a, b) => a !== b && st[a.properties.j] !== st[b.properties.j];
   const nest = (a, b) => nested(st[a.properties.j], st[b.properties.j], T);
   facBorder.attr('d', meshBy((a, b) => fa(a, b) && !nest(a, b) && !sameRealm(st[a.properties.j], st[b.properties.j], T)));
@@ -433,6 +448,7 @@ function renderTerritory() {
   // 只占着周边陆地（BOOK.outer）的势力也列进图例
   for (const n of Object.keys(OUTER)) { const f = outerOf(n, T); if (f && !counts.some(c => c[0] === f)) counts.push([f, 0]); }
   $('#legend').innerHTML = groupByRealm(counts, T).map(([rn, , fs], gi) => (rn ? `${gi ? '<b class="br"></b>' : ''}<span class="rg">${rn}</span>` : '') + fs.map(([f]) => `<span><i style="background:${fColor(f)}"></i>${fName(f, T)}</span>`).join('')).join('') +
+    [...new Set(LINES.filter(l => lineOn(l, T)).map(l => l.k))].map(k => `<span class="lk"><i class="lsw ln-${k}"></i>${LK[k]}</span>`).join('') +
     (Q.size ? '<span class="qn"><i class="hatch"></i>斜线：归属存疑或只是名义</span>' : '') +
     (B.regions?.legendNote ? `<span class="note">· ${B.regions.legendNote}</span>` : '');
   cityText.text(d => cityName(d, T));
@@ -852,6 +868,9 @@ function renderPerson(n) {
 // ---------- toggles ----------
 const tg = (id, cls) => { const el = $(id); const f = () => { svg.classed(cls, !el.checked); svg.classed('show-prov', K >= 1.8 && $('#tg-modern').checked); }; el.addEventListener('change', f); f(); };
 // 文化事件（文学、学术、宗教、艺术、科技）可以从地图与时间轴上隐去，只看战事、政事、外交；本卷没有文化事件时不显示这个开关
+// 线状图层：页头开关同时隐去图例里的线条一项；本卷没有线条时不显示开关
+if (LINES.length) { const el = $('#tg-lines'), f = () => { svg.classed('hide-lines', !el.checked); $('#legend').classList.toggle('hide-lines', !el.checked); }; el.addEventListener('change', f); f(); }
+else $('#tg-lines').parentNode.hidden = true;
 tg('#tg-terrain', 'hide-terrain'); tg('#tg-modern', 'hide-modern'); tg('#tg-zhou', 'hide-zhou'); tg('#tg-city', 'hide-city');
 $('#music').title = B.musicTitle || '原创合成的背景音';
 // 史事 / 文化 两条线的切换；读者手动选的线记在本机，翻到下一卷时沿用。

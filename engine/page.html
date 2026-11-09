@@ -19,7 +19,7 @@
   --seal: #b3322a;
   --dip: #2a7068;
   --cul: #7a4fa8;
-  --river: #2f73a0;
+  --river: #2f73a0; --wall: #7b4a2c; --canal: #1d8a86; --road: #9a5b2a; --silk: #c2861a; --searoute: #3c5aa6;
   --lake: #a9c6d6;
   --hl: #d8941c;
   --fo: .62;
@@ -31,13 +31,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0f1317; --sea: #08121a; --land: #232a30; --land-x: #1a2026; --ink: #e8e5db; --ink2: #bcb9af;
-    --muted: #868b8e; --line: #343d44; --panel: #141920; --chip: #1f262c; --seal: #e3624f; --dip: #5fb3a6; --cul: #b394e0; --river: #5aa2c8; --lake: #163a4d;
+    --muted: #868b8e; --line: #343d44; --panel: #141920; --chip: #1f262c; --seal: #e3624f; --dip: #5fb3a6; --cul: #b394e0; --river: #5aa2c8; --lake: #163a4d; --wall: #d2a476; --canal: #4cc0b8; --road: #d09060; --silk: #e7b14c; --searoute: #86a2e8;
     --hl: #f0b43c; --fo: .5; --terrain-o: .75; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0f1317; --sea: #08121a; --land: #232a30; --land-x: #1a2026; --ink: #e8e5db; --ink2: #bcb9af;
-  --muted: #868b8e; --line: #343d44; --panel: #141920; --chip: #1f262c; --seal: #e3624f; --dip: #5fb3a6; --cul: #b394e0; --river: #5aa2c8; --lake: #163a4d;
+  --muted: #868b8e; --line: #343d44; --panel: #141920; --chip: #1f262c; --seal: #e3624f; --dip: #5fb3a6; --cul: #b394e0; --river: #5aa2c8; --lake: #163a4d; --wall: #d2a476; --canal: #4cc0b8; --road: #d09060; --silk: #e7b14c; --searoute: #86a2e8;
   --hl: #f0b43c; --fo: .5; --terrain-o: .75; color-scheme: dark;
 }
 html, body { height: 100%; }
@@ -112,6 +112,22 @@ button { font: inherit; color: inherit; }
 .hide-modern .modern, .hide-modern .prov-lbl:not(.always) { display: none; }
 .hide-zhou .zhou, .hide-zhou .zhouline { display: none; }
 .hide-city .city { display: none; }
+.ln path { fill: none; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.ln .ln-hit { stroke: transparent; stroke-width: 10; pointer-events: stroke; }
+.ln .ln-base { pointer-events: none; stroke-width: 2.2; stroke-linecap: round; }
+.ln-wall .ln-base { stroke: var(--wall); stroke-width: 1.8; }
+.ln-wall .ln-tick { pointer-events: none; stroke: var(--wall); stroke-width: 5.5; stroke-dasharray: 1.6 4.4; }
+.ln-canal .ln-base { stroke: var(--canal); stroke-width: 2.4; stroke-dasharray: 7 2.5; }
+.ln-road .ln-base { stroke: var(--road); stroke-dasharray: .1 4; stroke-width: 2.6; }
+.ln-silk .ln-base { stroke: var(--silk); stroke-dasharray: 6 3.5; }
+.ln-sea .ln-base { stroke: var(--searoute); stroke-width: 1.7; stroke-dasharray: 3 4; }
+.hide-lines .lines, .legend.hide-lines .lk { display: none; }
+.legend i.lsw { width: 18px; height: 0; border-radius: 0; background: none; border-top: 2.5px solid; }
+.legend i.lsw.ln-wall { border-top: 4px dotted var(--wall); }
+.legend i.lsw.ln-canal { border-top-style: dashed; border-color: var(--canal); }
+.legend i.lsw.ln-road { border-top-style: dotted; border-color: var(--road); }
+.legend i.lsw.ln-silk { border-top-style: dashed; border-color: var(--silk); }
+.legend i.lsw.ln-sea { border-top: 2px dashed var(--searoute); }
 
 .ev { cursor: pointer; }
 .ev .hit { fill: transparent; }
@@ -361,6 +377,7 @@ button { font: inherit; color: inherit; }
       <label><input type="checkbox" id="tg-modern" checked> 今省界</label>
       <label><input type="checkbox" id="tg-zhou" checked> {{regionToggle}}</label>
       <label><input type="checkbox" id="tg-city" checked> 城邑</label>
+      <label><input type="checkbox" id="tg-lines" checked> 长城运河</label>
     </div>
   </header>
 

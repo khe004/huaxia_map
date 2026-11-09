@@ -56,6 +56,11 @@ if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
 // 没写 CITIES、PHASES 的书补空表，引擎各处直接遍历
 const dataSrc = bookSrc + (/\bconst CITIES\b/.test(bookSrc) ? '' : '\nconst CITIES = [];') + (/\bconst PHASES\b/.test(bookSrc) ? '' : '\nconst PHASES = [];') + `\n// 跨卷人物的统一简介（构建时由 books/_people.js 注入）\nconst PEOPLE_COMMON = ${JSON.stringify(commonSub)};\nPEOPLE_RAW.forEach(p => { const c = PEOPLE_COMMON[p[0]]; if (c) [p[2], p[3], p[4]] = c; });\nconst PEOPLE_ALIAS = ${JSON.stringify(aliasSub)};\n`;
 
+// 线状图层（books/_lines.js）：只注入与本卷年代有交集的各条
+const LINES = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_lines.js') + '\n;this.L = LINES;', c); return c.L; })()
+  .filter(l => l.y[0] <= BOOK.range[1] && l.y[1] + 1 > BOOK.range[0]);
+const dataSrcL = dataSrc + `const LINES = ${JSON.stringify(LINES)};\n`;
+
 const bm = `./basemaps/${BOOK.basemap}/`;
 const BASEMAP = JSON.parse(r(bm + 'basemap.json'));
 let SERIES = null;
@@ -90,7 +95,7 @@ const html = r('./engine/page.html')
   .replace('/*SERIES*/null', () => inScript(JSON.stringify(SERIES)))
   .replace('/*GEO*/null', () => r(bm + 'geo.json').trim())
   .replace('/*UNITS*/null', () => r(bm + 'units.topo.json').trim())
-  .replace('/*DATA*/', () => inScript(dataSrc))
+  .replace('/*DATA*/', () => inScript(dataSrcL))
   .replace('/*APP*/', () => r('./engine/app.js').replace('/*STORY*/', () => r('./engine/story.js')).replace('/*CAL*/', () => r('./engine/cal.js')).replace('/*MUSIC*/', () => r('./engine/music.js')));
 const out = new URL(SERIES_MODE ? `./dist/series/${id}/` : `./dist/${id}/`, import.meta.url);
 mkdirSync(out, { recursive: true });
