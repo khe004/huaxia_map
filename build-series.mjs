@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import vm from 'node:vm';
 import { overview, dynasties } from './engine/overview.mjs';
+import { territory, writeData } from './engine/export.mjs';
 const r = f => readFileSync(new URL(f, import.meta.url), 'utf8');
 const S = JSON.parse(r('./series.json'));
 const cn = n => { const D = '〇一二三四五六七八九', t = Math.floor(n / 10), o = n % 10; return n < 10 ? D[n] : (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
@@ -22,19 +23,23 @@ const plain = s => String(s).replace(/\*\*(?:[^|*]{1,6}\|)?([^*]*)\*\*/g, (m, x,
 const acx = {}; vm.createContext(acx); vm.runInContext(r('./books/_alias.js') + ';this.A = ALIAS; this.aliasOf = aliasOf;', acx);
 // alias 在各卷人物收齐后按人物的键（同名异人各自一条）填入
 const IDX = { books: [], events: [], people: {}, alias: {} };
+// 数据下载（dist/series/data/）：全部事件、人物与各卷疆域变化，见 engine/export.mjs
+const EXP = { events: [], territory: [] };
 // 事件纪年的写法与引擎共用 engine/cal.js
 const [CALTEXT, ERASFOR] = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./engine/cal.js') + ';this.f = [calText, erasFor];', c); return c.f; })();
 const rows = S.books.map((b, i) => {
   execFileSync(process.execPath, [new URL('./build.mjs', import.meta.url).pathname, b.id, '--series'], { stdio: 'inherit' });
   const c = {}; vm.createContext(c);
-  vm.runInContext(r(`./books/${b.id}/book.js`) + '\n;this.__ = { BOOK, EVENTS, PEOPLE_RAW, FACTIONS };', c);
-  const { BOOK, EVENTS, PEOPLE_RAW, FACTIONS } = c.__;
+  vm.runInContext(r(`./books/${b.id}/book.js`) + '\n;this.__ = { BOOK, EVENTS, PEOPLE_RAW, FACTIONS, SNAPSHOTS, SEEDS_RAW };', c);
+  const { BOOK, EVENTS, PEOPLE_RAW, FACTIONS, SNAPSHOTS, SEEDS_RAW } = c.__;
   // 王年、年号纪年：与引擎 eras() 同一算法（BOOK.calendar.label 或 eras/spans），事件没写 cal 时也能按纪年检索
   const CAL = BOOK.calendar || {};
   const erasOf = y => ERASFOR(CAL, y);
   const calOf = e => CALTEXT(e, CAL, BOOK.range, erasOf);
   IDX.books.push([b.id, BOOK.brand, BOOK.approxBefore ?? null]);
   const evOf = new Map(), postOf = new Map();
+  for (const e of EVENTS) EXP.events.push([i, e, plain(e.d), calOf(e)]);
+  EXP.territory.push(territory(b.id, BOOK, EVENTS, FACTIONS, SNAPSHOTS, SEEDS_RAW));
   for (const e of EVENTS) {
     // 相邻两卷交界处重复收录的同一事件（同年同月同题）在检索里只列一次，指向前一卷
     if (!IDX.events.some(x => x[0] === i - 1 && x[1] === e.y && x[2] === e.mo && x[3] === e.t)) IDX.events.push([i, e.y, e.mo, e.t, e.p, e.m, e.k, e.who.join('、'), plain(e.d), calOf(e)]);
@@ -452,6 +457,7 @@ ${searchJs}
 `;
 writeFileSync(new URL('./dist/series/index.html', import.meta.url), html);
 console.log('dist/series/index.html', S.books.length, '卷');
+writeData(new URL('./dist/series/data/', import.meta.url), S, IDX, EXP);
 // 合并或改名的卷（series.json 的 moved）：旧目录放一个跳转页，旧链接仍能打开
 for (const [from, to] of Object.entries(S.moved || {})) {
   mkdirSync(new URL(`./dist/series/${from}/`, import.meta.url), { recursive: true });

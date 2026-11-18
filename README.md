@@ -111,6 +111,16 @@
 
 地图数据：DataV 行政区划、geoBoundaries、Natural Earth、OpenStreetMap（河流，ODbL）、AWS Terrarium 高程。
 
+## 数据下载
+
+全书数据可以下载再利用，网站目录页的“凡例”栏也有链接：
+
+- 事件：[CSV](https://khe004.github.io/huaxia_map/data/events.csv) · [JSON](https://khe004.github.io/huaxia_map/data/events.json)：卷次、公历年月、原书纪年、类别、地点与今地、经纬度、人物、出处篇目与正文。
+- 人物：[CSV](https://khe004.github.io/huaxia_map/data/people.csv) · [JSON](https://khe004.github.io/huaxia_map/data/people.json)：字号、生卒、别名、简介与所在各卷。
+- 疆域：[JSON](https://khe004.github.io/huaxia_map/data/territory.json)：各卷的种子点、势力与每次疆域变化。
+
+按 CC BY-SA 4.0 使用，署名写“华夏舆图”。
+
 ## 纠错
 
 每个事件和人物页的末尾有“纠错”链接，会在本仓库新开一条 issue，自动带上卷名、条目和页面地址。请写明问题和依据的出处。

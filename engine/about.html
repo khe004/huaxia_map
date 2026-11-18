@@ -44,6 +44,14 @@
     <li>事件发生时已经去世、只在身后出现的（追尊、平反、被追述），标“身后”，不计入行迹。</li>
   </ul>
 
+  <h3>数据下载</h3>
+  <ul>
+    <li><b>事件</b>：<a href="data/events.csv" download>CSV</a> · <a href="data/events.json" download>JSON</a>。每条含卷次、公历年月、原书纪年、类别、地点与今地、经纬度、人物、出处篇目和正文（原文引文改为引号）。相邻两卷交界处重复收录的同一件事，各卷各留一条。</li>
+    <li><b>人物</b>：<a href="data/people.csv" download>CSV</a> · <a href="data/people.json" download>JSON</a>。跨卷人物合为一条，含字号、生卒、别名、简介，以及所在各卷、所属势力与事件数。</li>
+    <li><b>疆域</b>：<a href="data/territory.json" download>JSON</a>。各卷的种子点（州、名称、经纬度）、势力（名称、颜色、所属，随时间变化的按时刻列出）和每次疆域变化落在哪个事件、哪些种子点改属哪一方。地图上的拼块（今地级区）归最近的种子点，所以种子点的归属就是地图的画法；拼块轮廓用的是 DataV 与 geoBoundaries 的底图，不在此列。</li>
+    <li>CSV 是带 BOM 的 UTF-8，Excel 可以直接打开。数据随网站一起更新，按 CC BY-SA 4.0 使用，署名写“华夏舆图”。</li>
+  </ul>
+
   <h3>纠错</h3>
   <p>每个事件和人物页的末尾有“纠错”链接，会在 GitHub 上新开一条问题，自动带上卷名、条目和页面地址；请写明问题和依据的出处。也可以直接在 <a href="https://github.com/khe004/huaxia_map/issues" target="_blank" rel="noopener">github.com/khe004/huaxia_map</a> 提出。</p>
 
