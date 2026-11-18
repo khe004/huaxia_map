@@ -217,6 +217,8 @@ if (t0 === 'search' && hp.get('q')) { q.value = hp.get('q'); if (hp.get('v') != 
 if (t0 === 'people') { pf.v = $('#pvol').value = hp.get('v') ?? ''; pf.x = hp.get('x') === '1'; $('#pcross').setAttribute('aria-pressed', pf.x); }
 if (t0 === 'events') { ef.v = $('#evol').value = hp.get('v') ?? ''; const k = hp.get('k'); if (KN[k]) { ef.k = k; $('#ekind').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x.dataset.k === k)); } }
 show(t0, true); if (t0 === 'search') run();
+// 页内链接只改 #tab= 时（不重新载入）也切到对应页签
+addEventListener('hashchange', () => { const t = new URLSearchParams(location.hash.slice(1)).get('tab') || 'vols'; if (TABS.includes(t)) show(t, true); });
 })();`;
 // 目录页发布为 artifact 的主页面，发布时会套上文档骨架（doctype 等），这里只写片段；编码与 viewport 仍写上，便于本地直接打开
 // 目录页“凡例”（engine/about.html）：引文核对的总数取自 tools/quotes-log.json
@@ -269,7 +271,7 @@ li.era-start:not(:first-child) { margin-top: 14px; }
 .go { color: var(--muted); font-size: 22px; }
 .vol:hover .go { color: var(--seal); }
 .note { margin-top: 28px; color: var(--muted); font-size: 12.5px; line-height: 1.8; }
-.tabs { display: flex; gap: 4px; margin-top: 28px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tabs { display: flex; gap: 4px; margin-top: 28px; border-bottom: 1px solid var(--line); overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
 .tabs button { font: inherit; font-family: var(--f-serif); font-weight: 700; font-size: 16px; letter-spacing: .1em; padding: 8px 16px 9px; margin-bottom: -1px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); cursor: pointer; white-space: nowrap; }
 .tabs button:hover { color: var(--ink); }
 .tabs button[aria-selected="true"] { color: var(--seal); border-bottom-color: var(--seal); }
@@ -387,7 +389,8 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
   .yrs { grid-column: 1 / -1; }
   .hit { grid-template-columns: 1fr; }
   .hit .s, .hit .m { grid-column: 1; }
-  .tabs button { padding-inline: 12px; }
+  .tabs { gap: 0; }
+  .tabs button { padding-inline: 8px; letter-spacing: .04em; }
   .er { grid-template-columns: 52px minmax(0, 1fr); gap: 2px 10px; }
   .er .pl { grid-column: 2; }
 }

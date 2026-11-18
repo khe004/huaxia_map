@@ -551,6 +551,12 @@ $('#phases').innerHTML = PHASES.map(([a, b, n]) => `<div data-a="${a}" style="le
   ticks.push(Y1);
   if (B.axisTicks) ticks = B.axisTicks.filter(y => YEAR_STEP[y] != null);
   $('#axis').innerHTML = ticks.map(y => `<span style="left:${at(YEAR_STEP[y])}">${fmtYear(y)}</span>`).join('');
+  // 刻度按事件步数排布，事件稀疏的年份会挤在一起：窄屏上隐去与左边相撞的标签（首尾总保留），宽度变化时重算
+  const thin = () => { const sp = [...$('#axis').children]; sp.forEach(x => x.style.visibility = '');
+    let prev = null; sp.forEach((x, i) => { const r = x.getBoundingClientRect(); if (!r.width) return;
+      if (prev && r.left < prev.right + 6) { if (i === sp.length - 1) prev.el.style.visibility = 'hidden'; else { x.style.visibility = 'hidden'; return; } }
+      prev = { right: r.right, el: x }; }); };
+  thin(); if (window.ResizeObserver) new ResizeObserver(thin).observe($('#axis'));
 }
 $('#ticks').innerHTML = EVENTS.map(e => `<button data-ev="${e.i}" class="${e.k === 'pol' ? '' : e.k}" style="left:${at(EV_STEP[e.i])};width:7px;height:7px;top:3.5px" title="${fmtYear(e.y)}：${esc(e.t)}" aria-label="${fmtYear(e.y)} ${esc(e.t)}"></button>`).join('');
 $('#ticks').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { stop(); setStep(EV_STEP[+b.dataset.ev], state.view.t !== 'event'); } });
