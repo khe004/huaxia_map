@@ -2,7 +2,7 @@
 // 去掉标签与注释，存成 tools/.corpus/west/<名>.txt，供 node tools/quotes.js <卷> tools/.corpus/west 核对 **译文||原文** 的原文一侧。
 // 近东各卷另用古腾堡计划的公版书（GITenberg 在 GitHub 上的镜像，{ gut: '仓库/分支/文件' }）与钦定本《圣经》（{ kjv: [书卷 …] }，aruljohn/Bible-kjv 的 JSON）。
 // 用法：node tools/fetch-perseus.js [名 …]（不写则全部；已有的跳过，加 -f 重抓）
-// 译本都是公有领域的旧译：波利比乌斯为 Shuckburgh（1889），李维为 Roberts，阿庇安为 White（1899），普鲁塔克为 Perrin（1914–1921），撒路斯提乌斯为 Watson（1899）。
+// 译本都是公有领域的旧译：波利比乌斯为 Shuckburgh（1889），李维为 Roberts，阿庇安为 White（1899），普鲁塔克为 Perrin（1914–1921），撒路斯提乌斯为 Watson（1899），希罗多德为 Godley（1920），修昔底德为 Crawley（1874），荷马为 Murray（1919–1924），色诺芬为 Brownson、Dakyns 等。
 const fs = require('fs'), path = require('path'), https = require('https');
 const G = 'https://raw.githubusercontent.com/PerseusDL/canonical-greekLit/master/data/', L = 'https://raw.githubusercontent.com/PerseusDL/canonical-latinLit/master/data/';
 const WORKS = {
@@ -32,6 +32,29 @@ const WORKS = {
   伊利亚特: G + 'tlg0012/tlg001/tlg0012.tlg001.perseus-eng3.xml',
   奥德赛: G + 'tlg0012/tlg002/tlg0012.tlg002.perseus-eng3.xml',
   普鲁塔克忒修斯: G + 'tlg0007/tlg001/tlg0007.tlg001.perseus-eng3.xml',
+  普鲁塔克罗慕路斯: G + 'tlg0007/tlg002/tlg0007.tlg002.perseus-eng2.xml',
+  普鲁塔克吕库古: G + 'tlg0007/tlg004/tlg0007.tlg004.perseus-eng2.xml',
+  普鲁塔克努马: G + 'tlg0007/tlg005/tlg0007.tlg005.perseus-eng2.xml',
+  普鲁塔克梭伦: G + 'tlg0007/tlg007/tlg0007.tlg007.perseus-eng2.xml',
+  普鲁塔克普布利科拉: G + 'tlg0007/tlg008/tlg0007.tlg008.perseus-eng2.xml',
+  普鲁塔克地米斯托克利: G + 'tlg0007/tlg010/tlg0007.tlg010.perseus-eng2.xml',
+  普鲁塔克卡米卢斯: G + 'tlg0007/tlg011/tlg0007.tlg011.perseus-eng2.xml',
+  普鲁塔克伯利克利: G + 'tlg0007/tlg012/tlg0007.tlg012.perseus-eng2.xml',
+  普鲁塔克亚西比德: G + 'tlg0007/tlg015/tlg0007.tlg015.perseus-eng2.xml',
+  普鲁塔克科里奥兰纳斯: G + 'tlg0007/tlg016/tlg0007.tlg016.perseus-eng2.xml',
+  普鲁塔克提摩利昂: G + 'tlg0007/tlg018/tlg0007.tlg018.perseus-eng2.xml',
+  普鲁塔克佩洛皮达斯: G + 'tlg0007/tlg021/tlg0007.tlg021.perseus-eng2.xml',
+  普鲁塔克阿里斯提德: G + 'tlg0007/tlg024/tlg0007.tlg024.perseus-eng2.xml',
+  普鲁塔克皮洛士: G + 'tlg0007/tlg030/tlg0007.tlg030.perseus-eng2.xml',
+  普鲁塔克吕山德: G + 'tlg0007/tlg032/tlg0007.tlg032.perseus-eng2.xml',
+  普鲁塔克客蒙: G + 'tlg0007/tlg035/tlg0007.tlg035.perseus-eng2.xml',
+  普鲁塔克尼西阿斯: G + 'tlg0007/tlg038/tlg0007.tlg038.perseus-eng2.xml',
+  普鲁塔克欧迈尼斯: G + 'tlg0007/tlg041/tlg0007.tlg041.perseus-eng2.xml',
+  普鲁塔克阿格西劳斯: G + 'tlg0007/tlg044/tlg0007.tlg044.perseus-eng2.xml',
+  普鲁塔克亚历山大: G + 'tlg0007/tlg047/tlg0007.tlg047.perseus-eng2.xml',
+  普鲁塔克福基翁: G + 'tlg0007/tlg049/tlg0007.tlg049.perseus-eng2.xml',
+  色诺芬希腊史: G + 'tlg0032/tlg001/tlg0032.tlg001.perseus-eng2.xml',
+  色诺芬远征记: G + 'tlg0032/tlg006/tlg0032.tlg006.perseus-eng2.xml',
   // 近东：楔形文字与象形文字文献的公版英译（多收在当时的通史与文献集里）
   汉谟拉比法典: { gut: 'The-Oldest-Code-of-Laws-in-the-WorldB.C.-2285-2242_17150/master/17150.txt' },       // Johns 译（1903）
   吉尔伽美什古巴比伦本: { gut: 'An-Old-Babylonian-Version-of-the-Gilgamesh-Epic_11000/master/11000-8.txt' }, // Jastrow、Clay 译（1920）
