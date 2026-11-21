@@ -344,7 +344,8 @@ function homeTransform() {
   const ux = x => (W - cw / s) / 2 + (x - box.left) / s, uy = y => (H - ch / s) / 2 + (y - box.top) / s;
   const lg = $('#legend').getBoundingClientRect(), bottom = lg.height ? Math.min(wrap.bottom, lg.top - 6) : wrap.bottom;
   const pad = 12, ax0 = ux(wrap.left) + pad, ax1 = ux(wrap.right) - pad, ay0 = uy(wrap.top) + pad, ay1 = uy(bottom) - pad;
-  const k = Math.min(1, (ax1 - ax0) / (x1 - x0), (ay1 - ay0) / (y1 - y0));
+  // 默认不放大到超过全图（k ≤ 1）；只看局部地区的卷可设 BOOK.viewMax（如 2.5）允许初始视野放大
+  const k = Math.min(B.viewMax || 1, (ax1 - ax0) / (x1 - x0), (ay1 - ay0) / (y1 - y0));
   return d3.zoomIdentity.translate((ax0 + ax1) / 2 - k * (x0 + x1) / 2, (ay0 + ay1) / 2 - k * (y0 + y1) / 2).scale(k);
 }
 // 平移范围：底图配置的 pan 与本卷 view 的投影范围取并集（view 西北角超出 pan 时，全景不被挤偏）
