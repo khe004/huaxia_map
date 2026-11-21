@@ -28,6 +28,10 @@ const WORKS = {
   普鲁塔克格拉古: G + 'tlg0007/tlg052/tlg0007.tlg052.perseus-eng1.xml',
   撒路斯提乌斯朱古达: L + 'phi0631/phi002/phi0631.phi002.perseus-eng2.xml',
   希罗多德: G + 'tlg0016/tlg001/tlg0016.tlg001.perseus-eng2.xml',
+  修昔底德: G + 'tlg0003/tlg001/tlg0003.tlg001.perseus-eng6.xml',
+  伊利亚特: G + 'tlg0012/tlg001/tlg0012.tlg001.perseus-eng3.xml',
+  奥德赛: G + 'tlg0012/tlg002/tlg0012.tlg002.perseus-eng3.xml',
+  普鲁塔克忒修斯: G + 'tlg0007/tlg001/tlg0007.tlg001.perseus-eng3.xml',
   // 近东：楔形文字与象形文字文献的公版英译（多收在当时的通史与文献集里）
   汉谟拉比法典: { gut: 'The-Oldest-Code-of-Laws-in-the-WorldB.C.-2285-2242_17150/master/17150.txt' },       // Johns 译（1903）
   吉尔伽美什古巴比伦本: { gut: 'An-Old-Babylonian-Version-of-the-Gilgamesh-Epic_11000/master/11000-8.txt' }, // Jastrow、Clay 译（1920）
