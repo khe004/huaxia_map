@@ -2,7 +2,7 @@
 // 列出在页面里分不到任何地块的种子点（HAS_LAND 之外），这些种子的归属变化在地图上看不出来。需要本机的 Chrome（无头模式）。
 // 结果写入 tools/noland.json（改过种子坐标或 scope 后重跑）。
 const fs = require('fs'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const inSeries = JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
 const { findChrome, tempDir, dumpDom } = require('./chrome.js');

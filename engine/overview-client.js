@@ -12,8 +12,8 @@ function renderO() {
   const mix = (a, b, k) => { const A = hex(a), B = hex(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * k)).join(',') + ')'; };
   let cur = 0;
   // 朝代条带
-  const PX = 1.3, Y0 = -1100, Y1 = 1949, LH = 19, TOP = 22, X = y => (y - Y0) * PX, SW = X(Y1) + 40, SH = TOP + DY.lanes * LH + 6;
-  const ticks = []; for (let y = -1000; y <= 1900; y += 100) ticks.push(y);
+  const PX = 1.3, Y0 = (O.strip || [-1100])[0], Y1 = (O.strip || [0, 1949])[1], LH = 19, TOP = 22, X = y => (y - Y0) * PX, SW = X(Y1) + 40, SH = TOP + DY.lanes * LH + 6;
+  const ticks = []; for (let y = Math.ceil((Y0 + 1) / 100) * 100; y <= Y1; y += 100) ticks.push(y);
   $('#ovstrip').innerHTML = '<svg width="' + SW + '" height="' + SH + '" viewBox="0 0 ' + SW + ' ' + SH + '">' +
     ticks.map(y => '<line class="tk" x1="' + X(y) + '" x2="' + X(y) + '" y1="14" y2="' + SH + '"/><text class="tkl" x="' + (X(y) + 3) + '" y="11">' + fy(y) + '</text>').join('') +
     DY.rows.map(([n, a, b, g, l]) => { const x = X(Math.max(a, Y0)), w = Math.max(2, X(b) - x), y = TOP + l * LH, fits = w > n.length * 12 + 6;
@@ -36,7 +36,7 @@ function renderO() {
       return '<text x="' + x[3] + '" y="' + (x[4] + fs * 0.35) + '" font-size="' + fs + '"' + (fs > 30 ? ' class="big"' : '') + '>' + E(x[1]) + '</text>';
     }).join('');
     $('#ovy').textContent = fy(F.y) + ' 年';
-    $('#ovn').innerHTML = (F.rep ? '<span class="rep">谭图' + E(F.rep) + '总图之年</span>' : '<span>卷末</span>') + '据卷' + CN(F.k + 1) + '《' + E(B[1]) + '》';
+    $('#ovn').innerHTML = (F.rep ? '<span class="rep">' + (O.repLabel || '谭图{}总图之年').replace('{}', E(F.rep)) + '</span>' : '<span>卷末</span>') + '据卷' + CN(F.k + 1) + '《' + E(B[1]) + '》';
     $('#ovgo').href = B[0] + '/index.html?y=' + F.y;
     $('#ovleg').innerHTML = F.f.map(x => x).sort((p, q) => q[5] - p[5]).slice(0, 14).map(x => '<span><i style="background:' + mix(land, x[0], 0.6) + '"></i>' + E(x[2]) + '</span>').join('');
     document.querySelectorAll('#ovrep button').forEach(b => b.classList.toggle('on', +b.dataset.i === i));

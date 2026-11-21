@@ -1,26 +1,32 @@
 // 组装合集：node build-series.mjs
 // 按 series.json 的卷目逐卷以 --series 方式构建到 dist/series/<书>/，再生成目录页 dist/series/index.html。
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import vm from 'node:vm';
 import { overview, dynasties } from './engine/overview.mjs';
 import { territory, writeData } from './engine/export.mjs';
 const r = f => readFileSync(new URL(f, import.meta.url), 'utf8');
-const S = JSON.parse(r('./series.json'));
+// 合集根目录：环境变量 YUTU_SERIES（如 series/west）指定另一套合集；默认为仓库根目录（华夏舆图）。引擎文件仍从仓库根目录读
+const ROOT = new URL(process.env.YUTU_SERIES ? process.env.YUTU_SERIES.replace(/\/?$/, '/') : './', import.meta.url);
+const rd = f => readFileSync(new URL(f, ROOT), 'utf8');
+const S = JSON.parse(rd('./series.json'));
+// 输出目录：dist/<series.json 的 out>，默认 dist/series
+const OUT = `./dist/${S.out || 'series'}/`;
 const cn = n => { const D = '〇一二三四五六七八九', t = Math.floor(n / 10), o = n % 10; return n < 10 ? D[n] : (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const fy = y => (y < 0 ? `前 ${-y}` : `${y}`);
 let prevLast = null;
 // 目录页检索用的索引：全部事件与人物（跨卷人物合为一条，列出所在各卷）
-const pcx = {}; vm.createContext(pcx); vm.runInContext(r('./books/_people.js') + ';this.PC = commonOf;', pcx);
+const pcx = {}; vm.createContext(pcx); vm.runInContext(rd('./books/_people.js') + ';this.PC = commonOf;', pcx);
 // 引文 **…** 改为引号：已在引号里的（如 “**…**。”、“诸将易得耳。**…**。”）不再加，免得引号重复或不成对
-const plain = s => String(s).replace(/\*\*(?:[^|*]{1,6}\|)?([^*]*)\*\*/g, (m, x, i, all) => {
+// **译文||原文** 只留译文
+const plain = s => String(s).replace(/\*\*([^*|]+?)\|\|[^*]*\*\*/g, '**$1**').replace(/\*\*(?:[^|*]{1,6}\|)?([^*]*)\*\*/g, (m, x, i, all) => {
   const before = all.slice(0, i), open = (before.match(/“/g) || []).length - (before.match(/”/g) || []).length;
   // 引文里本身带引号的（“时号“李铁枪””），外加引号时里层换成单引号
   return open > 0 ? x : '“' + x.replace(/“/g, '‘').replace(/”/g, '’') + '”';
 });
 // 人物别名（本名、号、庙号、年号等）见 books/_alias.js
-const acx = {}; vm.createContext(acx); vm.runInContext(r('./books/_alias.js') + ';this.A = ALIAS; this.aliasOf = aliasOf;', acx);
+const acx = {}; vm.createContext(acx); vm.runInContext(rd('./books/_alias.js') + ';this.A = ALIAS; this.aliasOf = aliasOf;', acx);
 // alias 在各卷人物收齐后按人物的键（同名异人各自一条）填入
 const IDX = { books: [], events: [], people: {}, alias: {} };
 // 数据下载（dist/series/data/）：全部事件、人物与各卷疆域变化，见 engine/export.mjs
@@ -30,7 +36,7 @@ const [CALTEXT, ERASFOR] = (() => { const c = {}; vm.createContext(c); vm.runInC
 const rows = S.books.map((b, i) => {
   execFileSync(process.execPath, [new URL('./build.mjs', import.meta.url).pathname, b.id, '--series'], { stdio: 'inherit' });
   const c = {}; vm.createContext(c);
-  vm.runInContext(r(`./books/${b.id}/book.js`) + '\n;this.__ = { BOOK, EVENTS, PEOPLE_RAW, FACTIONS, SNAPSHOTS, SEEDS_RAW };', c);
+  vm.runInContext(rd(`./books/${b.id}/book.js`) + '\n;this.__ = { BOOK, EVENTS, PEOPLE_RAW, FACTIONS, SNAPSHOTS, SEEDS_RAW };', c);
   const { BOOK, EVENTS, PEOPLE_RAW, FACTIONS, SNAPSHOTS, SEEDS_RAW } = c.__;
   // 王年、年号纪年：与引擎 eras() 同一算法（BOOK.calendar.label 或 eras/spans），事件没写 cal 时也能按纪年检索
   const CAL = BOOK.calendar || {};
@@ -229,9 +235,10 @@ addEventListener('hashchange', () => { const t = new URLSearchParams(location.ha
 // 目录页“凡例”（engine/about.html）：引文核对的总数取自 tools/quotes-log.json
 const ABOUT = (() => { const L = JSON.parse(r('./tools/quotes-log.json')), ids = new Set(S.books.map(b => b.id)); let q = 0, f = 0;
   for (const [k, v] of Object.entries(L)) if (ids.has(k) || k === '_people') { q += v.quotes; f += v.found; }
-  return r('./engine/about.html').replace(/<!--[\s\S]*?-->\n?/, '').replace('{{books}}', cn(S.books.length)).replace('{{q_all}}', q).replace('{{q_found}}', f).replace('{{q_miss}}', q - f); })();
+  // 合集根目录下有 about.html 的用它，否则用 engine/about.html（华夏舆图的凡例）
+  return (existsSync(new URL('./about.html', ROOT)) && process.env.YUTU_SERIES ? rd('./about.html') : r('./engine/about.html')).replace(/<!--[\s\S]*?-->\n?/, '').replace('{{books}}', cn(S.books.length)).replace('{{q_all}}', q).replace('{{q_found}}', f).replace('{{q_miss}}', q - f); })();
 // 目录页“总览”：历代疆域总览与朝代条带（engine/overview.mjs）
-const OV = overview(S, r), DY = dynasties(r);
+const OV = overview(S, r, rd), DY = dynasties(rd);
 const html = `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(S.title)}</title>
@@ -410,12 +417,12 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
   </div>
   <section class="panel ov" id="overview" role="tabpanel" aria-labelledby="t-overview" hidden>
     <div class="ovhead"><b id="ovy"></b><span id="ovn"></span><a id="ovgo" href="#">到这一卷的这一年 ›</a></div>
-    <div class="ovwrap"><svg id="ovmap" viewBox="-170 -110 1250 990" role="img" aria-label="历代疆域总览"></svg><div class="ovleg" id="ovleg"></div></div>
+    <div class="ovwrap"><svg id="ovmap" viewBox="${OV.vb}" role="img" aria-label="历代疆域总览"></svg><div class="ovleg" id="ovleg"></div></div>
     <div class="ovctl"><button type="button" id="ovplay" aria-pressed="false">▶ 播放</button><button type="button" id="ovprev" aria-label="上一帧">‹</button><input type="range" id="ovr" min="0" value="0" aria-label="年代"><button type="button" id="ovnext" aria-label="下一帧">›</button></div>
-    <div class="ovrep" id="ovrep" aria-label="谭图各册总图的年份"></div>
+    <div class="ovrep" id="ovrep" aria-label="${esc(S.overviewRepAria || '谭图各册总图的年份')}"></div>
     <h3 class="ovh">历代纪年</h3>
     <div class="ovstrip" id="ovstrip"></div>
-    <p class="note">疆域取各卷卷末的一刻，另加谭其骧《中国历史地图集》各册总图的年份（标“总图之年”），按该年所在一卷的疆域快照上色，与各卷地图同一画法；总览只画今中国及周边，葱岭以西、漠北远处多在画面之外。点条带上的朝代跳到它年代里的一帧，“到这一卷的这一年”打开该卷并停在这一年。条带年代按通行说法，十六国、十国只画总的起讫。</p>
+    <p class="note">${S.overviewNote || `疆域取各卷卷末的一刻，另加谭其骧《中国历史地图集》各册总图的年份（标“总图之年”），按该年所在一卷的疆域快照上色，与各卷地图同一画法；总览只画今中国及周边，葱岭以西、漠北远处多在画面之外。点条带上的朝代跳到它年代里的一帧，“到这一卷的这一年”打开该卷并停在这一年。条带年代按通行说法，十六国、十国只画总的起讫。`}</p>
   </section>
   <section class="panel" id="people" role="tabpanel" aria-labelledby="t-people" hidden>
     <div class="sopts"><select id="pvol" aria-label="限定卷"><option value="">全部卷（按首次出场分组）</option>${S.books.map((b, i) => `<option value="${i}">卷${cn(i + 1)} ${esc(IDX.books[i][1])}</option>`).join('')}</select><button type="button" id="pcross" aria-pressed="false">只看跨卷人物</button><span class="cnt" id="pcnt"></span></div>
@@ -426,13 +433,13 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
     <div id="elist"></div>
   </section>
   <section class="panel search" id="search" role="tabpanel" aria-labelledby="t-search" hidden>
-    <div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="检索全部 ${IDX.events.length} 个事件、${Object.keys(IDX.people).length} 位人物：人名、字、地名、年号、事件……" autocomplete="off" aria-label="检索人物与事件"><kbd>/</kbd></div>
+    <div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="检索全部 ${IDX.events.length} 个事件、${Object.keys(IDX.people).length} 位人物：${esc(S.searchTerms || '人名、字、地名、年号、事件')}……" autocomplete="off" aria-label="检索人物与事件"><kbd>/</kbd></div>
     <div class="sopts" id="sopts" hidden>
       <button type="button" data-f="all" aria-pressed="true">全部</button><button type="button" data-f="p" aria-pressed="false">人物</button><button type="button" data-f="e" aria-pressed="false">事件</button>
       <select id="vol" aria-label="限定卷"><option value="">全部卷</option>${S.books.map((b, i) => `<option value="${i}">卷${cn(i + 1)} ${esc(IDX.books[i][1])}</option>`).join('')}</select>
       <span class="cnt" id="cnt"></span>
     </div>
-    <p class="empty" id="shint">可以输入人名、字、古地名、今地名、公元年份（如 208、前 209）、王年或年号（如 周显王、建安十三年）或事件中的词，多个词用空格隔开。在其他页签按 / 也能跳到这里。</p>
+    <p class="empty" id="shint">${S.searchHint || `可以输入人名、字、古地名、今地名、公元年份（如 208、前 209）、王年或年号（如 周显王、建安十三年）或事件中的词，多个词用空格隔开。在其他页签按 / 也能跳到这里。`}</p>
     <div class="res" id="res" hidden></div>
   </section>
   <section class="panel" id="about" role="tabpanel" aria-labelledby="t-about" hidden>
@@ -455,11 +462,11 @@ const IDX = ${JSON.stringify(IDX).replace(/</g, '\\u003c')};
 ${searchJs}
 </script>
 `;
-writeFileSync(new URL('./dist/series/index.html', import.meta.url), html);
-console.log('dist/series/index.html', S.books.length, '卷');
-writeData(new URL('./dist/series/data/', import.meta.url), S, IDX, EXP);
+writeFileSync(new URL(OUT + 'index.html', import.meta.url), html);
+console.log(OUT.slice(2) + 'index.html', S.books.length, '卷');
+writeData(new URL(OUT + 'data/', import.meta.url), S, IDX, EXP);
 // 合并或改名的卷（series.json 的 moved）：旧目录放一个跳转页，旧链接仍能打开
 for (const [from, to] of Object.entries(S.moved || {})) {
-  mkdirSync(new URL(`./dist/series/${from}/`, import.meta.url), { recursive: true });
-  writeFileSync(new URL(`./dist/series/${from}/index.html`, import.meta.url), `<!doctype html><meta charset="utf-8"><title>跳转</title><meta http-equiv="refresh" content="0; url=../${to}/index.html"><script>location.replace('../${to}/index.html' + location.search + location.hash)</script><a href="../${to}/index.html">本卷已并入新卷，点此前往</a>\n`);
+  mkdirSync(new URL(`${OUT}${from}/`, import.meta.url), { recursive: true });
+  writeFileSync(new URL(`${OUT}${from}/index.html`, import.meta.url), `<!doctype html><meta charset="utf-8"><title>跳转</title><meta http-equiv="refresh" content="0; url=../${to}/index.html"><script>location.replace('../${to}/index.html' + location.search + location.hash)</script><a href="../${to}/index.html">本卷已并入新卷，点此前往</a>\n`);
 }

@@ -3,7 +3,7 @@
 // 另列出势力名里写出、本卷人物表却没有收录的人（名字取自全部各卷人物表与 books/_people.js）。
 // 一人先后为几个势力之首的（如先属旧朝、后自立），人物表只能填一个：取其一生主要所属，核对后写进 OK：'书:人名'。
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const OK = new Set([
   'chuhan:韩信',  // 汉所封齐王、楚王，楚汉战争中一直是汉将

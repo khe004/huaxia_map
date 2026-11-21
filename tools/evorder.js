@@ -5,7 +5,7 @@
 // 4. 同年同月的几个事件，排在后面的事件简介里写着前一个事件的人“死后”等字样（按数组顺序排先后，可能颠倒）
 // 5. 两个事件的年、月完全相同：两步的时刻 t 相同，后一事件的疆域快照、势力或城邑改名会提前落在前一事件上，应给其一个小数月份（如 9.5）
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.PC=commonOf', pc);
 const yr = (q, n) => (n ? (q ? -n : +n) : null);

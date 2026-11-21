@@ -3,13 +3,16 @@
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync } from 'node:fs';
 import vm from 'node:vm';
 const id = process.argv[2];
+// 合集根目录：环境变量 YUTU_SERIES（如 series/west）指定另一套合集，其下有 books/、series.json 和共用数据；默认为仓库根目录（华夏舆图）
+const ROOT = new URL(process.env.YUTU_SERIES ? process.env.YUTU_SERIES.replace(/\/?$/, '/') : './', import.meta.url);
+const rd = f => readFileSync(new URL(f, ROOT), 'utf8');
 // --series：作为合集的一卷输出到 dist/series/<书>/，地形图共用合集根目录的一份
 const SERIES_MODE = process.argv.includes('--series');
-if (!id || !existsSync(new URL(`./books/${id}/book.js`, import.meta.url))) {
+if (!id || !existsSync(new URL(`./books/${id}/book.js`, ROOT))) {
   console.error('用法：node build.mjs <书目录名>，书目录在 books/ 下'); process.exit(1);
 }
 const r = f => readFileSync(new URL(f, import.meta.url), 'utf8');
-const bookSrc = r(`./books/${id}/book.js`);
+const bookSrc = rd(`./books/${id}/book.js`);
 // 在沙箱里执行一次书的数据，读取配置并做基本校验
 const ctx = {}; vm.createContext(ctx);
 vm.runInContext(bookSrc + '\n;this.__ = { BOOK, FACTIONS, EVENTS, PEOPLE_RAW, SNAPSHOTS, SEEDS_RAW, PHASES: typeof PHASES === "undefined" ? [] : PHASES };', ctx);
@@ -40,10 +43,10 @@ if (PHASES.length) EVENTS.forEach(e => { if (!PHASES.some(([a, b]) => e.y >= a &
 EVENTS.forEach(e => { if (!(e.mo >= 1)) problems.push(`事件「${e.t}」的月份 ${e.mo} 小于 1`); });
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
 // 跨卷人物的统一简介（books/_people.js）：覆盖本书同名人物的字、生卒、简介；引文出处与本书默认出处相同的去掉前缀
-const common = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_people.js') + '\n;this.p = commonOf;', c); return c.p; })();
+const common = (() => { const c = {}; vm.createContext(c); vm.runInContext(rd('./books/_people.js') + '\n;this.p = commonOf;', c); return c.p; })();
 const defSrc = ((BOOK.quoteLabel || '').match(/《(.+?)》/) || [])[1];
 // 人物别名（books/_alias.js）：卷内人物页签的筛选也认本名、号、庙号等
-const aliasOf = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_alias.js') + '\n;this.a = aliasOf;', c); return c.a; })();
+const aliasOf = (() => { const c = {}; vm.createContext(c); vm.runInContext(rd('./books/_alias.js') + '\n;this.a = aliasOf;', c); return c.a; })();
 // 同名异人按生年取别名（books/_alias.js 的“名|生年”键）
 const aliasSub = Object.fromEntries(PEOPLE_RAW.map(([n, , , life]) => [n, aliasOf(n, common(n, id) ? common(n, id)[1] : life)]).filter(([, al]) => al.length));
 const commonSub = {};
@@ -57,7 +60,7 @@ if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
 const dataSrc = bookSrc + (/\bconst CITIES\b/.test(bookSrc) ? '' : '\nconst CITIES = [];') + (/\bconst PHASES\b/.test(bookSrc) ? '' : '\nconst PHASES = [];') + `\n// 跨卷人物的统一简介（构建时由 books/_people.js 注入）\nconst PEOPLE_COMMON = ${JSON.stringify(commonSub)};\nPEOPLE_RAW.forEach(p => { const c = PEOPLE_COMMON[p[0]]; if (c) [p[2], p[3], p[4]] = c; });\nconst PEOPLE_ALIAS = ${JSON.stringify(aliasSub)};\n`;
 
 // 线状图层（books/_lines.js）：只注入与本卷年代有交集的各条
-const LINES = (() => { const c = {}; vm.createContext(c); vm.runInContext(r('./books/_lines.js') + '\n;this.L = LINES;', c); return c.L; })()
+const LINES = (() => { const c = {}; vm.createContext(c); vm.runInContext(rd('./books/_lines.js') + '\n;this.L = LINES;', c); return c.L; })()
   .filter(l => l.y[0] <= BOOK.range[1] && l.y[1] + 1 > BOOK.range[0]);
 const dataSrcL = dataSrc + `const LINES = ${JSON.stringify(LINES)};\n`;
 
@@ -65,13 +68,13 @@ const bm = `./basemaps/${BOOK.basemap}/`;
 const BASEMAP = JSON.parse(r(bm + 'basemap.json'));
 let SERIES = null;
 if (SERIES_MODE) {
-  SERIES = JSON.parse(r('./series.json'));
+  SERIES = JSON.parse(rd('./series.json'));
   // 每卷的页头名取自各书的 BOOK.brand
   // 跨卷人物：在两卷以上出现的人物，记下各卷中参与的事件 [卷序, 年, 月, 标题]，人物页据此补全其他卷的经历
   const seen = {};
   SERIES.books.forEach((b, k) => {
     const c = {}; vm.createContext(c);
-    vm.runInContext(r(`./books/${b.id}/book.js`) + '\n;this.b = BOOK; this.p = PEOPLE_RAW; this.e = EVENTS;', c);
+    vm.runInContext(rd(`./books/${b.id}/book.js`) + '\n;this.b = BOOK; this.p = PEOPLE_RAW; this.e = EVENTS;', c);
     b.brand = c.b.brand;
     // 首末事件 [年, 月, 标题]：相邻两卷时间重叠时，页面据此提示重叠的年份
     const es = c.e.slice().sort((u, v) => u.y - v.y || u.mo - v.mo), f = es[0], l = es[es.length - 1];
@@ -97,10 +100,11 @@ const html = r('./engine/page.html')
   .replace('/*UNITS*/null', () => r(bm + 'units.topo.json').trim())
   .replace('/*DATA*/', () => inScript(dataSrcL))
   .replace('/*APP*/', () => r('./engine/app.js').replace('/*STORY*/', () => r('./engine/story.js')).replace('/*CAL*/', () => r('./engine/cal.js')).replace('/*MUSIC*/', () => r('./engine/music.js')));
-const out = new URL(SERIES_MODE ? `./dist/series/${id}/` : `./dist/${id}/`, import.meta.url);
+const OUT = SERIES_MODE ? SERIES.out || 'series' : '';
+const out = new URL(SERIES_MODE ? `./dist/${OUT}/${id}/` : `./dist/${id}/`, import.meta.url);
 mkdirSync(out, { recursive: true });
 // 合集里的分卷是独立网页，要自带文档头
 writeFileSync(new URL('index.html', out), `<!doctype html>\n<html lang="zh-CN">\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n${html}`);
 if (SERIES_MODE) for (const t of BASEMAP.terrain) copyFileSync(new URL(bm + t.href.slice(3), import.meta.url), new URL(t.href, out));
 else for (const t of BASEMAP.terrain) copyFileSync(new URL(bm + t.href, import.meta.url), new URL(t.href, out));
-console.log(SERIES_MODE ? `dist/series/${id}/index.html` : `dist/${id}/index.html`, (html.length / 1024).toFixed(1) + ' KB', `· ${EVENTS.length} 事件 · ${PEOPLE_RAW.length} 人物`);
+console.log(SERIES_MODE ? `dist/${OUT}/${id}/index.html` : `dist/${id}/index.html`, (html.length / 1024).toFixed(1) + ' KB', `· ${EVENTS.length} 事件 · ${PEOPLE_RAW.length} 人物`);

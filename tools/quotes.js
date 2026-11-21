@@ -19,7 +19,7 @@ const load = d => fs.readdirSync(d).filter(f => f.endsWith('.txt')).map(f => [f.
 const corpora = { '': load(dir) };
 for (const m of more) { const [k, d] = m.split('='); corpora[k] = load(d); }
 // 以 _ 开头的是 books/ 下的共用数据文件（如 _people 跨卷人物简介）
-const src = fs.readFileSync(path.join(__dirname, '..', 'books', ...(id[0] === '_' ? [id + '.js'] : [id, 'book.js'])), 'utf8');
+const src = fs.readFileSync(path.join(require('./root.js').R, 'books', ...(id[0] === '_' ? [id + '.js'] : [id, 'book.js'])), 'utf8');
 let n = 0, bad = 0; const cnt = {};
 // 注释行里的 **…**（说明引文写法的示例）不算引文
 for (const m of src.replace(/^\s*\/\/.*$/gm, '').matchAll(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g)) {

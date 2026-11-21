@@ -2,7 +2,7 @@
 // 人名取自本卷、合集中前后各两卷的人物表与 books/_people.js 的跨卷人物；本卷人物表里没有的标“＋”（需要先补进本卷人物表）
 // 与年号、本卷势力名相同的人名不算（如年号“建兴”、官称“单于”）
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const all = require('./books.js')();
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : all;
 const load = id => { const c = {}; vm.createContext(c); vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`, 'utf8') + ';this.X={EVENTS,PEOPLE_RAW,BOOK,FACTIONS}', c); return c.X; };

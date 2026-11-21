@@ -5,7 +5,7 @@
 const fs = require('fs'), path = require('path');
 const { strip, fixText, quotesIn } = require('./quotes.js');
 const books = require('./books.js');
-const R = path.join(__dirname, '..'), C = path.join(__dirname, '.corpus'), LOG = path.join(__dirname, 'quotes-log.json');
+const R = require('./root.js').R, C = path.join(__dirname, '.corpus'), LOG = path.join(__dirname, 'quotes-log.json');
 const MAP = JSON.parse(fs.readFileSync(path.join(C, 'map.json'), 'utf8'));
 const fname = t => t.replace(/[\/:*?"<>|]/g, '_');
 const cache = {};
