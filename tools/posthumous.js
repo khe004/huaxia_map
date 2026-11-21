@@ -3,7 +3,7 @@
 // 以及写进 post 但卒年不早于事件的人物；同年早些月份已死（本卷或别卷有此人的死亡事件）而稍后的事件未标身后的，也列出。前者若在事件中只是身后出现（追尊、图像、平反、改葬），应写进 post；
 // 若是生前的言行被一并叙述（如事件跨越数年），可以不改。
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const pc = {}; vm.createContext(pc); vm.runInContext(fs.readFileSync(R + '/books/_people.js', 'utf8') + ';this.PC=commonOf', pc);
 const death = s => { const m = (s || '').match(/[–-]\s*约?(前)?(\d+)\??\s*$/); return m ? (m[1] ? -m[2] : +m[2]) : null; };

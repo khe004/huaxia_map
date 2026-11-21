@@ -1,5 +1,5 @@
 // 用法：node tools/overlap.js。列出合集中相邻两卷可能重复收录的同一件事（标题相同或相近、或同年同月同地同类，前后一年内），供人工逐对核对年月、地点与说法是否一致；只列出、不判错，不进 check.sh
-const fs=require('fs'),vm=require('vm');const R=require('path').join(__dirname,'..');
+const fs=require('fs'),vm=require('vm');const R=require('./root.js').R;
 const S=JSON.parse(fs.readFileSync(R+'/series.json'));
 function load(id){const c={};vm.createContext(c);vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`,'utf8')+';this.X={EVENTS}',c);return c.X.EVENTS;}
 const big=s=>{const a=new Set();for(let i=0;i+1<s.length;i++)a.add(s.slice(i,i+2));return a};

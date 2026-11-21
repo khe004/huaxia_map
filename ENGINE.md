@@ -114,3 +114,14 @@ yutu/
 - 目录页检索：`build-series.mjs` 把各卷的全部事件（标题、地名、纪年、人物、简介）和人物（跨卷人物合为一条，简介以 `_people.js` 为准）写进目录页，在搜索框里输入人名、字、古今地名、年号或事件，结果分人物和事件两组，可限定类别和卷；按 `/` 聚焦，方向键选择，回车打开。点事件打开该卷的这一事件（`?ev=`），点人物打开所选卷的人物页（`?p=人物`）。检索词保存在地址的 `#q=` 中，从卷里返回时结果仍在。
 - 单本构建（`node build.mjs <书>`）不受影响，不显示这些导航。
 - 发布时以目录页为主页，各卷的 index.html 和地形图作为附带文件一起发布。
+
+## 第二套合集：西方舆图（试点）
+
+`series/west/` 是用同一引擎做的第二套合集，目前试点三卷：卷一《布匿战争》（`buni`，前 264–前 201）、卷二《罗马东进》（`dongjin`，前 201–前 133）、卷三《格拉古到苏拉》（`sula`，前 133–前 78）。合集根目录由环境变量 `YUTU_SERIES` 指定，不设时为仓库根目录（华夏舆图）。
+
+- 构建：`YUTU_SERIES=series/west node build-series.mjs`，输出到 `dist/series/west/`（`series.json` 的 `out`），单卷 `YUTU_SERIES=series/west node build.mjs <书> [--series]`。
+- 检查：`YUTU_SERIES=series/west sh tools/check.sh`，各项与华夏舆图相同。
+- 底图：`basemaps/europe/`（欧洲、北非、西亚的 NUTS-3 与各国一级行政区，`tools/units-europe.js` 生成拼块、`tools/waters-europe.js` 生成河湖）。底图配置 `natline: false` 不画主区外缘，`noProvLabel` 列出不标“今某某”的微型国家，`modernToggle` 改“今省界”开关的名字。
+- 书的配置：`calendar.ganzhi: false` 不显示干支，纪年栏写罗马建城纪年与奥林匹亚纪年；`ziLabel: ''` 隐藏人物页的“字”；`linesToggle` 改“长城运河”开关的名字（西方各卷为罗马大道，数据在 `series/west/books/_lines.js`）；`quoteLabel` 改引文悬停的前缀。`series.json` 的 `ziLabel` 同样作用于目录页检索。
+- 引文：正文写 `**译文||原文**`，页面显示译文、悬停显示英译原文。原文一侧用 `node tools/fetch-perseus.js` 抓的公有领域英译核对：`YUTU_SERIES=series/west node tools/quotes.js <书> tools/.corpus/west`。
+- 地区：种子点按古代部族与城邦的中心摆放，现代 NUTS-3 / 一级行政区归入最近的种子点；个别拼块用 `UNIT_OVERRIDES` 指定（如比雷埃夫斯归阿提卡）。

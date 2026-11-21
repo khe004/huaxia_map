@@ -1,7 +1,7 @@
 // 用法：node tools/coexist.js [书 …] [--th=10]：同一时期并存（同时出现在图例中）的势力两两色差（CIELAB ΔE），
 // 低于阈值（默认 10，几乎分不出）的列出。接壤势力另由 tools/adjcolor.js 按 ΔE 20 检查。
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const args = process.argv.slice(2), th = +((args.find(a => a.startsWith('--th=')) || '--th=10').slice(5));
 const ids = args.filter(a => !a.startsWith('--')).length ? args.filter(a => !a.startsWith('--')) : require('./books.js')();
 const lab = h => { let [r, g, b] = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(c => (c > .04045 ? ((c + .055) / 1.055) ** 2.4 : c / 12.92));

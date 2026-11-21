@@ -2,7 +2,7 @@
 // 引擎的时刻 t = 年 + (月 − 1) / 12。若某事件的 t 比阈值 X 小不到 0.125 年（一个半月），点到这个事件时名称还没变，
 // 多半是按 年 + 月/12 写的阈值，列出来（阈值离后一个事件更近的不列）；应把 X 改到不大于该事件的 t（如 220 年 11 月 → 220.83）。
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 let n = 0;
 for (const id of ids) {

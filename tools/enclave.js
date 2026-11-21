@@ -3,7 +3,7 @@
 // 并且这片地块从开局起没被任何快照改动过（多半是忘了分配的 baseFaction 种子点）。
 // 每片孤岛只报它第一次出现时的快照，以及它持续到哪一条快照；确属历史上的飞地（如海运接济的据点）可不改。
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const argv = process.argv.slice(2), probe = (argv.find(a => a.startsWith('--seed=')) || '').slice(7), bk = argv.filter(a => !a.startsWith('--'));
 const ids = bk.length ? bk : require('./books.js')();
 const T = JSON.parse(fs.readFileSync(R + '/basemaps/china/units.topo.json', 'utf8'));

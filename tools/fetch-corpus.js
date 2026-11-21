@@ -8,7 +8,7 @@ const fs = require('fs'), path = require('path'), vm = require('vm');
 const OpenCC = require('opencc-js');
 const { clean } = require('./corpus.js');
 const books = require('./books.js');
-const R = path.join(__dirname, '..'), C = path.join(__dirname, '.corpus');
+const R = require('./root.js').R, C = path.join(__dirname, '.corpus');
 const UA = 'yutu-map/1.0', API = 'https://zh.wikisource.org/w/api.php', RAW = 'https://zh.wikisource.org/w/index.php';
 const toTw = OpenCC.Converter({ from: 'cn', to: 'tw' });
 ['idx', 'raw', 'cn'].forEach(d => fs.mkdirSync(path.join(C, d), { recursive: true }));

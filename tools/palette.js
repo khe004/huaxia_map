@@ -6,7 +6,7 @@ const [id, th = 25, near] = process.argv.slice(2);
 if (!id) { console.log('用法：node tools/palette.js <书目录名> [阈值，默认 25] [相邻距离（度）]'); process.exit(1); }
 const NL = new Set((() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'noland.json'), 'utf8'))[id] || []; } catch (e) { return []; } })());
 const ctx = {}; vm.createContext(ctx);
-vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'books', id, 'book.js'), 'utf8') + ';this.D={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS}', ctx);
+vm.runInContext(fs.readFileSync(path.join(require('./root.js').R, 'books', id, 'book.js'), 'utf8') + ';this.D={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS}', ctx);
 const { BOOK, FACTIONS, SEEDS_RAW, SNAPSHOTS } = ctx.D;
 const S = SEEDS_RAW.split(/\s{2,}|\n+/).map(s => s.trim()).filter(Boolean).map(s => s.split('|'));
 let cur = S.map(() => BOOK.baseFaction); const co = new Set();

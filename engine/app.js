@@ -105,8 +105,8 @@ function cnNum(n) {
 // 年号：BOOK.calendar.eras / spans（[起年, 年号, 起年记作第几年]，第三项缺省为 1，用于不立年号、以帝号接续纪年的“明帝二年”）；也可以直接给 BOOK.calendar.label(y) 返回 [{d, s}]
 // 唐天宝三载至至德三载（744–758）称“载”：BOOK.calendar.zai = [744, 758]（各家都写“载”），或 { 唐: [744, 758] }（只有这一家）
 function eras(y) { return erasFor(B.calendar || {}, y); }
-// 干支：按天文纪年（公元前 1 年 = 0 年）推算
-function ganzhi(y) { if (APPROX(y)) return ''; const a = y < 0 ? y + 1 : y; const i = ((a - 4) % 60 + 60) % 60; return '甲乙丙丁戊己庚辛壬癸'[i % 10] + '子丑寅卯辰巳午未申酉戌亥'[i % 12]; }
+// 干支：按天文纪年（公元前 1 年 = 0 年）推算；BOOK.calendar.ganzhi = false 时不用（西方各卷）
+function ganzhi(y) { if (APPROX(y) || (B.calendar || {}).ganzhi === false) return ''; const a = y < 0 ? y + 1 : y; const i = ((a - 4) % 60 + 60) % 60; return '甲乙丙丁戊己庚辛壬癸'[i % 10] + '子丑寅卯辰巳午未申酉戌亥'[i % 12]; }
 function phaseOf(y) { return PHASES.find(p => y >= p[0] && y <= p[1]) || [y, y, '']; }
 /*CAL*/
 // 时间轴与年份标题只列 BOOK.calendar.axis 中的几家（五代十国并存的年号太多）；事件详情仍按家补全
@@ -268,7 +268,8 @@ if (UNITS.objects.nb) {
   if (OUTF.length) OUTER_BORDER = (st, T) => outerBorder.attr('d', outerEdge(st, T));
   root.append('path').attr('class', 'frontier').attr('d', path(topojson.mesh(UNITS, ALL, (a, b) => a === b && inS(a))));
 } else root.append('path').attr('class', 'frontier').attr('d', meshBy((a, b) => a === b));
-root.append('path').attr('class', 'natline').attr('d', path(GEO.cnout));
+// 主区外缘（华夏舆图为今中国国界）；底图配置 natline: false 时不画
+if (BASEMAP.natline !== false) root.append('path').attr('class', 'natline').attr('d', path(GEO.cnout));
 
 // 水系：河流取自 OpenStreetMap（长江、黄河等主要河流，至入海口），湖泊取自 Natural Earth
 rewind(GEO.lk);
@@ -297,7 +298,7 @@ gModern.selectAll('path').data(GEO.cn.features).join('path').attr('d', path);
 const gLabels = root.append('g');
 // 不在本书范围内（或只部分纳入）的今省区，始终显示省名
 const OUTSIDE = new Set(GEO.cn.features.map(f => f.properties.n).filter(n => !(SC.provinces || []).includes(n)));
-const provLbl = gLabels.append('g').selectAll('text').data(GEO.cn.features.filter(f => !['香港', '澳门'].includes(f.properties.n))).join('text')
+const provLbl = gLabels.append('g').selectAll('text').data(GEO.cn.features.filter(f => !(BASEMAP.noProvLabel || ['香港', '澳门']).includes(f.properties.n))).join('text')
   .attr('class', f => 'lbl prov-lbl' + (OUTSIDE.has(f.properties.n) ? ' always' : '')).attr('text-anchor', 'middle')
   .attr('transform', f => { const c = proj(d3.geoCentroid(f)); return `translate(${c})`; })
   .text(f => '今' + f.properties.n);
@@ -397,7 +398,8 @@ function provHtml(j) {
 }
 cells.on('mousemove', (ev, d) => {
   const j = d.properties.j, s = SEEDS[j], f = curSt()[j];
-  const today = `今${d.properties.p}${d.properties.p === d.properties.n ? '' : d.properties.n}`;
+  // 拼块名是外文（欧洲底图的 NUTS 地区名）时与国名之间加间隔号
+  const today = `今${d.properties.p}${d.properties.p === d.properties.n ? '' : (/[A-Za-z]/.test(d.properties.n) ? ' · ' : '') + d.properties.n}`;
   showTip(ev, `<b>${esc(s.n)}</b> <span class="s">· ${esc(s.z)}</span><div>属 <span style="color:${fColor(f)}">●</span> ${fName(f, curT())}</div>${provHtml(j)}<div class="s">${today}</div>`);
 }).on('mouseleave', hideTip);
 outerCells.on('mousemove', (ev, d) => {
@@ -690,7 +692,9 @@ function srcBlock(refs) {
 // 可写作 **左传|…** 注明另一出处：悬停显示“《左传》原文”，下划线换色
 // 出处前缀限六字，书名长的用简称写，悬停时写出全名；各书可在 BOOK.srcFull 补充（如诗文的长题目）
 const SRC_FULL = { 要录: '建炎以来系年要录', 长编: '续资治通鉴长编', 东征传: '唐大和上东征传', 名画记: '历代名画记' };
-const rich = t => esc(t).replace(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g, (_, src, q) => src
+// 译文引文写作 **译文||原文**（原书不是中文时，正文写我们的译文，悬停显示原文，tools/quotes.js 核对原文一侧）
+const rich = t => esc(t).replace(/\*\*([^*|]+?)\|\|([^*]+?)\*\*/g, (_, q, o) => `<b class="yw" title="${B.quoteLabel || '原文'}：${o}">${q}</b>`)
+  .replace(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g, (_, src, q) => src
   ? `<b class="yw yw2" title="《${(B.srcFull || {})[src] || SRC_FULL[src] || src}》原文">${q}</b>` : `<b class="yw" title="${esc(B.quoteLabel || '原文')}">${q}</b>`);
 const tagOf = e => (e.src ? (B.tags || {})[e.src] || e.src : '');
 const evItem = (e, on) => `<button class="item${on ? ' on' : ''}" data-event="${e.i}"><span class="y">${fmtYear(e.y)}</span><span class="t"><i class="${e.k}"></i>${esc(e.t)}</span><span class="s">${esc([e.p + ' · ' + e.m, srcShort(e.refs), tagOf(e)].filter(Boolean).join(' · '))}</span></button>`;
@@ -864,7 +868,7 @@ function renderPerson(n) {
     : `<div style="left:${sc(e.y)}%;width:2px;background:var(--ink)"></div>`)).join('')}</div>` : '';
   pbody.innerHTML = `
     <button class="back">‹ 返回</button>
-    <h2>${n}${p.zi ? `<small>字${p.zi}</small>` : ''}</h2>
+    <h2>${n}${p.zi ? `<small>${B.ziLabel != null ? B.ziLabel : "字"}${p.zi}</small>` : ''}</h2>
     <div class="meta"><span class="chip" style="cursor:default">${fdot(p.f)}${fName(p.f, fy)}</span><span>${p.life}</span></div>
     ${life}
     <p>${rich(p.bio)}</p>
