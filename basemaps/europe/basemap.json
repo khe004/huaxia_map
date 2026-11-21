@@ -1,0 +1,35 @@
+{
+  "name": "欧洲、地中海与近东",
+  "size": [1000, 760],
+  "projection": {
+    "type": "conicEqualArea",
+    "parallels": [33, 57],
+    "rotate": [-24, 0],
+    "fitPadding": [[20, 30], [980, 740]],
+    "fitPoints": [[-11, 35], [-11, 57], [24, 61], [60, 55], [60, 29], [24, 22], [-11, 28]]
+  },
+  "pan": [[-700, -420], [1700, 1180]],
+  "natline": false,
+  "noProvLabel": ["摩纳哥", "圣马力诺", "列支敦士登", "安道尔"],
+  "bigRivers": ["莱茵河", "多瑙河", "罗讷河", "波河", "尼罗河", "幼发拉底河", "底格里斯河", "埃布罗河", "易北河", "第聂伯河", "卢瓦尔河", "塔霍河"],
+  "terrain": [
+    {
+      "href": "terrain-wide.webp",
+      "layer": "base",
+      "ext": [-700, -420, 1700, 1180]
+    },
+    {
+      "href": "terrain.webp",
+      "layer": "base",
+      "ext": [-80, -80, 1080, 840]
+    },
+    {
+      "href": "terrain-relief.webp",
+      "layer": "relief",
+      "ext": [-80, -80, 1080, 840]
+    }
+  ],
+  "countryLabels": [],
+  "overviewView": [60, 140, 760, 560],
+  "modernToggle": "今行政区"
+}

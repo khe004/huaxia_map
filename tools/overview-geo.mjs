@@ -1,11 +1,12 @@
 // 目录页“疆域总览”用的简化底图：把 basemaps/china/units.topo.json 的地级拼块按底图投影（与引擎相同）投到平面，
 // 逐条公共边（arc）做 Douglas–Peucker 简化（相邻拼块共用同一条边，简化后仍严丝合缝），输出 SVG 路径到 basemaps/china/overview.json（入库）。
 // 拼块的顺序、多块拆分与 tools/land.js 的 units() 完全一致（合集构建时按序号对应各卷的归属）。
-// 用法：node tools/overview-geo.mjs（在 tools/ 下 npm i 之后；底图改了重跑）
+// 用法：node tools/overview-geo.mjs [底图包名，默认 china]（在 tools/ 下 npm i 之后；底图改了重跑）
 import { readFileSync, writeFileSync } from 'fs';
 import * as d3 from 'd3-geo';
 
-const R = new URL('../basemaps/china/', import.meta.url);
+// 底图包名：第一个参数，默认 china
+const R = new URL(`../basemaps/${process.argv[2] || 'china'}/`, import.meta.url);
 const T = JSON.parse(readFileSync(new URL('units.topo.json', R), 'utf8'));
 const BM = JSON.parse(readFileSync(new URL('basemap.json', R), 'utf8'));
 const PJ = BM.projection, [W, H] = BM.size;
@@ -48,5 +49,7 @@ const units = T.objects.units.geometries.flatMap(g => {
   return g.properties.w ? [{ d: polys.map(polyD).join(''), c: cent(polys) }] : polys.map(p => ({ d: polyD(p), c: cent([p]) }));
 });
 const nb = (T.objects.nb ? T.objects.nb.geometries : []).flatMap(g => g.type === 'Polygon' ? [g.arcs] : g.type === 'MultiPolygon' ? g.arcs : []).map(polyD).join('');
-writeFileSync(new URL('overview.json', R), JSON.stringify({ w: W, h: H, units: units.map(u => u.d), c: units.map(u => u.c), nb }));
+// 总览地图的取景（viewBox）：basemap.json 的 overviewView（[x, y, 宽, 高]）；华夏舆图没有写，页面用原来的默认值
+const vb = BM.overviewView ? { vb: BM.overviewView.join(' ') } : {};
+writeFileSync(new URL('overview.json', R), JSON.stringify({ w: W, h: H, ...vb, units: units.map(u => u.d), c: units.map(u => u.c), nb }));
 console.log('overview.json', units.length, '拼块', Math.round(JSON.stringify({ units, nb }).length / 1024), 'KB');

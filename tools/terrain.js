@@ -1,16 +1,18 @@
 // 生成与底图投影一致的地形图层，输出带透明度的 WebP。
-// 用法：node tools/terrain.js <高程瓦片目录> <输出.webp> '<配置 JSON>'
+// 用法：node tools/terrain.js <高程瓦片目录> <输出.webp> '<配置 JSON>' [底图包名，默认 china]
 //   高程瓦片：AWS Terrarium（https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png），文件名 {z}_{x}_{y}.png
 //   配置：{"z":7,"tiles":[x0,x1,y0,y1],"ext":[x0,y0,x1,y1],"sc":2.5,"feather":50,"mode":"shade"}
 //     ext 为底图坐标范围（与 basemap.json 中 terrain[].ext 一致），sc 为每单位像素数，
 //     mode 省略 = 山体阴影 + 高程着色（base 层）；"shade" = 中性高通明暗（relief 层）
-// 注意：投影参数写在下面，需与 basemap.json 的 projection 保持一致。
 const fs = require('fs'), path = require('path'), { PNG } = require('pngjs'), d3 = require('d3-geo'), sharp = require('sharp');
-const [demDir, out, cfg] = process.argv.slice(2);
+const [demDir, out, cfg, bmName = 'china'] = process.argv.slice(2);
 const C = JSON.parse(cfg); // {z, tiles:[x0,x1,y0,y1], ext:[x0,y0,x1,y1], sc, feather}
-const W = 1000, H = 760, SC = C.sc, Z = C.z;
-const proj = d3.geoConicEqualArea().parallels([25, 45]).rotate([-111, 0])
-  .fitExtent([[20, 30], [W - 20, H - 20]], { type: 'MultiPoint', coordinates: [[94, 18.5], [127.5, 18.5], [94, 42.8], [127.5, 42.8], [111, 44]] });
+// 投影取自底图包的 basemap.json（第四个参数为底图包名，默认 china），与引擎同一算法
+const BM = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'basemaps', bmName, 'basemap.json'), 'utf8')), PJ = BM.projection;
+const [W, H] = BM.size, SC = C.sc, Z = C.z;
+const proj = ({ conicEqualArea: d3.geoConicEqualArea, conicConformal: d3.geoConicConformal, mercator: d3.geoMercator, equirectangular: d3.geoEquirectangular })[PJ.type]().rotate(PJ.rotate || [0, 0]);
+if (PJ.parallels) proj.parallels(PJ.parallels);
+proj.fitExtent(PJ.fitPadding, { type: 'MultiPoint', coordinates: PJ.fitPoints });
 // tile mosaic
 const [X0, X1, Y0, Y1] = C.tiles, TW = (X1 - X0 + 1) * 256, TH = (Y1 - Y0 + 1) * 256;
 const E = new Float32Array(TW * TH).fill(-1);

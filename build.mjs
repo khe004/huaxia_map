@@ -93,7 +93,7 @@ if (SERIES_MODE) {
 const inScript = s => s.replace(/<\/(script)/gi, '<\\/$1');
 const escAttr = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const html = r('./engine/page.html')
-  .replace(/\{\{(\w+)\}\}/g, (_, k) => escAttr(({ title: BOOK.title, brand: BOOK.brand, seal: BOOK.seal || '', subtitle: BOOK.subtitle || '', regionToggle: BOOK.regions?.toggle || '古政区' })[k] ?? ''))
+  .replace(/\{\{(\w+)\}\}/g, (_, k) => escAttr(({ title: BOOK.title, brand: BOOK.brand, seal: BOOK.seal || '', subtitle: BOOK.subtitle || '', regionToggle: BOOK.regions?.toggle || '古政区', modernToggle: BASEMAP.modernToggle || '今省界', linesToggle: BOOK.linesToggle || '长城运河' })[k] ?? ''))
   .replace('/*BASEMAP*/null', () => inScript(JSON.stringify(BASEMAP)))
   .replace('/*SERIES*/null', () => inScript(JSON.stringify(SERIES)))
   .replace('/*GEO*/null', () => r(bm + 'geo.json').trim())

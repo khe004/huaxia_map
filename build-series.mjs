@@ -133,7 +133,7 @@ function renderP() {
     arr.sort((a, b) => (a[1][3] ?? 1e9) - (b[1][3] ?? 1e9)); n += arr.length;
     h += '<section class="grp">' + head(k, arr.length, '位') + '<div class="pg">' + arr.map(([p, b]) => {
       const k0 = v != null ? v : p.bk.slice().sort((a, b) => b[2] - a[2])[0][0];
-      return '<a class="pc" href="' + pHref(p.n, k0) + '" title="' + esc((p.zi ? '字' + p.zi + '。' : '') + p.bio) + '"><b>' + esc(p.n) + '</b>' + (p.life ? '<span>' + esc(p.life) + '</span>' : '')
+      return '<a class="pc" href="' + pHref(p.n, k0) + '" title="' + esc((p.zi ? ZI + p.zi + '。' : '') + p.bio) + '"><b>' + esc(p.n) + '</b>' + (p.life ? '<span>' + esc(p.life) + '</span>' : '')
         + (p.ne ? '' : '<i class="po" title="' + p.bk.map(b => vol(b[0]) + evCnt(b)).join('，') + '">身后</i>')
         + (p.bk.length > 1 ? '<i title="出现在 ' + p.bk.map(b => vol(b[0])).join('、') + '">' + p.bk.length + ' 卷</i>' : '') + '</a>'; }).join('') + '</div></section>';
   }
@@ -201,7 +201,7 @@ function run() {
   cnt.textContent = (filt !== 'e' ? ps.length + ' 位人物' : '') + (filt === 'all' ? ' · ' : '') + (filt !== 'p' ? es.length + ' 个事件' : '');
   let hp = '', he = '';
   if (ps.length) hp = '<div><h2><span>人物</span></h2><div class="rl">' + ps.slice(0, lp).map(p => { const k0 = (v != null ? p.bk.find(b => b[0] === v) : p.bk.slice().sort((a, b) => b[2] - a[2])[0])[0];
-    return '<div class="hit" data-href="' + pHref(p.n, k0) + '"><span class="y">' + lifeHtml(p.life, terms.map(yearOf).filter(y => y != null)) + '</span><a class="t" href="' + pHref(p.n, k0) + '">' + mk(p.n, terms) + (p.zi ? '<small>字' + mk(p.zi, terms) + '</small>' : '') + aka(p, terms) + '</a>'
+    return '<div class="hit" data-href="' + pHref(p.n, k0) + '"><span class="y">' + lifeHtml(p.life, terms.map(yearOf).filter(y => y != null)) + '</span><a class="t" href="' + pHref(p.n, k0) + '">' + mk(p.n, terms) + (p.zi ? '<small>' + ZI + mk(p.zi, terms) + '</small>' : '') + aka(p, terms) + '</a>'
       + '<span class="s">' + mk(snip(p.bio, terms), terms) + '</span><span class="m">' + p.bk.map(b => { const [k, f] = b; return '<a class="vb" href="' + pHref(p.n, k) + '" title="' + esc(B[k][1]) + ' · ' + esc(f) + ' · ' + evCnt(b) + '">' + vol(k) + ' ' + esc(B[k][1]) + '</a>'; }).join('') + '</span></div>'; }).join('')
     + '</div>' + (ps.length > lp ? '<button class="more" data-more="p">显示全部 ' + ps.length + ' 位 ›</button>' : '') + '</div>';
   if (es.length) he = '<div><h2><span>事件</span></h2><div class="rl">' + es.slice(0, lim.e).map(e => '<a class="hit" href="' + evHref(e) + '"><span class="y">' + fy(e.y, e.k) + '</span><span class="t"><i class="k ' + e.kind + '"></i>' + mk(e.t, terms) + '</span>'
@@ -459,6 +459,7 @@ ${r('./engine/overview-client.js')}
 </script>
 <script>
 const IDX = ${JSON.stringify(IDX).replace(/</g, '\\u003c')};
+const ZI = ${JSON.stringify(S.ziLabel != null ? S.ziLabel : '字')};
 ${searchJs}
 </script>
 `;

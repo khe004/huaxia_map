@@ -298,7 +298,7 @@ gModern.selectAll('path').data(GEO.cn.features).join('path').attr('d', path);
 const gLabels = root.append('g');
 // 不在本书范围内（或只部分纳入）的今省区，始终显示省名
 const OUTSIDE = new Set(GEO.cn.features.map(f => f.properties.n).filter(n => !(SC.provinces || []).includes(n)));
-const provLbl = gLabels.append('g').selectAll('text').data(GEO.cn.features.filter(f => !['香港', '澳门'].includes(f.properties.n))).join('text')
+const provLbl = gLabels.append('g').selectAll('text').data(GEO.cn.features.filter(f => !(BASEMAP.noProvLabel || ['香港', '澳门']).includes(f.properties.n))).join('text')
   .attr('class', f => 'lbl prov-lbl' + (OUTSIDE.has(f.properties.n) ? ' always' : '')).attr('text-anchor', 'middle')
   .attr('transform', f => { const c = proj(d3.geoCentroid(f)); return `translate(${c})`; })
   .text(f => '今' + f.properties.n);
@@ -868,7 +868,7 @@ function renderPerson(n) {
     : `<div style="left:${sc(e.y)}%;width:2px;background:var(--ink)"></div>`)).join('')}</div>` : '';
   pbody.innerHTML = `
     <button class="back">‹ 返回</button>
-    <h2>${n}${p.zi ? `<small>字${p.zi}</small>` : ''}</h2>
+    <h2>${n}${p.zi ? `<small>${B.ziLabel != null ? B.ziLabel : "字"}${p.zi}</small>` : ''}</h2>
     <div class="meta"><span class="chip" style="cursor:default">${fdot(p.f)}${fName(p.f, fy)}</span><span>${p.life}</span></div>
     ${life}
     <p>${rich(p.bio)}</p>
