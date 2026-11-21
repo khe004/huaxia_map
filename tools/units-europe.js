@@ -23,12 +23,18 @@ const CN = {
   BA: '波黑', XK: '科索沃', UA: '乌克兰', BY: '白俄罗斯', MD: '摩尔多瓦', RU: '俄罗斯', GE: '格鲁吉亚', AM: '亚美尼亚', AZ: '阿塞拜疆',
   MA: '摩洛哥', EH: '西撒哈拉', DZ: '阿尔及利亚', TN: '突尼斯', LY: '利比亚', EG: '埃及', IL: '以色列', PS: '巴勒斯坦', LB: '黎巴嫩',
   SY: '叙利亚', JO: '约旦', IQ: '伊拉克', IR: '伊朗', SA: '沙特阿拉伯', KW: '科威特', AD: '安道尔', SM: '圣马力诺', MC: '摩纳哥',
+  AF: '阿富汗', PK: '巴基斯坦', TM: '土库曼斯坦', UZ: '乌兹别克斯坦', TJ: '塔吉克斯坦', KG: '吉尔吉斯斯坦', AE: '阿联酋', OM: '阿曼', QA: '卡塔尔', BH: '巴林',
+  SD: '苏丹', YE: '也门',
 };
 // 用 Natural Earth 一级行政区做拼块的国家（adm0_a3）
 const NE_UNITS = { BIH: 'BA', KOS: 'XK', UKR: 'UA', BLR: 'BY', MDA: 'MD', RUS: 'RU', GEO: 'GE', ARM: 'AM', AZE: 'AZ', MAR: 'MA', SAH: 'EH', DZA: 'DZ',
-  TUN: 'TN', LBY: 'LY', EGY: 'EG', ISR: 'IL', PSX: 'PS', LBN: 'LB', SYR: 'SY', JOR: 'JO', IRQ: 'IQ', IRN: 'IR', KWT: 'KW', AND: 'AD', SMR: 'SM', MCO: 'MC' };
-// 拼块的经纬度范围：质心落在其中的才算拼块（俄罗斯只取乌拉尔以西，沙特只取北部）
-const inBox = ([x, y]) => x >= -25 && x <= 62 && y >= 20 && y <= 72;
+  TUN: 'TN', LBY: 'LY', EGY: 'EG', ISR: 'IL', PSX: 'PS', LBN: 'LB', SYR: 'SY', JOR: 'JO', IRQ: 'IQ', IRN: 'IR', KWT: 'KW', AND: 'AD', SMR: 'SM', MCO: 'MC',
+  SAU: 'SA', AFG: 'AF', PAK: 'PK', TKM: 'TM', UZB: 'UZ', TJK: 'TJ', KGZ: 'KG', ARE: 'AE', OMN: 'OM', QAT: 'QA', BHR: 'BH', SDN: 'SD', YEM: 'YE' };
+// 两河流域、叙利亚与印度河流域的古代城邦比一级行政区细，改用 geoBoundaries 的二级行政区（数据目录里有 gb-<国>-ADM2.geojson 时）：
+//   https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/main/releaseData/gbOpen/<国>/ADM2/geoBoundaries-<国>-ADM2_simplified.geojson
+const GB_ADM2 = { IRQ: 'IQ', SYR: 'SY', PAK: 'PK' };
+// 拼块的经纬度范围：质心落在其中的才算拼块（俄罗斯只取乌拉尔以西；东到印度河，南到北纬 15°）
+const inBox = ([x, y]) => x >= -25 && x <= 78 && y >= 15 && y <= 72;
 // 陆地总范围（nb 只保留与之相交的国家）
 const BIG = [-75, -5, 110, 82];
 
@@ -58,13 +64,17 @@ const DE2 = { DE11: 'Stuttgart', DE12: 'Karlsruhe', DE13: 'Freiburg', DE14: 'Tü
 for (const u of units) if (DE2[u.properties.g]) u.properties.n = DE2[u.properties.g];
 // Natural Earth 一级行政区
 const NEU = new Set(Object.keys(NE_UNITS)), rest = new Map();
+const GB = new Set(Object.keys(GB_ADM2).filter(a3 => fs.existsSync(path.join(dir, `gb-${a3}-ADM2.geojson`))));
+for (const a3 of GB) for (const f of rd(`gb-${a3}-ADM2.geojson`).features) if (f.geometry)
+  units.push({ type: 'Feature', properties: { n: f.properties.shapeName, p: CN[GB_ADM2[a3]], g: 'gb-' + (f.properties.shapeID || a3 + '-' + f.properties.shapeName) }, geometry: f.geometry });
 for (const f of rd('ne_10m_admin_1_states_provinces.geojson').features) {
-  const a3 = f.properties.adm0_a3; if (!NEU.has(a3) || !f.geometry) continue;
+  const a3 = f.properties.adm0_a3; if (!NEU.has(a3) || GB.has(a3) || !f.geometry) continue;
   let cc = NE_UNITS[a3];
   // 克里米亚与塞瓦斯托波尔按国际通行的看法记作乌克兰
   if (['Crimea', 'Sevastopol'].includes(f.properties.name) || /^UA-4[03]$/.test(f.properties.iso_3166_2 || '')) cc = 'UA';
   const ft = { type: 'Feature', properties: { n: f.properties.name, p: CN[cc], g: f.properties.adm1_code }, geometry: f.geometry };
-  if (inBox(centroid(f.geometry))) units.push(ft);
+  const c = centroid(f.geometry);
+  if (inBox(c) && !(a3 === 'RUS' && c[0] > 62)) units.push(ft);
   else (rest.get(a3) || rest.set(a3, []).get(a3)).push(ft);
 }
 // 范围以外：其余国家整体，加上上面国家落在范围以外的一级行政区（按国家合并）

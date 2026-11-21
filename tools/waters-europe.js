@@ -8,7 +8,7 @@ const dir = process.argv[2];
 if (!dir) { console.error('用法：node tools/waters-europe.js <数据目录>'); process.exit(1); }
 const OUT = path.join(__dirname, '..', 'basemaps', 'europe', 'geo.json');
 const rd = f => JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
-const BOX = [-26, 15, 68, 72];
+const BOX = [-26, 15, 80, 72];
 const ZH = {
   Rhein: '莱茵河', Rhin: '莱茵河', Rhine: '莱茵河', Nederrijn: '莱茵河', Waal: '瓦尔河', Lek: '莱克河', IJssel: '艾瑟尔河',
   Danube: '多瑙河', Donau: '多瑙河', 'Soroksari Duna': '多瑙河', 'Bratul Chillia': '多瑙河', 'Bratul Sulina': '多瑙河', 'Bratul Sfintu Gheorghe': '多瑙河', Borcea: '多瑙河',
@@ -26,8 +26,10 @@ const ZH = {
   'Al Furat': '幼发拉底河', Tigris: '底格里斯河', Dicle: '底格里斯河', 'Shatt al Arab': '阿拉伯河', 'Shatt al Hillah': '希拉河', Karkheh: '卡尔黑河',
   'Qezel Owzan': '克孜勒乌赞河', Sefid: '塞菲德河', Atrek: '阿特雷克河', Jordan: '约旦河', Nile: '尼罗河', 'Rosetta Branch': '尼罗河', 'Damietta Branch': '尼罗河',
   Moulouya: '穆卢耶河', 'Oued Sebou': '塞布河', 'Oum Er Rbia': '乌姆赖比阿河', Sous: '苏斯河', 'Syr  Darya': '锡尔河', 'Amu  Darya': '阿姆河',
+  Indus: '印度河', Jhelum: '杰赫勒姆河', Chenab: '杰纳布河', Ravi: '拉维河', Beas: '比亚斯河', Sutlej: '萨特莱杰河', Helmand: '赫尔曼德河', Harirud: '哈里河',
+  Zarafshon: '泽拉夫尚河', Panj: '喷赤河', Kabul: '喀布尔河',
 };
-const MAJOR = new Set(['莱茵河', '多瑙河', '第聂伯河', '伏尔加河', '顿河', '尼罗河', '幼发拉底河', '底格里斯河', '罗讷河', '波河', '埃布罗河', '易北河', '维斯瓦河', '卢瓦尔河', '塞纳河', '塔霍河']);
+const MAJOR = new Set(['莱茵河', '多瑙河', '第聂伯河', '伏尔加河', '顿河', '尼罗河', '幼发拉底河', '底格里斯河', '罗讷河', '波河', '埃布罗河', '易北河', '维斯瓦河', '卢瓦尔河', '塞纳河', '塔霍河', '印度河', '阿姆河']);
 const SKIP_RV = new Set(['Suez Canal', 'Ismailiya Canal', 'Caledonian Canal', 'Ferenc Csatorna', 'Gharraf Canal', 'Hindiyah Channel']);
 const LZH = { 'Lake Geneva': '日内瓦湖', Bodensee: '博登湖', 'Lake Balaton': '巴拉顿湖', 'Sea of Galilee': '加利利海', 'Dead Sea': '死海', 'Lake Van': '凡湖',
   'Lake Urmia': '乌尔米耶湖', 'Lake Tuz': '图兹湖', 'Lake Sevan': '塞凡湖', 'Lake Skadar': '斯库台湖', 'Lake Ladoga': '拉多加湖', 'Lake Onega': '奥涅加湖',
