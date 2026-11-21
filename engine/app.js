@@ -886,6 +886,8 @@ function renderPerson(n) {
 const tg = (id, cls) => { const el = $(id); const f = () => { svg.classed(cls, !el.checked); svg.classed('show-prov', K >= 1.8 && $('#tg-modern').checked); }; el.addEventListener('change', f); f(); };
 // 文化事件（文学、学术、宗教、艺术、科技）可以从地图与时间轴上隐去，只看战事、政事、外交；本卷没有文化事件时不显示这个开关
 // 线状图层：页头开关同时隐去图例里的线条一项；本卷没有线条时不显示开关
+// 窄屏的图例默认收起（见 page.html 的 .lg-tog）
+$('#lg-tog').addEventListener('click', () => { const o = $('#mapwrap').classList.toggle('lg-open'); $('#lg-tog').textContent = o ? '收起图例' : '图例'; $('#lg-tog').setAttribute('aria-expanded', o); });
 if (LINES.length) { const el = $('#tg-lines'), f = () => { svg.classed('hide-lines', !el.checked); $('#legend').classList.toggle('hide-lines', !el.checked); }; el.addEventListener('change', f); f(); }
 else $('#tg-lines').parentNode.hidden = true;
 tg('#tg-terrain', 'hide-terrain'); tg('#tg-modern', 'hide-modern'); tg('#tg-zhou', 'hide-zhou'); tg('#tg-city', 'hide-city');
