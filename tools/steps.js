@@ -1,7 +1,7 @@
 // 各检查工具共用：按引擎（engine/app.js）的同一规则生成时间轴的年份与步。
 // load(id) 读入一卷，返回 { X: 书的各项数据, YEARS, steps, tOf }；steps[k] = { y, t, e }，e 为事件（年初一步为 null）。
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const tOf = (y, m) => y + (m - 1) / 12;
 function load(id) {
   const c = {}; vm.createContext(c);

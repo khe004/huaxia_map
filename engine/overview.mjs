@@ -11,11 +11,13 @@ const REP = [[-210, '秦'], [2, '西汉'], [140, '东汉'], [262, '三国'], [28
   [612, '隋'], [669, '唐'], [741, '唐'], [820, '唐'], [943, '五代十国'], [1111, '北宋'], [1142, '南宋'], [1330, '元'], [1433, '明'], [1582, '明'], [1820, '清']];
 const fy = y => (y < 0 ? `前${-y}` : `${y}`);
 
-export function overview(S, r) {
-  const G = JSON.parse(r('./basemaps/china/overview.json'));
+// r 读仓库根目录的文件（底图），rd 读合集根目录的文件（各卷）；不传 rd 时同 r
+// 另一套合集可在 series.json 里写 basemap（底图包）、overviewYears（[[年, 名], …] 代替谭图总图年份）、repLabel（帧说明，{} 处填名）、strip（纪年条带的起止年）
+export function overview(S, r, rd = r) {
+  const G = JSON.parse(r(`./basemaps/${S.basemap || 'china'}/overview.json`));
   const vols = S.books.map(b => {
     const c = {}; vm.createContext(c);
-    vm.runInContext(r(`./books/${b.id}/book.js`) + ';this.X={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS,EVENTS,UNIT_OVERRIDES:typeof UNIT_OVERRIDES!=="undefined"?UNIT_OVERRIDES:{}}', c);
+    vm.runInContext(rd(`./books/${b.id}/book.js`) + ';this.X={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS,EVENTS,UNIT_OVERRIDES:typeof UNIT_OVERRIDES!=="undefined"?UNIT_OVERRIDES:{}}', c);
     const X = c.X, ts = X.EVENTS.map(e => e.y + (e.mo - 1) / 12);
     return { id: b.id, X, L: land(X), t0: Math.min(...ts), t1: Math.max(...ts) };
   });
@@ -46,7 +48,7 @@ export function overview(S, r) {
   // 各卷卷末
   vols.forEach((V, k) => frames.push(frame(k, V.t1, Math.floor(V.t1), null)));
   // 谭图总图年份：落在哪卷就取哪卷（几卷都含时取离两端最远的一卷），取该年年中
-  for (const [y, n] of REP) {
+  for (const [y, n] of S.overviewYears || REP) {
     let best = -1, bd = -1;
     vols.forEach((V, k) => { const a = V.X.BOOK.range[0], b = V.X.BOOK.range[1]; if (y >= a && y <= b) { const d = Math.min(y - a, b - y); if (d > bd) { bd = d; best = k; } } });
     if (best >= 0) frames.push(frame(best, y + 0.5, y, n));
@@ -54,12 +56,17 @@ export function overview(S, r) {
   frames.sort((p, q) => p.t - q.t || (p.rep ? 1 : -1));
   // 同一年的卷末帧与总图帧并存时只留总图帧
   const out = frames.filter((f, i) => !(!f.rep && frames.some(g => g !== f && g.rep && g.y === f.y)));
-  return { w: G.w, h: G.h, units: G.units, nb: G.nb, frames: out, books: vols.map(V => [V.id, V.X.BOOK.brand, V.X.BOOK.range]) };
+  const o = { w: G.w, h: G.h, units: G.units, nb: G.nb, frames: out, books: vols.map(V => [V.id, V.X.BOOK.brand, V.X.BOOK.range]) };
+  // 华夏舆图沿用原有的默认值，不写进数据（目录页产物不变）
+  if (S.repLabel) o.repLabel = S.repLabel;
+  if (S.strip) o.strip = S.strip;
+  Object.defineProperty(o, 'vb', { value: G.vb || '-170 -110 1250 990', enumerable: false });
+  return o;
 }
 
 // 朝代条带：books/_dynasties.js，按类别分组、组内首次适配分行
-export function dynasties(r) {
-  const c = {}; vm.createContext(c); vm.runInContext(r('./books/_dynasties.js') + ';this.D=DYNASTIES', c);
+export function dynasties(rd) {
+  const c = {}; vm.createContext(c); vm.runInContext(rd('./books/_dynasties.js') + ';this.D=DYNASTIES', c);
   const order = ['p', 'z', 'n', 'b', 'x'], rows = [];
   for (const g of order) {
     const lanes = [];

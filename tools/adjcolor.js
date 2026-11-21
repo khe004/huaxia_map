@@ -3,7 +3,7 @@
 // 按页面实际的拼块归属求出相邻的种子点，逐个时间步列出接壤的势力对，计算两色的 CIELAB ΔE。
 // ΔE 低于阈值（默认 20）的标 ✗。需要本机的 Chrome（无头模式）。
 const fs = require('fs'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const args = process.argv.slice(2), th = +((args.find(a => a.startsWith('--th=')) || '--th=20').slice(5));
 const ids = args.filter(a => !a.startsWith('--')).length ? args.filter(a => !a.startsWith('--')) : require('./books.js')();
 const inSeries = JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);

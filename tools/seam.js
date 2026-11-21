@@ -2,7 +2,7 @@
 // 底图范围外的周边陆地（BOOK.outer）按国名比较所属势力名；
 // 按现代地级拼块对齐（与引擎一样经 UNIT_OVERRIDES 与最近种子点归属，见 tools/land.js），分不到地块的种子点不比较；按下卷的种子点名列出
 const fs=require('fs'),vm=require('vm'),path=require('path');
-const R=path.join(__dirname,'..');
+const R=require('./root.js').R;
 const S=JSON.parse(fs.readFileSync(R+'/series.json'));
 const {land}=require('./land.js');
 function load(id){const c={};vm.createContext(c);vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`,'utf8')+';this.X={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS,EVENTS,UNIT_OVERRIDES:typeof UNIT_OVERRIDES!=="undefined"?UNIT_OVERRIDES:{}}',c);return c.X;}

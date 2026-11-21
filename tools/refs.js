@@ -1,6 +1,6 @@
 // 用法：node tools/refs.js [书 …]：列出事件 refs 中不在 BOOK.source.titles 里的篇名，以及 titles 中没有任何事件引用的冗余篇目
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 let n = 0;
 for (const id of ids) {

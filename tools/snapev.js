@@ -5,7 +5,7 @@
 // 同时列出前一个事件，便于判断是该把快照挪到前一个事件、补一句简介，还是补一个事件。
 // 另检查快照是否按时间排序，并列出不改变任何地块的空操作快照。开局快照（不晚于第一个事件）不列。
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const R = require('./root.js').R;
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const tOf = (y, m) => y + (m - 1) / 12;
 let total = 0;

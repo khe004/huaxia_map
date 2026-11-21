@@ -3,10 +3,13 @@
 // 两者在本卷任一快照时刻分属不同势力的列出来（地图上看得出的错），附分歧的年份。只列出、不判错：
 // 市域本来跨江的（如马鞍山、铜陵）、河道古今不同的（黄河 1128–1855 年南流夺淮）要人工判断，确认无误的写进 OK 名单。
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = path.join(__dirname, '..');
+const { R, REPO } = require('./root.js');
+// 底图包取合集 series.json 的 basemap（默认 china）；大河名单写在底图包的 basemap.json（bigRivers）
+const BMN = (() => { try { return JSON.parse(fs.readFileSync(R + '/series.json')).basemap || 'china'; } catch (e) { return 'china'; } })();
+const BMJ = JSON.parse(fs.readFileSync(`${REPO}/basemaps/${BMN}/basemap.json`, 'utf8'));
 const { land, units } = require('./land.js');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
-const BIG = new Set(['长江', '金沙江', '黄河', '淮河', '汉江', '渭河', '湘江', '赣江', '西江', '松花江', '黑龙江']);
+const BIG = new Set(BMJ.bigRivers || ['长江', '金沙江', '黄河', '淮河', '汉江', '渭河', '湘江', '赣江', '西江', '松花江', '黑龙江']);
 // 人工核过、跨河归属合理的：'书/拼块' 或 '*/拼块'（各卷通用）
 // 2026-11-20 逐条核过：盐城属广陵、益阳属长沙、新余吉安属豫章、郴州永州属长沙、娄底属长沙、西宁海东属金城（汉郡如此）；
 // 江门、阳江、双鸭山、佳木斯、香港的“本岸”是英、法、俄的租借地或属地；黔东南靠近湘江源头，算不上跨河
@@ -19,7 +22,7 @@ const OK = new Set(['*/马鞍山市', '*/铜陵市', '*/崇明区', '*/盐城市
   // 唐末五代柳州属马楚（951 年才归南汉），归零陵（楚）合适
   'tangmo/柳州市', 'liangjin/柳州市', 'yanyun/柳州市']);
 const segs = [];
-for (const f of JSON.parse(fs.readFileSync(R + '/basemaps/china/geo.json')).rv.features) {
+for (const f of JSON.parse(fs.readFileSync(`${REPO}/basemaps/${BMN}/geo.json`)).rv.features) {
   if (!BIG.has(f.properties.n)) continue;
   const lines = f.geometry.type === 'LineString' ? [f.geometry.coordinates] : f.geometry.coordinates;
   for (const l of lines) for (let i = 0; i + 1 < l.length; i++) segs.push([l[i], l[i + 1], f.properties.n]);
@@ -33,10 +36,10 @@ const cross = (p, q) => {
   }
   return null;
 };
-const U = units();
+const U = units(BMN);
 // 各拼块的外环（与 units() 同样的拆分顺序）；大河从拼块中间穿过的（河道顶点落在拼块内）算跨河的市，不查
 const POLY = (() => {
-  const T = JSON.parse(fs.readFileSync(R + '/basemaps/china/units.topo.json', 'utf8')), [sx, sy] = T.transform.scale, [tx, ty] = T.transform.translate;
+  const T = JSON.parse(fs.readFileSync(`${REPO}/basemaps/${BMN}/units.topo.json`, 'utf8')), [sx, sy] = T.transform.scale, [tx, ty] = T.transform.translate;
   const arcs = T.arcs.map(a => { let x = 0, y = 0; return a.map(([dx, dy]) => { x += dx; y += dy; return [x * sx + tx, y * sy + ty]; }); });
   const ring = r => r.flatMap((i, k) => { const a = i < 0 ? arcs[~i].slice().reverse() : arcs[i]; return k ? a.slice(1) : a; });
   return T.objects.units.geometries.flatMap(g => {

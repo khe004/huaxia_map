@@ -1,6 +1,6 @@
 // 校验书中标注的原文引文（**…** 或 **出处|…**）是否确实出现在原书文本中。
 // 用法：node tools/quotes.js <书目录名 | _people> <原文目录> [出处=原文目录 …]
-//   第一个目录核对不带出处的引文；其余如 左传=dir 核对 **左传|…**；*=dir 核对其余未单列的出处（如诗文篇名）。
+//   第一个目录核对不带出处的引文（西方各卷的 **译文||原文** 也在这个目录里核对原文一侧，如 tools/.corpus/west）；其余如 左传=dir 核对 **左传|…**；*=dir 核对其余未单列的出处（如诗文篇名）。
 //   原文目录下为若干 .txt（简体），引文去掉标点、空白后在全部文本中查找。
 const fs = require('fs'), path = require('path');
 // 原文的异体字按通行字比较（籓→藩、砲→炮、於→于、籐→藤、隣→邻、篛→箬、鴈→雁、疎→疏、臯→皋、粧→妆、祇→只、瘖→喑、囘→回、靑→青、衞→卫、淸→清、戸→户、歳→岁；简繁转换把“著”多转成“着”，两边都按“著”比），书中引文写通行字
@@ -19,10 +19,20 @@ const load = d => fs.readdirSync(d).filter(f => f.endsWith('.txt')).map(f => [f.
 const corpora = { '': load(dir) };
 for (const m of more) { const [k, d] = m.split('='); corpora[k] = load(d); }
 // 以 _ 开头的是 books/ 下的共用数据文件（如 _people 跨卷人物简介）
-const src = fs.readFileSync(path.join(__dirname, '..', 'books', ...(id[0] === '_' ? [id + '.js'] : [id, 'book.js'])), 'utf8');
+const src = fs.readFileSync(path.join(require('./root.js').R, 'books', ...(id[0] === '_' ? [id + '.js'] : [id, 'book.js'])), 'utf8');
 let n = 0, bad = 0; const cnt = {};
+// 译文引文 **译文||原文**（西方各卷）：核对原文一侧，忽略大小写、标点与空白，在第一个目录的全部文本中查找；核过的从源码里去掉，下面不再按中文引文核对
+const latin = t => t.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]/g, '');
+let latinC = null;
+const src2 = src.replace(/^\s*\/\/.*$/gm, '').replace(/\*\*([^*|]+?)\|\|([^*]+?)\*\*/g, (_, zh, o) => {
+  n++; cnt['译文'] = (cnt['译文'] || 0) + 1;
+  latinC = latinC || fs.readdirSync(dir).filter(f => f.endsWith('.txt')).map(f => latin(fs.readFileSync(path.join(dir, f), 'utf8')));
+  const q = latin(o);
+  if (q.length < 8 || !latinC.some(t => t.includes(q))) { bad++; console.log('✗', zh, '||', o); }
+  return '';
+});
 // 注释行里的 **…**（说明引文写法的示例）不算引文
-for (const m of src.replace(/^\s*\/\/.*$/gm, '').matchAll(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g)) {
+for (const m of src2.matchAll(/\*\*(?:([^|*]{1,6})\|)?(.+?)\*\*/g)) {
   n++;
   const k = m[1] || '', q = strip(m[2]); cnt[k || '默认'] = (cnt[k || '默认'] || 0) + 1;
   const c = corpora[k] || (k && corpora['*']);

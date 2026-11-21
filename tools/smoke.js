@@ -6,7 +6,8 @@
 // 需要 Chrome（tools/chrome.js 按平台查找，或用环境变量 CHROME 指定），默认同时开 4 个。
 const fs = require('fs'), path = require('path'), { execFile } = require('child_process');
 const { findChrome, tempDir } = require('./chrome.js');
-const R = path.join(__dirname, '..'), D = path.join(R, 'dist/series');
+const { R, REPO } = require('./root.js');
+const D = path.join(REPO, 'dist', JSON.parse(fs.readFileSync(path.join(R, 'series.json'), 'utf8')).out || 'series');
 const CHROME = findChrome(), TMP = tempDir('smoke-');
 const S = JSON.parse(fs.readFileSync(path.join(R, 'series.json'), 'utf8'));
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : S.books.map(b => b.id);
