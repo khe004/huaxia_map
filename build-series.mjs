@@ -233,7 +233,7 @@ addEventListener('hashchange', () => { const t = new URLSearchParams(location.ha
 })();`;
 // 目录页发布为 artifact 的主页面，发布时会套上文档骨架（doctype 等），这里只写片段；编码与 viewport 仍写上，便于本地直接打开
 // 目录页“凡例”（engine/about.html）：引文核对的总数取自 tools/quotes-log.json
-const ABOUT = (() => { const L = JSON.parse(r('./tools/quotes-log.json')), ids = new Set(S.books.map(b => b.id)); let q = 0, f = 0;
+const ABOUT = (() => { const L = JSON.parse(process.env.YUTU_SERIES && existsSync(new URL('./quotes-log.json', ROOT)) ? rd('./quotes-log.json') : r('./tools/quotes-log.json')), ids = new Set(S.books.map(b => b.id)); let q = 0, f = 0;
   for (const [k, v] of Object.entries(L)) if (ids.has(k) || k === '_people') { q += v.quotes; f += v.found; }
   // 合集根目录下有 about.html 的用它，否则用 engine/about.html（华夏舆图的凡例）
   return (existsSync(new URL('./about.html', ROOT)) && process.env.YUTU_SERIES ? rd('./about.html') : r('./engine/about.html')).replace(/<!--[\s\S]*?-->\n?/, '').replace('{{books}}', cn(S.books.length)).replace('{{q_all}}', q).replace('{{q_found}}', f).replace('{{q_miss}}', q - f); })();

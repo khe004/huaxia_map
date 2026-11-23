@@ -48,9 +48,10 @@ export function overview(S, r, rd = r) {
   // 各卷卷末
   vols.forEach((V, k) => frames.push(frame(k, V.t1, Math.floor(V.t1), null)));
   // 谭图总图年份：落在哪卷就取哪卷（几卷都含时取离两端最远的一卷），取该年年中
-  for (const [y, n] of S.overviewYears || REP) {
-    let best = -1, bd = -1;
-    vols.forEach((V, k) => { const a = V.X.BOOK.range[0], b = V.X.BOOK.range[1]; if (y >= a && y <= b) { const d = Math.min(y - a, b - y); if (d > bd) { bd = d; best = k; } } });
+  // 第三项可指定卷 id（西方舆图几卷年代重叠而地理范围不同，按年份挑卷会挑错）
+  for (const [y, n, pin] of S.overviewYears || REP) {
+    let best = pin ? vols.findIndex(V => V.id === pin) : -1, bd = -1;
+    if (best < 0) vols.forEach((V, k) => { const a = V.X.BOOK.range[0], b = V.X.BOOK.range[1]; if (y >= a && y <= b) { const d = Math.min(y - a, b - y); if (d > bd) { bd = d; best = k; } } });
     if (best >= 0) frames.push(frame(best, y + 0.5, y, n));
   }
   frames.sort((p, q) => p.t - q.t || (p.rep ? 1 : -1));
