@@ -52,6 +52,8 @@ const WORKS = {
   普鲁塔克欧迈尼斯: G + 'tlg0007/tlg041/tlg0007.tlg041.perseus-eng2.xml',
   普鲁塔克阿格西劳斯: G + 'tlg0007/tlg044/tlg0007.tlg044.perseus-eng2.xml',
   普鲁塔克亚历山大: G + 'tlg0007/tlg047/tlg0007.tlg047.perseus-eng2.xml',
+  普鲁塔克狄摩西尼: G + 'tlg0007/tlg054/tlg0007.tlg054.perseus-eng2.xml',
+  普鲁塔克德米特里: G + 'tlg0007/tlg057/tlg0007.tlg057.perseus-eng2.xml',
   普鲁塔克福基翁: G + 'tlg0007/tlg049/tlg0007.tlg049.perseus-eng2.xml',
   色诺芬希腊史: G + 'tlg0032/tlg001/tlg0032.tlg001.perseus-eng2.xml',
   色诺芬远征记: G + 'tlg0032/tlg006/tlg0032.tlg006.perseus-eng2.xml',
