@@ -9,6 +9,7 @@ function xbYear(y) {
 }
 
 const BOOK = {
+  vassalRealm: '属邦 · 附庸',
   id: 'xibo',
   title: '希波战争舆图',
   brand: '希波战争',

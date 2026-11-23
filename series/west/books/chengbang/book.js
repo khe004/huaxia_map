@@ -9,6 +9,7 @@ function cbYear(y) {
 }
 
 const BOOK = {
+  vassalRealm: '属邦 · 附庸',
   id: 'chengbang',
   title: '城邦时代舆图',
   brand: '城邦时代',
@@ -195,8 +196,6 @@ const SNAPSHOTS = [
   [-546, 6, [['persia', '#lydia #eastanat #aram']]],
   // 阿拉利亚海战后，福西亚人撤离科西嘉，埃特鲁里亚人据有科西嘉，迦太基巩固撒丁岛
   [-540, 6, [['etruria', '阿拉利亚 科西嘉南部']]],
-  // 克罗顿灭锡巴里斯
-  [-510, 3, [['greek', '卢卡尼亚']]],
 ];
 
 const ZHOU_LABELS = [

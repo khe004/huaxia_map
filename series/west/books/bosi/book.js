@@ -9,6 +9,7 @@ function bsYear(y) {
 }
 
 const BOOK = {
+  vassalRealm: '属邦 · 附庸',
   id: 'bosi',
   title: '波斯兴起舆图',
   brand: '波斯兴起',
@@ -161,11 +162,11 @@ const SNAPSHOTS = [
   // 耶路撒冷毁灭，犹大国亡
   [-587, 6, [['babylon', '#judah']]],
   // 日食之战后，米底与吕底亚以哈吕斯河为界
-  [-585, 6, [['lydia', '#phrygia 伊科尼昂'], ['tabal', '塔巴勒 图瓦纳 梅利德 卡马努']]],
+  [-585, 6, [['lydia', '#phrygia 伊科尼昂 马尔马拉'], ['tabal', '塔巴勒 图瓦纳 梅利德 卡马努']]],
   // 那波尼德征服泰马一带
   [-552, 6, [['babylon', '泰马 杜马']]],
   // 居鲁士推翻阿斯提阿格斯，波斯取代米底
-  [-550, 6, [['persia', '#media #elam #tabal']]],
+  [-550, 6, [['persia', '#media #elam #tabal 卡尔马尼亚']]],
   // 萨第斯陷落，吕底亚亡
   [-546, 6, [['persia', '#lydia']]],
   // 居鲁士东征

@@ -9,6 +9,7 @@ function blYear(y) {
 }
 
 const BOOK = {
+  vassalRealm: '属邦 · 附庸',
   id: 'bolikeli',
   title: '伯利克利时代舆图',
   brand: '伯利克利',

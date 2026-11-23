@@ -11,6 +11,7 @@ function lmYear(y) {
 }
 
 const BOOK = {
+  vassalRealm: '盟邦 · 附庸',
   id: 'luoma',
   title: '罗马统一意大利舆图',
   brand: '罗马统一意大利',
