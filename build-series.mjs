@@ -160,7 +160,7 @@ let filt = 'all', lim = { p: 12, e: 30 };
 // 检索词里数字与文字之间的空格可有可无：“前209年”能匹配正文的“前 209 年”，反之亦然
 const RX = new Map(), rx = t => { let r = RX.get(t);
   // “年”与“载”等价（天宝三年 = 天宝三载）
-  if (!r) RX.set(t, r = new RegExp(t.replace(/[.*+?^$(){}|[\\]\\\\]/g, '\\\\$&').replace(/(\\d)(?=[^\\d])|([^\\d\\s])(?=\\d)/g, '$1$2\\\\s*').replace(/[年载]/g, '[年载]'), 'g'));
+  if (!r) RX.set(t, r = new RegExp(t.replace(/[.*+?^$(){}|[\\]\\\\]/g, '\\\\$&').replace(/(\\d)(?=[^\\d])|([^\\d\\s])(?=\\d)/g, '$1$2\\\\s*').replace(/[年载]/g, '[年载]'), ${S.foldCase ? "'gi'" : "'g'"}));
   r.lastIndex = 0; return r; };
 const has = (s, t) => !!s && rx(t).test(s);
 // 高亮：先在原文上找出各检索词命中的区间并合并重叠，再逐段转义，免得后一个词匹配进前一轮插入的标签或转义字符
@@ -181,11 +181,11 @@ const lifeYears = l => { const m = String(l || '').match(/^约?(前)?(\\d+)?\\??
 // 生卒年里与检索年份相同的年份加高亮（检索词写作“公元前210年”“155年”时也按年份比对，不按字面）
 const lifeHtml = (l, ys) => esc(l || '').replace(/(前)?(\\d+)/g, (m, q, d) => (ys.includes(q ? -d : +d) ? '<mark>' + m + '</mark>' : m));
 // 检索词命中别名时，在人名后注“又称……”
-const aka = (p, terms) => { const a = p.al.filter(x => terms.some(t => x.includes(t))); return a.length ? '<small>又称' + mk(a.join('、'), terms) + '</small>' : ''; };
+const aka = (p, terms) => { const a = p.al.filter(x => terms.some(t => ${S.foldCase ? 'has(x, t)' : 'x.includes(t)'})); return a.length ? '<small>又称' + mk(a.join('、'), terms) + '</small>' : ''; };
 function scoreP(p, terms) { let s = 0; for (const t of terms) {
   const yr = yearOf(t);
-  if (p.n === t) s += 100; else if (p.al.includes(t)) s += 90; else if (p.n.startsWith(t)) s += 60; else if (p.n.includes(t)) s += 40; else if (yr != null && lifeYears(p.life).includes(yr)) s += 40;
-  else if (p.al.some(a => a.includes(t))) s += 35; else if (p.zi && p.zi.includes(t)) s += 30; else if (has(p.bio, t) || p.bk.some(b => b[1].includes(t))) s += 5; else return 0; } return s + Math.min(p.ne, 20) / 10; }
+  if (p.n === t) s += 100; else if (${S.foldCase ? 'p.al.some(a => a.toLowerCase() === t.toLowerCase())' : 'p.al.includes(t)'}) s += 90; else if (p.n.startsWith(t)) s += 60; else if (p.n.includes(t)) s += 40; else if (yr != null && lifeYears(p.life).includes(yr)) s += 40;
+  else if (p.al.some(a => ${S.foldCase ? 'has(a, t)' : 'a.includes(t)'})) s += 35; else if (p.zi && ${S.foldCase ? 'has(p.zi, t)' : 'p.zi.includes(t)'}) s += 30; else if (has(p.bio, t) || p.bk.some(b => b[1].includes(t))) s += 5; else return 0; } return s + Math.min(p.ne, 20) / 10; }
 function scoreE(e, terms) { let s = 0; for (const t of terms) {
   const yr = yearOf(t);
   if (yr != null && e.y === yr) s += 40; else if (has(e.t, t)) s += 50; else if (e.who.split('、').includes(t)) s += 30; else if (has(e.p, t) || has(e.m, t) || has(e.cal, t)) s += 20;
@@ -208,7 +208,7 @@ function run() {
       + '<span class="s">' + mk(snip(e.d, terms), terms) + '</span><span class="m"><span>' + vol(e.k) + '《' + esc(B[e.k][1]) + '》</span><span>' + mk(e.p + '（' + e.m + '）', terms) + '</span>' + (e.cal ? '<span>' + mk(e.cal, terms) + '</span>' : '') + '<span>' + KN[e.kind] + '</span>' + (e.who ? '<span>' + mk(e.who.length > 40 ? e.who.slice(0, 40) + '…' : e.who, terms) + '</span>' : '') + '</span></a>').join('')
     + '</div>' + (es.length > lim.e ? '<button class="more" data-more="e">显示全部 ' + es.length + ' 个 ›</button>' : '') + '</div>';
   const h = evFirst ? he + hp : hp + he;
-  res.innerHTML = h || '<p class="empty">没有找到“' + esc(raw) + '”。可以换个写法，如人名、字、古地名、今地名或年号。</p>';
+  res.innerHTML = h || '<p class="empty">没有找到“' + esc(raw) + '”。${S.emptyHint || '可以换个写法，如人名、字、古地名、今地名或年号。'}</p>';
   kb = -1;
 }
 let kb = -1, timer;

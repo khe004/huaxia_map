@@ -53,7 +53,7 @@ const BOOK = {
   },
   tags: { 考古: '考古与铭文', 后世史家: '后世史家' },
   quoteLabel: '古代文献原文（英译）',
-  linesToggle: '进军路线',
+  linesToggle: '罗马大道',
   ziLabel: '',
   peopleGroups: [['rome', '罗马'], ['samnites', '萨莫奈人'], ['syracuse', '叙拉古'], ['epirus', '皮洛士']],
   otherGroup: '诸邦与诸部',

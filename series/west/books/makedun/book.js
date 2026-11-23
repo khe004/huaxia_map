@@ -105,7 +105,7 @@ const SEEDS_RAW = `
 北非|迦太基|10.2,36.8  北非|哈德鲁梅图姆|10.6,35.8
 `;
 // 比雷埃夫斯与萨拉米斯、埃伊纳等岛归雅典；穆拉省归哈利卡纳苏斯；巴勒莫省归希梅拉，特拉帕尼省归莫提亚
-const UNIT_OVERRIDES = { 'Peiraias, Nisoi': '雅典', Muğla: '哈利卡纳苏斯', Palermo: '希梅拉', Trapani: '莫提亚', 'Thasos, Kavala': '萨索斯', Mersin: '基利基亚' };
+const UNIT_OVERRIDES = { Antalya: '吕基亚', 'Peiraias, Nisoi': '雅典', Muğla: '哈利卡纳苏斯', Palermo: '希梅拉', Trapani: '莫提亚', 'Thasos, Kavala': '萨索斯', Mersin: '基利基亚' };
 
 const SNAPSHOTS = [
   // 开局：前 404 年秋。斯巴达接管了雅典帝国，小亚细亚的希腊城市已按约交给波斯

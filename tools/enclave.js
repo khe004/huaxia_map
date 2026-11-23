@@ -3,10 +3,10 @@
 // 并且这片地块从开局起没被任何快照改动过（多半是忘了分配的 baseFaction 种子点）。
 // 每片孤岛只报它第一次出现时的快照，以及它持续到哪一条快照；确属历史上的飞地（如海运接济的据点）可不改。
 const fs = require('fs'), vm = require('vm'), path = require('path');
-const R = require('./root.js').R;
+const { R, REPO } = require('./root.js');
 const argv = process.argv.slice(2), probe = (argv.find(a => a.startsWith('--seed=')) || '').slice(7), bk = argv.filter(a => !a.startsWith('--'));
 const ids = bk.length ? bk : require('./books.js')();
-const T = JSON.parse(fs.readFileSync(R + '/basemaps/china/units.topo.json', 'utf8'));
+const T = JSON.parse(fs.readFileSync(`${REPO}/basemaps/${JSON.parse(fs.readFileSync(R + '/series.json', 'utf8')).basemap || 'china'}/units.topo.json`, 'utf8'));
 // 拼块的各块（与 land.js 的拆法一致：带 w 的整块算一个，其余每块一个）及其用到的弧
 const PARTS = T.objects.units.geometries.flatMap(g => {
   const polys = g.type === 'Polygon' ? [g.arcs] : g.type === 'MultiPolygon' ? g.arcs : [];

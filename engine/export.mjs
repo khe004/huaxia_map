@@ -61,7 +61,7 @@ export function writeData(dir, S, IDX, EXP) {
   W('events.csv', csv([['卷', '卷目', '公历年', '公历月', '原书纪年', '事件', '类别', '地点', '今地', '经度', '纬度', '人物', '身后提及', '出处篇目', '正文'],
     ...events.map(e => [e.vol, e.bookTitle, e.year, e.month, e.cal, e.title, e.kindName, e.place, e.modern, e.lon, e.lat, e.people.join('、'), e.posthumous.join('、'), e.refs.join('、'), e.text])]));
   W('people.json', JSON.stringify(people));
-  W('people.csv', csv([['姓名', '字', '生卒', '别名', '简介', '所在各卷'],
+  W('people.csv', csv([['姓名', S.ziLabel === '' ? '原名' : S.ziLabel || '字', '生卒', '别名', '简介', '所在各卷'],
     ...people.map(p => [p.name, p.zi, p.life, p.alias.join('、'), p.bio, p.volumes.map(v => `卷${v.vol}${v.bookTitle}`).join('、')])]));
   W('territory.json', JSON.stringify({ note: '每卷：seeds 为 [州, 种子点名, 经度, 纬度]；snapshots 的 set 为 {势力键: [种子点序号…]}，首条是开局全量，其后只记变化；势力键 x 表示底图外不上色。地图上的拼块（今地级区）归最近的种子点。', books: EXP.territory }));
   console.log('dist/series/data/', events.length, '事件', people.length, '人物', EXP.territory.length, '卷疆域');

@@ -94,7 +94,7 @@ const SEEDS_RAW = `
 北非|迦太基|10.2,36.8  北非|哈德鲁梅图姆|10.6,35.8
 `;
 // 比雷埃夫斯与萨拉米斯、埃伊纳等岛归雅典；穆拉省归哈利卡纳苏斯；巴勒莫省归希梅拉，特拉帕尼省归莫提亚
-const UNIT_OVERRIDES = { 'Peiraias, Nisoi': '雅典', Muğla: '哈利卡纳苏斯', Palermo: '希梅拉', Trapani: '莫提亚', 'Thasos, Kavala': '萨索斯', Mersin: '基利基亚' };
+const UNIT_OVERRIDES = { Antalya: '吕基亚', 'Peiraias, Nisoi': '雅典', Muğla: '哈利卡纳苏斯', Palermo: '希梅拉', Trapani: '莫提亚', 'Thasos, Kavala': '萨索斯', Mersin: '基利基亚' };
 
 const SNAPSHOTS = [
   // 开局：前 430 年。雅典帝国控制爱琴海诸岛与小亚细亚、色雷斯、赫勒斯滂的沿海城市；哈尔基季基的卡尔基斯人与波提狄亚已叛离
