@@ -26,6 +26,7 @@ EVENTS.forEach(e => {
   (e.post || []).forEach(w => e.who.includes(w) || problems.push(`事件「${e.t}」的身后人物「${w}」不在 who 中`));
   if (e.y === 0) problems.push(`事件「${e.t}」的年份为 0（没有公元 0 年）`);
   if (e.y < BOOK.range[0] || e.y > BOOK.range[1]) problems.push(`事件「${e.t}」的年份 ${e.y} 超出时间轴范围`);
+  if (!['war', 'pol', 'dip', 'eco', 'cul'].includes(e.k)) problems.push(`事件「${e.t}」的类别 k: '${e.k}' 不是 war/pol/dip/eco/cul 之一`);
 });
 PEOPLE_RAW.forEach(p => FACTIONS[p[1]] || problems.push(`人物「${p[0]}」的势力「${p[1]}」未定义`));
 // 交汇图只画在世事件不少于 2 件的人物，storyDefault 里不够的人会被静默去掉，这里直接报出来

@@ -2,9 +2,9 @@
 // 列出在页面里分不到任何地块的种子点（HAS_LAND 之外），这些种子的归属变化在地图上看不出来。需要本机的 Chrome（无头模式）。
 // 结果写入 tools/noland.json（改过种子坐标或 scope 后重跑）。
 const fs = require('fs'), path = require('path');
-const R = require('./root.js').R;
+const { R, REPO } = require('./root.js');
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
-const inSeries = JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
+const SJ = JSON.parse(fs.readFileSync(R + '/series.json')), inSeries = SJ.books.map(b => b.id), OUT = SJ.out || 'series';
 const { findChrome, tempDir, dumpDom } = require('./chrome.js');
 const CHROME = findChrome();
 const probe = `
@@ -14,7 +14,7 @@ const probe = `
 const tmp = tempDir('noland-');
 let bad = 0; const cacheF = path.join(__dirname, 'noland.json'), cache = fs.existsSync(cacheF) ? JSON.parse(fs.readFileSync(cacheF, 'utf8')) : {};
 for (const id of ids) {
-  const src = path.join(R, inSeries.includes(id) ? 'dist/series' : 'dist', id, 'index.html');
+  const src = path.join(REPO, 'dist', ...(inSeries.includes(id) ? [OUT] : []), id, 'index.html');
   if (!fs.existsSync(src)) { console.log(`== ${id}：没有找到 ${path.relative(R, src)}，先构建`); continue; }
   let html = fs.readFileSync(src, 'utf8'); const k = html.lastIndexOf('})();');
   html = html.slice(0, k) + probe + html.slice(k + 5);

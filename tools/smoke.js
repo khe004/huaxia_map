@@ -39,7 +39,7 @@ function done(){var r={err:E,ov:document.querySelectorAll('#ovmap .ovu path').le
 setTimeout(function(){try{
   [].forEach.call(document.querySelectorAll('#tabs [role=tab]'),function(b){click(b);});
   click($('[data-tab="overview"]'));for(var i=0;i<5;i++)click($('#ovnext'));click($('#ovprev'));click($('#ovrep button'));click($('#ovplay'));
-  var q=$('#q');if(q){click($('[data-tab="search"]'));q.value='项羽';q.dispatchEvent(new Event('input',{bubbles:true}));}
+  var q=$('#q');if(q){click($('[data-tab="search"]'));q.value=${JSON.stringify(S.smokeQuery || '项羽')};q.dispatchEvent(new Event('input',{bubbles:true}));}
 }catch(x){E.push('操作出错：'+x.message);}setTimeout(function(){click($('#ovplay'));setTimeout(done,800);},3000);},800);});</script>`;
 
 // 中途退出时删掉还留着的 __smoke.html

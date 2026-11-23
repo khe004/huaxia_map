@@ -3,10 +3,10 @@
 // 按页面实际的拼块归属求出相邻的种子点，逐个时间步列出接壤的势力对，计算两色的 CIELAB ΔE。
 // ΔE 低于阈值（默认 20）的标 ✗。需要本机的 Chrome（无头模式）。
 const fs = require('fs'), path = require('path');
-const R = require('./root.js').R;
+const { R, REPO } = require('./root.js');
 const args = process.argv.slice(2), th = +((args.find(a => a.startsWith('--th=')) || '--th=20').slice(5));
 const ids = args.filter(a => !a.startsWith('--')).length ? args.filter(a => !a.startsWith('--')) : require('./books.js')();
-const inSeries = JSON.parse(fs.readFileSync(R + '/series.json')).books.map(b => b.id);
+const SJ = JSON.parse(fs.readFileSync(R + '/series.json')), inSeries = SJ.books.map(b => b.id), OUT = SJ.out || 'series';
 const { findChrome, tempDir, dumpDom } = require('./chrome.js');
 const CHROME = findChrome();
 const probe = `
@@ -29,7 +29,7 @@ const tmp = tempDir('adj-');
 let bad = 0;
 for (const id of ids) {
   // 合集各卷在 dist/series/<书>/（build-series.mjs），独立成书的在 dist/<书>/（node build.mjs <书>）
-  const src = path.join(R, inSeries.includes(id) ? 'dist/series' : 'dist', id, 'index.html');
+  const src = path.join(REPO, 'dist', ...(inSeries.includes(id) ? [OUT] : []), id, 'index.html');
   if (!fs.existsSync(src)) { console.log(`== ${id}：没有找到 ${path.relative(R, src)}，先构建`); continue; }
   let html = fs.readFileSync(src, 'utf8'); const k = html.lastIndexOf('})();');
   html = html.slice(0, k) + probe + html.slice(k + 5);
