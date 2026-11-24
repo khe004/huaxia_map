@@ -65,6 +65,12 @@
   "found": 39,
   "missing": []
  },
+ "xilahua": {
+  "date": "2026-11-24",
+  "quotes": 24,
+  "found": 24,
+  "missing": []
+ },
  "luoma": {
   "date": "2026-11-24",
   "quotes": 53,
@@ -87,6 +93,12 @@
   "date": "2026-11-24",
   "quotes": 54,
   "found": 54,
+  "missing": []
+ },
+ "kaisa": {
+  "date": "2026-11-24",
+  "quotes": 43,
+  "found": 43,
   "missing": []
  }
 }

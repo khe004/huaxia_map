@@ -67,6 +67,10 @@ const WORKS = {
   恺撒高卢战记: L + 'phi0448/phi001/phi0448.phi001.perseus-eng2.xml',
   恺撒内战记: L + 'phi0448/phi002/phi0448.phi002.perseus-eng2.xml',
   苏埃托尼乌斯恺撒传: L + 'phi1348/abo011/phi1348.abo011.perseus-eng2.xml',
+  普鲁塔克菲洛皮门: G + 'tlg0007/tlg027/tlg0007.tlg027.perseus-eng2.xml',
+  普鲁塔克阿吉斯与克列奥美涅斯: G + 'tlg0007/tlg051/tlg0007.tlg051.perseus-eng1.xml',
+  普鲁塔克阿拉图斯: G + 'tlg0007/tlg063/tlg0007.tlg063.perseus-eng2.xml',
+  约瑟夫斯犹太古史: G + 'tlg0526/tlg001/tlg0526.tlg001.perseus-eng2.xml',
   色诺芬希腊史: G + 'tlg0032/tlg001/tlg0032.tlg001.perseus-eng2.xml',
   色诺芬远征记: G + 'tlg0032/tlg006/tlg0032.tlg006.perseus-eng2.xml',
   // 近东：楔形文字与象形文字文献的公版英译（多收在当时的通史与文献集里）
@@ -79,6 +83,7 @@ const WORKS = {
   巴比伦亚述文学: { gut: 'Babylonian-and-Assyrian-Literature_10887/master/10887.txt' },                        // Harper 编（1901）
   迦勒底: { gut: 'ChaldeaFrom-the-Earliest-Times-to-the-Rise-of-Assyria_24654/master/24654.txt' },             // Ragozin（1886）
   ...Object.fromEntries([1, 2, 3, 4, 5, 6, 7, 8, 9].map(k => ['马斯佩罗' + k, { gut: `${k === 1 ? 'History-of-Egypt-Chaldea-Syria-Babylonia-and-Assyria-in-the-Light-of-Recent-Discovery' : `History-of-Egypt-Chald-a-Syria-Babylonia-and-Assyria-Volume-${k}--of-12-`}_${17320 + k}/master/${17320 + k}.txt` }])), // Maspero（1903–1904），书中引铭文英译
+  次经: { gut: 'Deuterocanonical-Books-of-the-Bible--13-Apocrypha_124/master/124.txt' },                    // 钦定本次经（含马加比一书、二书）
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum'] },
 };
 const GUT = 'https://raw.githubusercontent.com/GITenberg/', KJV = 'https://raw.githubusercontent.com/aruljohn/Bible-kjv/master/';
