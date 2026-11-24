@@ -97,6 +97,8 @@ const FACTIONS = {
   scythae:    { color: '#9aa0a8', name: () => '斯基泰人', mapName: () => '斯基泰' },
   sarmatae:   { color: '#b0a8c8', name: () => '萨尔马提亚人', mapName: () => '萨尔马提亚' },
   wild:       { color: '#e6e2d6', name: () => '沙漠中的部族', mapName: () => '', hideLabel: () => true },
+  // 种子分组 x（爱尔兰）不参与疆域，引擎仍按势力 x 给它的拼块取色，这里定义为不着色
+  x:          { color: '#e6e2d6', blank: true, name: () => '', mapName: () => '', hideLabel: () => true },
 };
 
 const SEEDS_RAW = `
