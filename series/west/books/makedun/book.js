@@ -74,7 +74,7 @@ const FACTIONS = {
   pelop:    { color: '#e08a30', name: t => (t < -370.5 ? '斯巴达的盟邦与属邦' : '伯罗奔尼撒诸邦（科林斯、伊利斯等）'), mapName: () => '科林斯',
     of: t => (t < -370.5 ? 'sparta' : t >= -336.584 ? 'macedon' : null) },
   argos:    { color: '#5a9a50', name: t => (t < -370.5 ? '阿尔戈斯' : '阿尔戈斯与阿卡迪亚同盟'), mapName: () => '阿尔戈斯', of: t => (t >= -336.584 ? 'macedon' : null) },
-  boeotia:  { color: '#d08a40', name: () => '忒拜与维奥蒂亚', mapName: () => '忒拜',
+  boeotia:  { color: '#c08850', name: () => '忒拜与维奥蒂亚', mapName: () => '忒拜',
     of: t => (t >= -381.584 && t < -378.084 ? 'sparta' : t >= -337.417 ? 'macedon' : null) },
   phocis:   { color: '#c8d0a0', name: () => '福基斯、洛克里斯与西希腊诸邦', mapName: () => '福基斯', of: t => (t >= -336.584 ? 'macedon' : null) },
   corcyra:  { color: '#806aa0', name: () => '科西拉', mapName: () => '科西拉' },
