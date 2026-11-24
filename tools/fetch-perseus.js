@@ -76,6 +76,14 @@ const WORKS = {
   塔西佗编年史: L + 'phi1351/phi005/phi1351.phi005.perseus-eng2.xml',
   维吉尔埃涅阿斯纪: L + 'phi0690/phi003/phi0690.phi003.perseus-eng2.xml',
   奥维德变形记: L + 'phi0959/phi006/phi0959.phi006.perseus-eng3.xml',
+  苏埃托尼乌斯卡利古拉传: L + 'phi1348/abo014/phi1348.abo014.perseus-eng2.xml',
+  苏埃托尼乌斯克劳狄乌斯传: L + 'phi1348/abo015/phi1348.abo015.perseus-eng2.xml',
+  苏埃托尼乌斯尼禄传: L + 'phi1348/abo016/phi1348.abo016.perseus-eng2.xml',
+  苏埃托尼乌斯加尔巴传: L + 'phi1348/abo017/phi1348.abo017.perseus-eng2.xml',
+  苏埃托尼乌斯奥托传: L + 'phi1348/abo018/phi1348.abo018.perseus-eng2.xml',
+  苏埃托尼乌斯维特利乌斯传: L + 'phi1348/abo019/phi1348.abo019.perseus-eng2.xml',
+  塔西佗历史: L + 'phi1351/phi004/phi1351.phi004.perseus-eng2.xml',
+  约瑟夫斯犹太战记: G + 'tlg0526/tlg004/tlg0526.tlg004.perseus-eng2.xml',
   色诺芬希腊史: G + 'tlg0032/tlg001/tlg0032.tlg001.perseus-eng2.xml',
   色诺芬远征记: G + 'tlg0032/tlg006/tlg0032.tlg006.perseus-eng2.xml',
   // 近东：楔形文字与象形文字文献的公版英译（多收在当时的通史与文献集里）
@@ -91,7 +99,7 @@ const WORKS = {
   次经: { gut: 'Deuterocanonical-Books-of-the-Bible--13-Apocrypha_124/master/124.txt' },                    // 钦定本次经（含马加比一书、二书）
   奥古斯都功业录: { gut: 'Monumentum-Ancyranum-The-Deeds-of-Augustus_66595/master/66595-0.txt' },   // Fairley 译（1898）
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
-  圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Luke'] },
+  圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans'] },
 };
 const GUT = 'https://raw.githubusercontent.com/GITenberg/', KJV = 'https://raw.githubusercontent.com/aruljohn/Bible-kjv/master/';
 // 古腾堡文本去掉卷首卷尾的版权说明
