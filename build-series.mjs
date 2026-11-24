@@ -266,6 +266,7 @@ h1 .seal { display: inline-grid; place-items: center; width: 38px; height: 38px;
 .sub { margin: 10px 0 0; color: var(--muted); letter-spacing: .06em; }
 .start { display: inline-block; margin-top: 20px; padding: 8px 18px; border-radius: 6px; background: var(--seal); color: var(--land); text-decoration: none; font-weight: 500; }
 .start:hover { filter: brightness(1.08); }
+.start.alt { margin-left: 10px; background: none; color: var(--seal); box-shadow: inset 0 0 0 1px var(--seal); }
 ol { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 10px; }
 li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 12px; align-items: stretch; }
 li.era-start:not(:first-child) { margin-top: 14px; }
@@ -411,7 +412,7 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
 <main>
   <h1>${esc(S.title)}<span class="seal">史</span></h1>
   <p class="sub">${esc(S.subtitle)}</p>
-  <a class="start" href="${S.books[0].id}/index.html?at=start">从卷一读起 ›</a>
+  <a class="start" href="${S.books[0].id}/index.html?at=start">从卷一读起 ›</a>${S.globe ? `<a class="start alt" href="${esc(S.globe)}">在地球上看 ›</a>` : ''}
   <div class="tabs" id="tabs" role="tablist" aria-label="目录">
     <button type="button" role="tab" id="t-vols" data-tab="vols" aria-controls="vols" aria-selected="true">卷目</button><button type="button" role="tab" id="t-overview" data-tab="overview" aria-controls="overview" aria-selected="false" tabindex="-1">总览</button><button type="button" role="tab" id="t-people" data-tab="people" aria-controls="people" aria-selected="false" tabindex="-1">人物</button><button type="button" role="tab" id="t-events" data-tab="events" aria-controls="events" aria-selected="false" tabindex="-1">事件</button><button type="button" role="tab" id="t-search" data-tab="search" aria-controls="search" aria-selected="false" tabindex="-1">检索</button><button type="button" role="tab" id="t-about" data-tab="about" aria-controls="about" aria-selected="false" tabindex="-1">凡例</button>
   </div>

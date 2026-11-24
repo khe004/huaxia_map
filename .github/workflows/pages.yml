@@ -37,6 +37,9 @@ jobs:
       - run: YUTU_SERIES=series/west node build-series.mjs
       - run: YUTU_SERIES=series/west node tools/smoke.js
       - run: sed -i '1i <!doctype html>\n<html lang="zh-CN">' dist/series/west/index.html
+      # 地球入口页（globe.json 列出的各套合集画在同一个地球上）：构建到 dist/series/globe/
+      - run: node build-globe.mjs
+      - run: sed -i '1i <!doctype html>\n<html lang="zh-CN">' dist/series/globe/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist/series
