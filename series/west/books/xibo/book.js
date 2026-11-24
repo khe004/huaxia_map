@@ -64,7 +64,7 @@ const FACTIONS = {
   greek:    { color: '#58a0d8', name: () => '希腊同盟诸邦（科林斯、埃伊纳、麦加拉、优卑亚等）', mapName: () => '希腊同盟' },
   argos:    { color: '#5a9a50', name: () => '阿尔戈斯与亚该亚（中立）', mapName: () => '阿尔戈斯' },
   thessaly: { color: '#c0a060', name: () => '色萨利', mapName: () => '色萨利', of: t => (t >= -479.667 ? 'persia' : null) },
-  boeotia:  { color: '#d08a40', name: () => '维奥蒂亚（忒拜）', mapName: () => '忒拜', of: t => (t >= -479.417 && t < -478.417 ? 'persia' : null) },
+  boeotia:  { color: '#c08850', name: () => '维奥蒂亚（忒拜）', mapName: () => '忒拜', of: t => (t >= -479.417 && t < -478.417 ? 'persia' : null) },
   macedon:  { color: '#e0a0a0', name: () => '马其顿（亚历山大一世）', mapName: () => '马其顿', of: t => (t < -478.417 ? 'persia' : null) },
   thrace:   { color: '#a0a0c0', name: () => '色雷斯与培奥尼亚诸部', mapName: () => '色雷斯', of: t => (t < -478.334 ? 'persia' : null) },
   epirus:   { color: '#b0a0b0', name: () => '伊庇鲁斯与西希腊诸部', mapName: () => '伊庇鲁斯', hideLabel: () => true },

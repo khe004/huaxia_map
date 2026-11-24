@@ -68,7 +68,7 @@ const FACTIONS = {
   sparta:   { color: '#b02a2a', name: () => '斯巴达', mapName: () => '斯巴达' },
   pelop:    { color: '#e08a30', name: () => '伯罗奔尼撒同盟诸邦（科林斯、麦加拉、伊利斯等）', mapName: () => '科林斯', of: () => 'sparta' },
   argos:    { color: '#5a9a50', name: () => '阿尔戈斯', mapName: () => '阿尔戈斯' },
-  boeotia:  { color: '#d08a40', name: () => '维奥蒂亚（忒拜）', mapName: () => '忒拜', of: t => (t >= -456.25 && t < -446.334 ? 'athens' : null) },
+  boeotia:  { color: '#c08850', name: () => '维奥蒂亚（忒拜）', mapName: () => '忒拜', of: t => (t >= -456.25 && t < -446.334 ? 'athens' : null) },
   greek:    { color: '#c8d0a0', name: () => '中希腊与西希腊诸邦（福基斯、洛克里斯、埃托利亚等）', mapName: () => '福基斯', hideLabel: () => true },
   corcyra:  { color: '#806aa0', name: () => '科西拉', mapName: () => '科西拉' },
   thessaly: { color: '#c0a060', name: () => '色萨利', mapName: () => '色萨利' },
