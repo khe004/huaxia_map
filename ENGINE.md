@@ -133,7 +133,7 @@ yutu/
 - 交互：拖动转地球、滚轮或双指缩放；地球正中的十字是焦点。时间轴单独控制，转动不改年份。地址 `#y=年份&ll=经,纬&k=缩放` 可回到同一视角，各合集目录页的“在地球上看”按钮带上本地区的 `ll`。
 - 选卷：这一年有书写的各卷（年份落在卷首、卷末事件之间）里，每套合集取地域中心离焦点最近的一卷（中心为卷末着色拼块的球面平均；年代重叠、地域相同时减去“这一年靠近卷中段”的加分），各套都画；离焦点最近的一卷为当前卷，盖在其他卷上面，右栏显示它的势力、这一年的事件与“打开这一卷的这一年”（`?y=`）。切换留 4° 余量。
 - 着色与引擎同一规则：拼块按 `tools/land.js` 的拆法与归属，快照、势力名称（`mapName`、`hideLabel`、去括号）、颜色、`blank` 都按时刻取值，填色按 `--fo` 与陆地底色混合。
-- 地形：`node tools/globe-terrain.mjs`（`tools/` 下 `npm i`）把各底图包按自身投影渲染好的地形图反投影成一张经纬度等距的贴图（`basemaps/globe/terrain-base.webp`、`terrain-relief.webp`，入库），页面用 WebGL 按正射投影取样；几套底图重叠处按离各自投影中心的远近混合。底图的地形图改过、或新地区超出 `globe.json` 的 `terrain` 范围时重跑。
+- 地形：`node tools/globe-terrain.mjs`（`tools/` 下 `npm i`）由 AWS Terrarium 高程瓦片直接按经纬度等距渲染，画法与 `tools/terrain.js` 相同（base 层山体阴影与高程着色、relief 层中性明暗）：全球一张（`basemaps/globe/world-*.webp`，4096×2048）、欧亚高清区一张（`terrain-*.webp`，范围与每度像素见 `globe.json` 的 `terrain`），入库；瓦片缓存在 `tools/.dem/`。页面用 WebGL 按正射投影取样，高清区内取高清贴图、边缘 4° 内与全球贴图渐变。新地区要更清晰的地形时放大高清区，重跑脚本。
 - 事件简介：点事件点或右栏的事件时，从各合集导出的 `data/events.json` 读取。
 - 全球陆地轮廓：`basemaps/globe/land-110m.json`（world-atlas 2.0.2，Natural Earth 1:1.1 亿）。
 
@@ -141,7 +141,7 @@ yutu/
 
 1. 照西方舆图的做法新建合集目录（如 `series/india/`）和底图包，构建到站点下的子目录（`series.json` 的 `out`）。
 2. 在 `globe.json` 的 `series` 里加一项：`name`、`dir`（合集根目录）、`site`（发布在站点下的子目录）、`color` / `dark`（时间条与标签的标识色），需要的话在 `jump` 里加快捷按钮，把 `range` 放宽。
-3. 新底图的范围超出 `terrain` 时放大它，重跑 `tools/globe-terrain.mjs`。
+3. 全球贴图已覆盖各地；新地区想要和欧亚一样清晰时，放大 `terrain` 的范围，重跑 `tools/globe-terrain.mjs`。
 4. 该合集的 `series.json` 可写 `"globe": "../globe/index.html#ll=经,纬&k=2.2"`，目录页出现“在地球上看”按钮。
 5. Pages 工作流里新合集的构建要放在 `node build-globe.mjs` 之前。
 

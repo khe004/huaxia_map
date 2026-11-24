@@ -213,21 +213,27 @@ const CONF = {{CONF}};
     if (h.get('k') && +h.get('k') > 0) zoomK = Math.min(14, Math.max(0.8, +h.get('k')));
   } catch (e) {}
 
-  // —— 地形：经纬度等距贴图，在片元着色器里按正射投影反算经纬度取样
-  function terrainGL(canvas, src) {
+  // —— 地形：两张经纬度等距贴图（全球一张，欧亚高清区一张，tools/globe-terrain.mjs 生成），在片元着色器里按正射投影反算经纬度取样。
+  // 高清区内取高清贴图，离高清区边缘 4° 以内与全球贴图渐变；两张同一画法，接缝不明显
+  function terrainGL(canvas, worldSrc, hiSrc) {
     const gl = canvas.getContext('webgl', { premultipliedAlpha: false, alpha: true });
     if (!gl) return null;
     const vs = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
-    const fs = `precision highp float; uniform sampler2D tex; uniform vec2 ctr; uniform float sc; uniform vec2 rot; uniform vec4 ext; uniform float hh;
+    const fs = `precision highp float; uniform sampler2D tw; uniform sampler2D th; uniform float hasW; uniform float hasH;
+      uniform vec2 ctr; uniform float sc; uniform vec2 rot; uniform vec4 ext; uniform float hh;
       void main(){ vec2 q = vec2(gl_FragCoord.x - ctr.x, (hh - gl_FragCoord.y) - ctr.y) / sc; q.y = -q.y; float r2 = dot(q, q); if (r2 > 1.0) discard;
         float cz = sqrt(1.0 - r2); float lam = atan(q.x, cz), phi = asin(clamp(q.y, -1.0, 1.0));
         float x = cos(phi) * cos(lam), y = cos(phi) * sin(lam), z = sin(phi);
         float cp = cos(rot.y), sp = sin(rot.y);
         float lon = atan(y, x * cp + z * sp) - rot.x, lat = asin(clamp(z * cp - x * sp, -1.0, 1.0));
         lon = degrees(lon); lat = degrees(lat); lon = mod(lon + 180.0, 360.0) - 180.0;
-        vec2 uv = vec2((lon - ext.x) / (ext.y - ext.x), (ext.w - lat) / (ext.w - ext.z));
-        if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) discard;
-        gl_FragColor = texture2D(tex, uv); }`;
+        vec4 c = hasW > 0.5 ? texture2D(tw, vec2((lon + 180.0) / 360.0, (90.0 - lat) / 180.0)) : vec4(0.0);
+        if (hasH > 0.5) {
+          float d = min(min(lon - ext.x, ext.y - lon), min(lat - ext.z, ext.w - lat));
+          if (d > 0.0) { vec4 h = texture2D(th, vec2((lon - ext.x) / (ext.y - ext.x), (ext.w - lat) / (ext.w - ext.z))); c = mix(c, h, smoothstep(0.0, 4.0, d)); }
+        }
+        if (c.a <= 0.0) discard;
+        gl_FragColor = c; }`;
     const sh = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); return o; };
     const pg = gl.createProgram(); gl.attachShader(pg, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pg, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pg);
     if (!gl.getProgramParameter(pg, gl.LINK_STATUS)) return null;
@@ -236,14 +242,16 @@ const CONF = {{CONF}};
     const loc = gl.getAttribLocation(pg, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     const U = n => gl.getUniformLocation(pg, n), T = G.terrain;
     gl.uniform4f(U('ext'), T.lon[0], T.lon[1], T.lat[0], T.lat[1]);
+    gl.uniform1i(U('tw'), 0); gl.uniform1i(U('th'), 1); gl.uniform1f(U('hasW'), 0); gl.uniform1f(U('hasH'), 0);
     let ready = false;
-    const img = new Image(); img.onload = () => {
-      const tx = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tx);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    const load = (src, unit, flag, wrap) => { if (!src) return; const img = new Image(); img.onload = () => {
+      gl.activeTexture(gl.TEXTURE0 + unit); const tx = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tx);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap ? gl.REPEAT : gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); ready = true; draw();
-    };
-    img.src = src;
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); gl.uniform1f(U(flag), 1); ready = true; draw();
+    }; img.src = src; };
+    // 全球贴图宽高都是 2 的幂，经度方向可以环绕
+    load(worldSrc, 0, 'hasW', true); load(hiSrc, 1, 'hasH', false);
     gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     return () => {
       gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
@@ -253,7 +261,8 @@ const CONF = {{CONF}};
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     };
   }
-  const GL = [terrainGL(cv[1], CONF.terrain + G.terrain.base), terrainGL(cv[3], CONF.terrain + G.terrain.relief)];
+  const TW = G.terrain.world || {}, tsrc = f => f && CONF.terrain + f;
+  const GL = [terrainGL(cv[1], tsrc(TW.base), tsrc(G.terrain.base)), terrainGL(cv[3], tsrc(TW.relief), tsrc(G.terrain.relief))];
 
   function resize() {
     const r = cv[4].getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);

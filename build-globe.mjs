@@ -15,7 +15,7 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 const SERIES = GJ.series.map(S => ({ ...S, books: JSON.parse(r(`./${S.dir}series.json`)).books }));
 const D = globeData(SERIES);
 writeFileSync(new URL('globe-data.json', OUT), JSON.stringify(D));
-for (const f of ['terrain-base.webp', 'terrain-relief.webp']) copyFileSync(new URL(`./basemaps/globe/${f}`, import.meta.url), new URL(f, OUT));
+for (const f of ['terrain-base.webp', 'terrain-relief.webp', 'world-base.webp', 'world-relief.webp']) copyFileSync(new URL(`./basemaps/globe/${f}`, import.meta.url), new URL(f, OUT));
 
 const conf = {
   data: 'globe-data.json', terrain: '',
