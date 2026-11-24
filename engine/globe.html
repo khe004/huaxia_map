@@ -1,0 +1,499 @@
+<title>寰宇舆图</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500;700;900&display=swap">
+<style>
+/* Layout: one-screen atlas like the volume pages — globe on the left, reading panel on the right, the time axis under the globe; stacks on phones. Tokens follow engine/page.html. */
+:root {
+  --bg: #e6e8e1; --sea: #ccd6d8; --land: #f3f2eb; --land-x: #e3e2d8; --ink: #1c2125; --ink2: #49525a; --muted: #747d84;
+  --line: #b3bbba; --panel: #f7f7f2; --chip: #ebece5; --seal: #b3322a; --hl: #d8941c; --river: #2f73a0; --lake: #a9c6d6;
+  --grat: rgba(40,60,70,.10); --edge: rgba(28,33,37,.55); --fo: .62; --terrain-o: 1;   --f-display: "Ma Shan Zheng", "STKaiti", "KaiTi", serif;
+  --f-serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --f-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #0f1317; --sea: #08121a; --land: #232a30; --land-x: #1a2026; --ink: #e8e5db; --ink2: #bcb9af; --muted: #868b8e;
+    --line: #343d44; --panel: #141920; --chip: #1f262c; --seal: #e3624f; --hl: #f0b43c; --river: #5aa2c8; --lake: #163a4d;
+    --grat: rgba(200,220,230,.07); --edge: rgba(232,229,219,.5); --fo: .5; --terrain-o: .75; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #0f1317; --sea: #08121a; --land: #232a30; --land-x: #1a2026; --ink: #e8e5db; --ink2: #bcb9af; --muted: #868b8e;
+  --line: #343d44; --panel: #141920; --chip: #1f262c; --seal: #e3624f; --hl: #f0b43c; --river: #5aa2c8; --lake: #163a4d;
+  --grat: rgba(200,220,230,.07); --edge: rgba(232,229,219,.5); --fo: .5; --terrain-o: .75; color-scheme: dark; }
+html, body { height: 100%; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-sans); font-size: 14px; margin: 0; }
+button, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--hl); outline-offset: 2px; }
+.app { height: 100%; box-sizing: border-box; display: grid; gap: 10px 14px; grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: "top top" "map panel" "tl panel";
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 10px 12px; }
+.top { grid-area: top; display: flex; align-items: baseline; gap: 6px 16px; flex-wrap: wrap; }
+.top h1 { margin: 0; font: 400 30px/1 var(--f-display); letter-spacing: 2px; }
+.top h1 .seal { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-left: 6px; background: var(--seal); color: var(--land); font-size: 16px; border-radius: 3px; vertical-align: 4px; letter-spacing: 0; }
+.top p { margin: 0; color: var(--muted); font-size: 13px; flex: 1 1 300px; min-width: 0; }
+.top nav { display: flex; gap: 12px; font-size: 13px; }
+.top nav a { color: var(--ink2); }
+.mapwrap { grid-area: map; position: relative; min-height: 0; border-radius: 6px; overflow: hidden; background: var(--bg); }
+.mapwrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+.mapwrap canvas.top-layer { pointer-events: auto; touch-action: none; cursor: grab; }
+.mapwrap canvas.top-layer:active { cursor: grabbing; }
+.terr { opacity: var(--terrain-o); }
+.jump { position: absolute; left: 10px; top: 10px; display: flex; flex-wrap: wrap; gap: 6px; max-width: calc(100% - 20px); }
+.jump button, .tl button, .tl select { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 3px 9px; cursor: pointer; font-size: 13px; }
+.jump button:hover, .tl button:hover { border-color: var(--ink2); }
+.focusbadge { position: absolute; right: 10px; bottom: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 4px 9px; font-size: 12px; color: var(--ink2); font-variant-numeric: tabular-nums; }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); background: var(--bg); }
+.panel { grid-area: panel; min-height: 0; overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; display: flex; flex-direction: column; gap: 14px; }
+.panel h2 { margin: 0 0 4px; font: 700 12px/1.2 var(--f-sans); letter-spacing: .12em; color: var(--muted); }
+.active { display: flex; flex-direction: column; gap: 6px; }
+.serieschip { align-self: flex-start; font-size: 12px; padding: 1px 8px; border-radius: 10px; background: var(--chip); border: 1px solid var(--line); }
+.voltitle { font: 700 22px/1.3 var(--f-serif); margin: 0; }
+.volmeta { color: var(--ink2); font-size: 13px; }
+.go { align-self: flex-start; text-decoration: none; color: var(--land); background: var(--seal); padding: 5px 12px; border-radius: 4px; font-size: 13px; }
+.go:hover { filter: brightness(1.08); }
+.warn { font-size: 13px; color: var(--ink2); background: var(--chip); border-radius: 4px; padding: 6px 9px; }
+.others { display: flex; flex-direction: column; gap: 6px; }
+.others button { text-align: left; background: none; border: 1px solid var(--line); border-radius: 4px; padding: 6px 9px; cursor: pointer; display: grid; gap: 2px; }
+.others button:hover { border-color: var(--ink2); }
+.others small { color: var(--muted); }
+.leg { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; }
+.leg span { display: inline-flex; align-items: center; gap: 5px; }
+.leg i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; flex: none; }
+.evs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.evs button { background: none; border: 0; padding: 0; text-align: left; cursor: pointer; color: var(--ink); }
+.evs button:hover, .evs button.on { text-decoration: underline; }
+.evs small { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: 6px; }
+.empty { color: var(--muted); font-size: 13px; }
+.detail { border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; background: var(--bg); }
+.detail .dh { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.detail h3 { margin: 0; font: 700 17px/1.35 var(--f-serif); }
+.detail .x { background: none; border: 0; cursor: pointer; color: var(--muted); font-size: 16px; padding: 0 2px; }
+.detail .meta { color: var(--ink2); font-size: 12.5px; }
+.detail .txt { font: 400 14px/1.75 var(--f-serif); margin: 0; }
+.detail .who { font-size: 12.5px; color: var(--ink2); }
+.detail a { font-size: 13px; color: var(--seal); }
+.rule { font-size: 12.5px; color: var(--ink2); line-height: 1.6; border-top: 1px solid var(--line); padding-top: 10px; }
+.rule p { margin: 0 0 6px; }
+.tl { grid-area: tl; display: flex; flex-direction: column; gap: 6px; }
+.tlrow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.year { font: 700 24px/1 var(--f-serif); min-width: 7.5em; font-variant-numeric: tabular-nums; }
+#yr { flex: 1 1 260px; min-width: 0; accent-color: var(--seal); }
+.strip { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; cursor: pointer; }
+.strip .lane { position: absolute; left: 0; right: 0; height: 15px; }
+.strip .lane b { position: absolute; top: 0; height: 15px; border-radius: 2px; opacity: .5; }
+.strip .lane b { background: var(--sc); }
+.serieschip { border-color: var(--sc); }
+.strip .lane b.on { opacity: 1; outline: 1.5px solid var(--ink); }
+.strip .cur { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--hl); }
+.strip .lab { position: absolute; left: 2px; background: var(--panel); padding: 0 4px; border-radius: 2px; z-index: 1; font-size: 10px; color: var(--ink); pointer-events: none; line-height: 15px; }
+@media (max-width: 820px) {
+  .app { height: auto; min-height: 100%; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 62vh auto auto; grid-template-areas: "top" "map" "tl" "panel"; }
+  .panel { overflow: visible; }
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <h1>寰宇舆图<span class="seal">寰</span></h1>
+    <p>{{SUBTITLE}}</p>
+    <nav>{{NAV}}</nav>
+  </header>
+  <div class="mapwrap" id="mw">
+    <canvas id="c0"></canvas>
+    <canvas id="c1" class="terr"></canvas>
+    <canvas id="c2"></canvas>
+    <canvas id="c3" class="terr"></canvas>
+    <canvas id="c4" class="top-layer" aria-label="可旋转的地球，显示当前年份各卷的疆域"></canvas>
+    <div class="jump" role="group" aria-label="转到">
+      <button type="button" id="home">复位</button>
+    </div>
+    <div class="focusbadge" id="fb"></div>
+    <div class="loading" id="ld">正在载入各卷的疆域数据…</div>
+  </div>
+  <aside class="panel" aria-live="polite">
+    <section class="active" id="act"></section>
+    <section class="detail" id="det" hidden></section>
+    <section id="legsec"><h2>本卷此刻的势力</h2><div class="leg" id="leg"></div></section>
+    <section><h2>这一年另一边</h2><div class="others" id="oth"></div></section>
+    <section><h2>本卷这一年的事件</h2><ul class="evs" id="evs"></ul></section>
+    <section class="rule">
+      <p><b>怎么切卷：</b>先找出这一年有书写的各卷，再看哪一卷的地域中心离焦点（地球正中的十字）最近。年代重叠、地域也相同的两卷，取这一年更靠近该卷中段的一卷。切换留有 4° 的余量，在边界附近转动不会来回跳。</p>
+      <p><b>各套底图：</b>每套合集用自己的底图拼块，相邻地区会有重叠（如华夏舆图与西方舆图在中亚一带）。每套合集各画这一年离焦点最近的一卷，重叠处焦点所在的一卷盖在上面；都没有覆盖的陆地只画浅色轮廓。</p>
+      <p><b>和各卷的关系：</b>疆域、势力名称与颜色都直接取自各卷的数据，与卷中地图一致。事件点可以点开看简介；要读完整的卷，点“打开这一卷”。</p>
+    </section>
+  </aside>
+  <div class="tl">
+    <div class="tlrow">
+      <span class="year" id="yl"></span>
+      <button type="button" data-d="-10" aria-label="后退十年">«</button>
+      <button type="button" data-d="-1" aria-label="后退一年">‹</button>
+      <input type="range" id="yr" step="1" aria-label="年份">
+      <button type="button" data-d="1" aria-label="前进一年">›</button>
+      <button type="button" data-d="10" aria-label="前进十年">»</button>
+      <button type="button" id="play" aria-pressed="false">▶ 播放</button>
+      <select id="spd" aria-label="播放速度"><option value="1">每步 1 年</option><option value="5" selected>每步 5 年</option><option value="25">每步 25 年</option></select>
+    </div>
+    <div class="strip" id="strip" title="点击跳到这一年"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+const CONF = {{CONF}};
+(async function () {
+  const $ = s => document.querySelector(s);
+  const E = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  const CN = n => { const D = '〇一二三四五六七八九', t = Math.floor(n / 10), o = n % 10; return n < 10 ? D[n] : (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
+  const fy = y => (y < 0 ? '前 ' + -y : '' + y);
+  let G;
+  try { G = await (await fetch(CONF.data)).json(); } catch (e) { $('#ld').textContent = '疆域数据没有载入：' + e.message; return; }
+  const V = G.vols, SER = G.series.map((s, i) => ({ ...s, ...CONF.series[i] }));
+  const KN = { war: '战事', pol: '政事', dip: '外交', eco: '民生', cul: '文化' };
+
+  // 与引擎一致：面积超过半球的多边形是绕向反了，翻过来
+  const rewind = rings => { if (d3.geoArea({ type: 'Polygon', coordinates: rings }) > 2 * Math.PI) rings.forEach(r => r.reverse()); };
+  // —— 拼块：与 tools/land.js 的拆法一致（带 w 的整块，其余多块拆开），序号与各卷 assign 对应
+  const BM = G.topo.map(T => {
+    const units = [], geomOf = [];
+    T.objects.units.geometries.forEach((g, gi) => {
+      const geo = topojson.feature(T, g).geometry;
+      if (!geo) { if (g.properties.w) { units.push(null); geomOf.push(gi); } return; }
+      if (geo.type === 'Polygon') rewind(geo.coordinates); else if (geo.type === 'MultiPolygon') geo.coordinates.forEach(rewind);
+      if (g.properties.w || geo.type === 'Polygon') { units.push(geo); geomOf.push(gi); }
+      else geo.coordinates.forEach(c => { units.push({ type: 'Polygon', coordinates: c }); geomOf.push(gi); });
+    });
+    const area = units.map(u => (u ? d3.geoArea(u) : 0)), cen = units.map(u => (u ? d3.geoCentroid(u) : [0, 0]));
+    const firstU = []; geomOf.forEach((gi, ui) => { if (firstU[gi] == null) firstU[gi] = ui; });
+    const ix = new Map(T.objects.units.geometries.map((g, i) => [g, i]));
+    return { T, units, geomOf, area, cen, firstU, ix };
+  });
+  const WATER = G.water.map(w => ({
+    big: { type: 'MultiLineString', coordinates: w.rv.filter(r => r[0]).flatMap(r => (r[1] === 'LineString' ? [r[2]] : r[2])) },
+    small: { type: 'MultiLineString', coordinates: w.rv.filter(r => !r[0]).flatMap(r => (r[1] === 'LineString' ? [r[2]] : r[2])) },
+    lakes: w.lk.map(l => { const g = { type: l[0], coordinates: l[1] }; (g.type === 'Polygon' ? [g.coordinates] : g.coordinates).forEach(rewind); return g; }),
+  }));
+  const world = topojson.feature(G.world, G.world.objects.land);
+  const grat = d3.geoGraticule10();
+
+  // —— 卷在某时刻的状态
+  const at = (arr, t) => { if (!Array.isArray(arr)) return arr; let v = arr[0][1]; for (const [k, x] of arr) { if (k <= t + 1e-9) v = x; else break; } return v; };
+  function seedState(v, t) {
+    const cur = [];
+    for (let j = 0; j < v.snaps.length; j++) { const [ts, set] = v.snaps[j]; if (j > 0 && ts > t + 1e-9) break; for (const f in set) for (const i of set[f]) cur[i] = f; }
+    return cur;
+  }
+  const covers = (v, y) => y >= Math.floor(v.t0) && y <= Math.floor(v.t1);
+
+  // —— 颜色
+  const css = () => getComputedStyle(document.documentElement);
+  let C = {};
+  const readColors = () => { const s = css(); C = Object.fromEntries(['bg', 'sea', 'land', 'land-x', 'ink', 'ink2', 'muted', 'line', 'grat', 'edge', 'hl', 'panel', 'seal', 'river', 'lake', 'fo', 'f-display', 'f-serif', 'f-sans'].map(k => [k, s.getPropertyValue('--' + k).trim()])); };
+  readColors();
+  const fillOf = col => d3.interpolateRgb(C.land, col)(+C.fo || 0.62);
+  // 合集的标识色：globe.json 的 color（浅色主题）/ dark（深色主题）
+  const isDark = () => (+C.fo || 0.62) < 0.56;
+  const scol = si => (isDark() ? SER[si].dark : SER[si].color);
+
+  // —— 画布：c0 海与陆地底色，c1 地形（WebGL），c2 势力着色与河湖，c3 地形明暗（WebGL），c4 边界、城邑、事件、标签
+  const cv = [0, 1, 2, 3, 4].map(i => $('#c' + i)), ctx = [cv[0], , cv[2], , cv[4]].map(c => c && c.getContext('2d'));
+  const proj = d3.geoOrthographic().clipAngle(90).precision(0.4);
+  const P = [0, 2, 4].map(i => d3.geoPath(proj, ctx[i]));
+  const path0 = P[0], path2 = P[1], path4 = P[2];
+  const ST = CONF.start || {};
+  let W = 0, H = 0, DPR = 1, R0 = 1, zoomK = ST.k || 1.9, rot = [-(ST.ll || [0, 30])[0], -(ST.ll || [0, 30])[1], 0];
+  const HOME = { rot: rot.slice(), k: zoomK };
+  let Y = ST.year || 1, active = null;
+  // 地址里的 #y=年份&ll=经,纬&k=缩放（saveHash 写入）
+  try {
+    const h = new URLSearchParams(location.hash.slice(1));
+    if (h.get('y') && !isNaN(+h.get('y'))) Y = +h.get('y');
+    if (h.get('ll')) { const [a, b] = h.get('ll').split(',').map(Number); if (isFinite(a) && isFinite(b)) rot = [-a, -b, 0]; }
+    if (h.get('k') && +h.get('k') > 0) zoomK = Math.min(14, Math.max(0.8, +h.get('k')));
+  } catch (e) {}
+
+  // —— 地形：两张经纬度等距贴图（全球一张，欧亚高清区一张，tools/globe-terrain.mjs 生成），在片元着色器里按正射投影反算经纬度取样。
+  // 高清区内取高清贴图，离高清区边缘 4° 以内与全球贴图渐变；两张同一画法，接缝不明显
+  function terrainGL(canvas, worldSrc, hiSrc) {
+    const gl = canvas.getContext('webgl', { premultipliedAlpha: false, alpha: true });
+    if (!gl) return null;
+    const vs = 'attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }';
+    const fs = `precision highp float; uniform sampler2D tw; uniform sampler2D th; uniform float hasW; uniform float hasH;
+      uniform vec2 ctr; uniform float sc; uniform vec2 rot; uniform vec4 ext; uniform float hh;
+      void main(){ vec2 q = vec2(gl_FragCoord.x - ctr.x, (hh - gl_FragCoord.y) - ctr.y) / sc; q.y = -q.y; float r2 = dot(q, q); if (r2 > 1.0) discard;
+        float cz = sqrt(1.0 - r2); float lam = atan(q.x, cz), phi = asin(clamp(q.y, -1.0, 1.0));
+        float x = cos(phi) * cos(lam), y = cos(phi) * sin(lam), z = sin(phi);
+        float cp = cos(rot.y), sp = sin(rot.y);
+        float lon = atan(y, x * cp + z * sp) - rot.x, lat = asin(clamp(z * cp - x * sp, -1.0, 1.0));
+        lon = degrees(lon); lat = degrees(lat); lon = mod(lon + 180.0, 360.0) - 180.0;
+        vec4 c = hasW > 0.5 ? texture2D(tw, vec2((lon + 180.0) / 360.0, (90.0 - lat) / 180.0)) : vec4(0.0);
+        if (hasH > 0.5) {
+          float d = min(min(lon - ext.x, ext.y - lon), min(lat - ext.z, ext.w - lat));
+          if (d > 0.0) { vec4 h = texture2D(th, vec2((lon - ext.x) / (ext.y - ext.x), (ext.w - lat) / (ext.w - ext.z))); c = mix(c, h, smoothstep(0.0, 4.0, d)); }
+        }
+        if (c.a <= 0.0) discard;
+        gl_FragColor = c; }`;
+    const sh = (t, s) => { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); return o; };
+    const pg = gl.createProgram(); gl.attachShader(pg, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pg, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(pg);
+    if (!gl.getProgramParameter(pg, gl.LINK_STATUS)) return null;
+    gl.useProgram(pg);
+    const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(pg, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U = n => gl.getUniformLocation(pg, n), T = G.terrain;
+    gl.uniform4f(U('ext'), T.lon[0], T.lon[1], T.lat[0], T.lat[1]);
+    gl.uniform1i(U('tw'), 0); gl.uniform1i(U('th'), 1); gl.uniform1f(U('hasW'), 0); gl.uniform1f(U('hasH'), 0);
+    let ready = false;
+    const load = (src, unit, flag, wrap) => { if (!src) return; const img = new Image(); img.onload = () => {
+      gl.activeTexture(gl.TEXTURE0 + unit); const tx = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tx);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap ? gl.REPEAT : gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); gl.uniform1f(U(flag), 1); ready = true; draw();
+    }; img.src = src; };
+    // 全球贴图宽高都是 2 的幂，经度方向可以环绕
+    load(worldSrc, 0, 'hasW', true); load(hiSrc, 1, 'hasH', false);
+    gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    return () => {
+      gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      if (!ready) return;
+      gl.uniform2f(U('ctr'), W / 2 * DPR, H / 2 * DPR); gl.uniform1f(U('sc'), R0 * zoomK * DPR); gl.uniform1f(U('hh'), canvas.height);
+      gl.uniform2f(U('rot'), rot[0] * Math.PI / 180, rot[1] * Math.PI / 180);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    };
+  }
+  const TW = G.terrain.world || {}, tsrc = f => f && CONF.terrain + f;
+  const GL = [terrainGL(cv[1], tsrc(TW.base), tsrc(G.terrain.base)), terrainGL(cv[3], tsrc(TW.relief), tsrc(G.terrain.relief))];
+
+  function resize() {
+    const r = cv[4].getBoundingClientRect(); DPR = Math.min(2, window.devicePixelRatio || 1);
+    W = r.width; H = r.height;
+    cv.forEach(c => { c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); });
+    ctx.forEach(c => c && c.setTransform(DPR, 0, 0, DPR, 0, 0));
+    R0 = Math.min(W, H) / 2 - 14; draw();
+  }
+
+  // —— 年份、焦点与选卷
+  const focus = () => [-rot[0], -rot[1]];
+  const dist = (a, b) => d3.geoDistance(a, b) * 180 / Math.PI;
+  function score(v, f, y) { const span = Math.max(1, v.t1 - v.t0), mid = Math.min(y - v.t0, v.t1 - y) / span; return dist(f, v.c) - 5 * Math.max(0, mid); }
+  let picks = [];
+  function choose() {
+    const f = focus();
+    picks = SER.map((S, si) => { let b = null, bs = Infinity; V.forEach((v, vi) => { if (v.s !== si || !covers(v, Y)) return; const s = score(v, f, Y); if (s < bs) { bs = s; b = vi; } }); return b == null ? null : { vi: b, s: bs, d: dist(f, V[b].c), si }; });
+    const cand = picks.filter(Boolean).sort((a, b) => a.s - b.s);
+    if (!cand.length) { active = null; return; }
+    let next = cand[0];
+    if (active) { const keep = cand.find(c => c.vi === active.vi); if (keep && keep.s - next.s < 4) next = keep; }
+    active = next;
+  }
+
+  // —— 每卷此刻的着色（年份或选卷变了才重算）
+  let layers = [];
+  const T = () => Y + 0.5;
+  function layerFor(vi) {
+    const v = V[vi], t = T(), st = seedState(v, t), B = BM[v.bm], fills = new Map(), facOfU = [], acc = new Map(), blank = [];
+    v.assign.forEach((j, ui) => {
+      if (j < 0 || !B.units[ui]) return;
+      const fk = st[j]; if (!fk || fk === 'x') return;
+      const F = v.fac[fk]; facOfU[ui] = fk;
+      if (!F || F[2]) { blank.push(B.units[ui]); return; }
+      const col = fillOf(at(F[1], t));
+      if (!fills.has(col)) fills.set(col, []); fills.get(col).push(B.units[ui]);
+      if (!acc.has(fk)) acc.set(fk, { A: 0, x: 0, y: 0, z: 0, us: [] });
+      const o = acc.get(fk), a = B.area[ui], [lo, la] = B.cen[ui].map(d => d * Math.PI / 180);
+      o.A += a; o.x += a * Math.cos(la) * Math.cos(lo); o.y += a * Math.cos(la) * Math.sin(lo); o.z += a * Math.sin(la); o.us.push(ui);
+    });
+    // 势力分界：一个几何体两侧属不同势力（或一侧不在本卷）
+    const gf = g => { const u = B.firstU[B.ix.get(g)]; return u == null ? undefined : facOfU[u]; };
+    const mesh = topojson.mesh(B.T, B.T.objects.units, (a, b) => { const fa = gf(a), fb = gf(b); return (fa || fb) && fa !== fb; });
+    const labels = [...acc.entries()].map(([fk, o]) => {
+      const F = v.fac[fk], name = at(F[0], t); if (!name) return null;
+      const c = [Math.atan2(o.y, o.x) * 180 / Math.PI, Math.atan2(o.z, Math.hypot(o.x, o.y)) * 180 / Math.PI];
+      let best = o.us[0], bd = Infinity; for (const u of o.us) { const d = d3.geoDistance(B.cen[u], c); if (d < bd) { bd = d; best = u; } }
+      return { name, ll: B.cen[best], A: o.A, col: at(F[1], t), full: at(F[3], t) };
+    }).filter(Boolean).sort((a, b) => b.A - a.A);
+    // 城邑：名字随年份，'' 或首个起始年之前不画
+    const cities = v.cities.map(c => { const nm = c[0][0][0] <= t ? at(c[0], t) : ''; const cap = Array.isArray(c[3]) ? at(c[3], t) : c[3]; return nm ? { n: nm, ll: [c[1], c[2]], cap: !!cap, m: c[4] } : null; }).filter(Boolean);
+    return { vi, bmi: v.bm, fills, blank, mesh, labels, cities };
+  }
+  function rebuild() {
+    const order = picks.filter(Boolean).sort((a, b) => (active && a.vi === active.vi ? 1 : 0) - (active && b.vi === active.vi ? 1 : 0));
+    layers = order.map(o => layerFor(o.vi));
+  }
+
+  // —— 绘制
+  let evNow = [], sel = null, hits = [];
+  function draw() {
+    if (!W) return;
+    proj.translate([W / 2, H / 2]).scale(R0 * zoomK).rotate(rot);
+    const k = zoomK, f = focus();
+    ctx.forEach(c => c && c.clearRect(0, 0, W, H));
+    // c0：海、经纬网、全球陆地、各卷范围内未着色的陆地
+    const c0 = ctx[0];
+    c0.beginPath(); path0({ type: 'Sphere' }); c0.fillStyle = C.sea; c0.fill();
+    c0.beginPath(); path0(grat); c0.strokeStyle = C.grat; c0.lineWidth = 0.6; c0.stroke();
+    c0.beginPath(); path0(world); c0.fillStyle = C['land-x']; c0.fill(); c0.strokeStyle = C.line; c0.lineWidth = 0.5; c0.stroke();
+    for (const L of layers) { c0.beginPath(); for (const u of L.blank) path0(u); for (const us of L.fills.values()) for (const u of us) path0(u); c0.fillStyle = C.land; c0.fill(); }
+    GL[0] && GL[0]();
+    // c2：势力着色、河湖
+    const c2 = ctx[2];
+    for (const L of layers) {
+      // 焦点一侧的卷盖住另一套：先抹掉它覆盖的未着色陆地上的下层颜色
+      if (L === layers[layers.length - 1] && layers.length > 1) { c2.beginPath(); for (const u of L.blank) path2(u); c2.save(); c2.globalCompositeOperation = 'destination-out'; c2.fill(); c2.restore(); }
+      for (const [col, us] of L.fills) { c2.beginPath(); for (const u of us) path2(u); c2.fillStyle = col; c2.fill(); c2.strokeStyle = col; c2.lineWidth = 0.6; c2.stroke(); }
+    }
+    const shown = new Set(layers.map(L => L.bmi));
+    for (const bi of shown) {
+      const w = WATER[bi];
+      c2.beginPath(); for (const l of w.lakes) path2(l); c2.fillStyle = C.lake; c2.fill();
+      c2.strokeStyle = C.river; c2.lineCap = 'round'; c2.lineJoin = 'round';
+      if (k >= 2.2) { c2.beginPath(); path2(w.small); c2.lineWidth = Math.min(1.1, 0.25 * k); c2.globalAlpha = 0.75; c2.stroke(); c2.globalAlpha = 1; }
+      c2.beginPath(); path2(w.big); c2.lineWidth = Math.min(2, 0.45 + 0.25 * k); c2.stroke();
+    }
+    GL[1] && GL[1]();
+    // c4：边界、城邑、事件、标签、焦点
+    const c4 = ctx[4];
+    for (const L of layers) { c4.beginPath(); path4(L.mesh); c4.strokeStyle = C.edge; c4.lineWidth = Math.min(1.4, 0.5 + 0.25 * k); c4.stroke(); }
+    const vis = ll => d3.geoDistance(ll, f) < Math.PI / 2 - 0.03;
+    const placed = [], hitBox = (bx) => placed.some(b => bx[0] < b[2] && bx[2] > b[0] && bx[1] < b[3] && bx[3] > b[1]);
+    c4.textAlign = 'center'; c4.textBaseline = 'middle';
+    hits = [];
+    // 事件点：焦点一侧的卷亮色，另一卷灰色；选中的放大
+    for (const e of evNow) {
+      if (!vis([e[4], e[5]])) continue;
+      const p = proj([e[4], e[5]]), on = active && e[0] === active.vi, isSel = sel && sel === e;
+      c4.beginPath(); c4.arc(p[0], p[1], isSel ? 7 : on ? 4.5 : 3, 0, 2 * Math.PI); c4.fillStyle = on || isSel ? C.hl : C.muted; c4.fill(); c4.strokeStyle = C.panel; c4.lineWidth = 1.4; c4.stroke();
+      hits.push([p[0], p[1], e]);
+    }
+    // 城邑：都城总画，其余放大后才画；名字放大到一定程度才标
+    c4.font = '500 12px ' + C['f-sans'];
+    for (const L of layers.slice().reverse()) for (const c of L.cities) {
+      if ((!c.cap && k < 3) || !vis(c.ll)) continue;
+      const p = proj(c.ll);
+      c4.beginPath(); if (c.cap) { c4.rect(p[0] - 3.5, p[1] - 3.5, 7, 7); } else c4.arc(p[0], p[1], 2.4, 0, 2 * Math.PI);
+      c4.fillStyle = c.cap ? C.seal : C.ink; c4.fill(); c4.strokeStyle = C.panel; c4.lineWidth = 1; c4.stroke();
+      if (k >= (c.cap ? 2.6 : 4.5)) {
+        const fs = c.cap ? 13 : 11.5, w = c.n.length * fs + 4, bx = [p[0] + 5, p[1] - fs / 2 - 9, p[0] + 5 + w, p[1] + fs / 2 - 9];
+        if (hitBox(bx)) continue; placed.push(bx);
+        c4.font = (c.cap ? '700 ' : '500 ') + fs + 'px ' + C['f-serif']; c4.textAlign = 'left';
+        c4.lineWidth = 3; c4.strokeStyle = C.panel; c4.strokeText(c.n, p[0] + 6, p[1] - 9); c4.fillStyle = C.ink; c4.fillText(c.n, p[0] + 6, p[1] - 9); c4.textAlign = 'center';
+      }
+    }
+    // 势力名：按面积从大到小，与已放的重叠就略去，只标朝向读者的一面
+    for (const L of layers.slice().reverse()) for (const lb of L.labels) {
+      const ang = d3.geoDistance(lb.ll, f); if (ang > 1.25) continue;
+      const px = lb.A * (R0 * k) ** 2 * Math.cos(ang); if (px < 900) continue;
+      const fs = Math.max(11, Math.min(32, Math.sqrt(px) / 7)), p = proj(lb.ll), w = lb.name.length * fs * 1.02 + 4, h = fs + 2;
+      const bx = [p[0] - w / 2, p[1] - h / 2, p[0] + w / 2, p[1] + h / 2];
+      if (hitBox(bx)) continue; placed.push(bx);
+      c4.font = fs > 22 ? '400 ' + fs + 'px ' + C['f-display'] : '500 ' + fs + 'px ' + C['f-serif'];
+      c4.lineWidth = 3; c4.strokeStyle = C.panel; c4.globalAlpha = 0.85; c4.strokeText(lb.name, p[0], p[1]); c4.globalAlpha = 1;
+      c4.fillStyle = C.ink; c4.fillText(lb.name, p[0], p[1]);
+    }
+    c4.beginPath(); path4({ type: 'Sphere' }); c4.strokeStyle = C.line; c4.lineWidth = 1; c4.stroke();
+    c4.beginPath();
+    for (const [a, b] of [[[-9, 0], [-3, 0]], [[3, 0], [9, 0]], [[0, -9], [0, -3]], [[0, 3], [0, 9]]]) { c4.moveTo(W / 2 + a[0], H / 2 + a[1]); c4.lineTo(W / 2 + b[0], H / 2 + b[1]); }
+    c4.strokeStyle = C.seal; c4.lineWidth = 1.6; c4.stroke();
+    const [lo, la] = f, lo2 = ((lo + 540) % 360) - 180;
+    $('#fb').textContent = '焦点 ' + (la >= 0 ? '北纬 ' : '南纬 ') + Math.abs(la).toFixed(1) + '°　' + (lo2 >= 0 ? '东经 ' : '西经 ') + Math.abs(lo2).toFixed(1) + '°';
+  }
+
+  // —— 右栏
+  const volUrl = (v, q) => SER[v.s].vol + v.id + '/index.html?' + q;
+  function panel() {
+    if (!active) { $('#act').innerHTML = '<div class="warn">' + fy(Y) + ' 年各卷都还没有写到。</div>'; $('#leg').innerHTML = ''; $('#oth').innerHTML = ''; $('#evs').innerHTML = ''; return; }
+    const v = V[active.vi], S = SER[v.s], far = active.d > 45;
+    $('#act').innerHTML = '<span class="serieschip" style="--sc:' + scol(v.s) + '">' + E(S.name) + '</span>' +
+      '<h3 class="voltitle">卷' + CN(v.n) + '《' + E(v.brand) + '》</h3>' +
+      '<div class="volmeta">' + E(v.era) + ' · ' + E(v.years) + '</div>' +
+      (far ? '<div class="warn">焦点附近这一年还没有卷，这是离焦点最近的一卷（相距约 ' + Math.round(active.d) + '°）。</div>' : '') +
+      '<a class="go" href="' + E(volUrl(v, 'y=' + Y)) + '">打开这一卷的 ' + fy(Y) + ' 年 ›</a>';
+    const L = layers.find(l => l.vi === active.vi);
+    $('#leg').innerHTML = L ? L.labels.slice(0, 12).map(l => '<span><i style="background:' + fillOf(l.col) + '"></i>' + E(l.full) + '</span>').join('') : '';
+    $('#oth').innerHTML = picks.map(p => {
+      if (!p || p.vi === active.vi) return '';
+      const o = V[p.vi]; return '<button type="button" data-vi="' + p.vi + '"><span>' + E(SER[o.s].name) + ' · 卷' + CN(o.n) + '《' + E(o.brand) + '》</span><small>转过去（约 ' + Math.round(p.d) + '°）</small></button>';
+    }).join('') || '<div class="empty">另一套合集这一年还没有卷。</div>';
+    const evs = evNow.filter(e => e[0] === active.vi).sort((a, b) => a[2] - b[2]);
+    $('#evs').innerHTML = evs.length ? evs.map(e => '<li><small>' + e[2] + ' 月</small><button type="button" data-ei="' + G.events.indexOf(e) + '"' + (sel === e ? ' class="on"' : '') + '>' + E(e[3]) + '</button></li>').join('') : '<li class="empty">这一年本卷没有事件，地图是此前最近一次变动后的疆域。</li>';
+    document.querySelectorAll('#strip b').forEach(b => b.classList.toggle('on', +b.dataset.vi === active.vi));
+  }
+  // 事件详情：正文取自各合集的 data/events.json（构建合集时导出），首次点开时载入
+  const EVD = {};
+  const evData = si => EVD[si] || (EVD[si] = fetch(SER[si].events).then(r => r.json()).then(a => { const m = new Map(); a.forEach(x => m.set(x.book + '\u0001' + x.title + '\u0001' + x.year, x)); return m; }).catch(() => null));
+  async function showEvent(e) {
+    sel = e; draw(); panel();
+    const v = V[e[0]], S = SER[v.s], box = $('#det'); box.hidden = false;
+    const head = '<div class="dh"><h3>' + E(e[3]) + '</h3><button type="button" class="x" aria-label="关闭">×</button></div>';
+    box.innerHTML = head + '<div class="meta">' + fy(e[1]) + ' 年 ' + e[2] + ' 月 · ' + (KN[e[6]] || '') + ' · 卷' + CN(v.n) + '《' + E(v.brand) + '》</div><div class="empty">正在载入简介…</div>';
+    const m = await evData(v.s), d = m && m.get(v.id + '\u0001' + e[3] + '\u0001' + e[1]);
+    if (sel !== e) return;
+    box.innerHTML = head + '<div class="meta">' + (d && d.cal ? E(d.cal) + ' · ' : '') + fy(e[1]) + ' 年 ' + e[2] + ' 月 · ' + (KN[e[6]] || '') + (d ? ' · ' + E(d.place) + (d.modern ? '（' + E(d.modern) + '）' : '') : '') + '</div>' +
+      (d ? '<p class="txt">' + E(d.text) + '</p>' + (d.people.length ? '<div class="who">人物：' + d.people.map(E).join('、') + '</div>' : '') : '<div class="empty">简介没有载入。</div>') +
+      '<a href="' + E(volUrl(v, 'ev=' + encodeURIComponent(e[3]))) + '">在卷' + CN(v.n) + '《' + E(v.brand) + '》中打开这一事件 ›</a>';
+  }
+  $('#det').addEventListener('click', e => { if (e.target.closest('.x')) { sel = null; $('#det').hidden = true; draw(); panel(); } });
+  $('#evs').addEventListener('click', e => { const b = e.target.closest('button[data-ei]'); if (b) showEvent(G.events[+b.dataset.ei]); });
+
+  // —— 时间轴
+  const yr = $('#yr'), [Y0, Y1] = CONF.range || [-5000, 1950], strip = $('#strip');
+  yr.min = Y0; yr.max = Y1; strip.style.height = (4 + SER.length * 15) + 'px';
+  const sx = y => ((y - Y0) / (Y1 - Y0)) * 100;
+  strip.innerHTML = SER.map((S, si) => '<div class="lane" style="--sc:' + scol(si) + ';top:' + (2 + si * 15) + 'px">' +
+    V.map((v, vi) => v.s !== si ? '' : '<b data-vi="' + vi + '" title="' + E(S.name + ' 卷' + CN(v.n) + '《' + v.brand + '》 ' + v.years) + '" style="left:' + sx(v.t0) + '%;width:' + Math.max(0.15, sx(v.t1) - sx(v.t0)) + '%"></b>').join('') +
+    '<span class="lab">' + E(S.name) + '</span></div>').join('') + '<div class="cur" id="cur"></div>';
+  strip.addEventListener('click', e => { stop(); const r = strip.getBoundingClientRect(); setYear(Math.round(Y0 + (e.clientX - r.left) / r.width * (Y1 - Y0))); });
+  let lastKey = '';
+  const pkey = () => (active ? active.vi + ':' + (active.d > 45) + ':' + Math.round(active.d / 5) : '-') + '|' + picks.map(p => p && p.vi).join(',');
+  function setYear(y) {
+    y = Math.max(Y0, Math.min(Y1, Math.round(y))); if (y === 0) y = Y > 0 ? -1 : 1; Y = y; yr.value = y;
+    $('#yl').textContent = fy(y) + ' 年'; $('#cur').style.left = sx(y) + '%';
+    evNow = G.events.filter(e => e[1] === y);
+    if (sel && sel[1] !== y) { sel = null; $('#det').hidden = true; }
+    choose(); rebuild(); draw(); panel(); lastKey = pkey(); saveHash();
+  }
+  yr.addEventListener('input', () => { stop(); setYear(+yr.value); });
+  document.querySelectorAll('.tl [data-d]').forEach(b => b.addEventListener('click', () => { stop(); const d = +b.dataset.d; let y = Y + d; if ((Y < 0) !== (y < 0) || y === 0) y += Math.sign(d); setYear(y); }));
+  let timer = null; const pb = $('#play');
+  function stop() { if (timer) { clearInterval(timer); timer = null; pb.textContent = '▶ 播放'; pb.setAttribute('aria-pressed', 'false'); } }
+  pb.addEventListener('click', () => { if (timer) return stop(); pb.textContent = '❚❚ 暂停'; pb.setAttribute('aria-pressed', 'true');
+    timer = setInterval(() => { if (Y >= Y1) return stop(); let y = Y + +$('#spd').value; if (Y < 0 && y >= 0) y += 1; setYear(y); }, 700); });
+
+  // —— 转动：拖动改经纬，滚轮/双指缩放（d3.zoom 只用来取手势增量）；点一下（没拖动）选事件点
+  let last = d3.zoomIdentity.scale(zoomK), raf = 0;
+  const redraw = () => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; const before = active && active.vi; choose(); if ((active && active.vi) !== before) rebuild(); const k = pkey(); if (k !== lastKey) { lastKey = k; panel(); } draw(); }); };
+  const zoom = d3.zoom().scaleExtent([0.8, 14]).on('zoom', ev => {
+    const t = ev.transform, dk = t.k / last.k;
+    if (Math.abs(dk - 1) > 1e-6) zoomK = t.k;
+    else { const s = 0.25 / zoomK * (300 / R0); rot[0] += (t.x - last.x) * s; rot[1] = Math.max(-89, Math.min(89, rot[1] - (t.y - last.y) * s)); }
+    last = t; redraw();
+  }).on('end', saveHash);
+  const sel4 = d3.select(cv[4]).call(zoom).call(zoom.transform, last).on('dblclick.zoom', null);
+  cv[4].addEventListener('click', ev => {
+    const r = cv[4].getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top;
+    let best = null, bd = 100; for (const [hx, hy, e] of hits) { const d = (hx - x) ** 2 + (hy - y) ** 2; if (d < bd) { bd = d; best = e; } }
+    if (best) showEvent(best);
+  });
+  function flyTo(ll, k) {
+    const r0 = rot.slice(), r1 = [-ll[0], -ll[1], 0]; let d = r1[0] - r0[0]; d = ((d + 540) % 360) - 180; r1[0] = r0[0] + d;
+    const it = d3.interpolate(r0, r1), dur = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 900;
+    sel4.transition().duration(dur).tween('rot', () => s => { rot = it(s); redraw(); }).on('end', saveHash);
+    if (k) sel4.call(zoom.scaleTo, k);
+  }
+  $('#home').insertAdjacentHTML('beforebegin', (CONF.jump || []).map(([n, lo, la]) => '<button type="button" data-ll="' + lo + ',' + la + '">' + E(n) + '</button>').join(''));
+  document.querySelectorAll('.jump button[data-ll]').forEach(b => b.addEventListener('click', () => flyTo(b.dataset.ll.split(',').map(Number))));
+  $('#home').addEventListener('click', () => { flyTo([-HOME.rot[0], -HOME.rot[1]]); sel4.call(zoom.scaleTo, HOME.k); });
+  $('#oth').addEventListener('click', e => { const b = e.target.closest('button[data-vi]'); if (b) flyTo(V[+b.dataset.vi].c); });
+
+  // —— 地址：#y=年份&ll=经,纬&k=缩放，复制地址可回到这一视角（artifact 查看器里不生效，不影响使用）
+  function saveHash() { try { history.replaceState(null, '', '#y=' + Y + '&ll=' + (-rot[0]).toFixed(1) + ',' + (-rot[1]).toFixed(1) + '&k=' + zoomK.toFixed(2)); } catch (e) {} }
+  // —— 主题
+  const retheme = () => { readColors(); rebuild(); draw(); panel(); document.querySelectorAll('#strip .lane').forEach((l, si) => l.style.setProperty('--sc', scol(si))); };
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', retheme);
+  new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  new ResizeObserver(resize).observe(cv[4]);
+  $('#ld').hidden = true;
+  resize(); setYear(Y);
+  window.__globe = { setYear, flyTo, showEvent, get active() { return active && V[active.vi].id; }, get rot() { return rot; }, get events() { return evNow; } };
+})();
+</script>

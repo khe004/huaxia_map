@@ -1,6 +1,7 @@
 {
   "title": "西方舆图",
   "subtitle": "据楔形文字铭文、埃及文献与希罗多德、波利比乌斯、李维、阿庇安、普鲁塔克等古代作家 · 从乌鲁克到四帝之年（陆续补写中）",
+  "globe": "../globe/index.html#ll=22,38&k=2.2",
   "basemap": "europe",
   "ziLabel": "",
   "out": "series/west",

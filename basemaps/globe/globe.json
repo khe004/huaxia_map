@@ -1,0 +1,18 @@
+{
+  "terrain": {
+    "lon": [
+      -40,
+      160
+    ],
+    "lat": [
+      -15,
+      75
+    ],
+    "base": "terrain-base.webp",
+    "relief": "terrain-relief.webp",
+    "world": {
+      "base": "world-base.webp",
+      "relief": "world-relief.webp"
+    }
+  }
+}
