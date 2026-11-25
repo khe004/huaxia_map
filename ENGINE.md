@@ -126,6 +126,16 @@ yutu/
 - 引文：正文写 `**译文||原文**`，页面显示译文、悬停显示英译原文。原文一侧用 `node tools/fetch-perseus.js` 抓的公有领域英译核对：`YUTU_SERIES=series/west node tools/quotes.js <书> tools/.corpus/west`。
 - 地区：种子点按古代部族与城邦的中心摆放，现代 NUTS-3 / 一级行政区归入最近的种子点；个别拼块用 `UNIT_OVERRIDES` 指定（如比雷埃夫斯归阿提卡）。
 
+## 第三套合集：列国舆图（试点）
+
+`series/lieguo/` 画 1945 年以来的国家与疆界，目前试点一卷《苏联解体》（`sulian`，1990–1992）。规划（系列名、止于 2011 年、14 卷卷目、体例与取材规则）见项目的规划文档。
+
+- 构建与检查同西方舆图：`YUTU_SERIES=series/lieguo node build-series.mjs`、`YUTU_SERIES=series/lieguo sh tools/check.sh`，发布在 `/lieguo/`。
+- 底图：`basemaps/eurasia/`（北欧亚，原苏联 15 国的 Natural Earth 一级行政区，`tools/units-eurasia.js` 生成拼块、`tools/waters-eurasia.js` 生成河湖；南千岛群岛从萨哈林州拆出、拜科努尔补作哈萨克斯坦的拼块）。地形用 `tools/terrain.js … eurasia`，z6 瓦片。
+- 归属：现代国界就是当时的加盟共和国界，所以每个共和国只设一个种子点，拼块一律用 `UNIT_OVERRIDES` 指定，不靠“最近”；`tools/rivercross.js` 不检查已逐块指定的拼块。
+- 体例：只记疆域变动与文化、科技大事，不写评价，政治人物不入人物表；事件写到日（`mo` 用 `md(月, 日)` 排序，`cal` 显示日期）。已宣布独立而未获承认、或主权有争议的地块按实际管辖上色、加 `q` 叠斜线，图例文字用 `BOOK.hatchNote`。不收受版权保护的引文。
+- `series.json` 可写 `seal` 改目录页印章字（默认“史”）；只有一卷的合集，卷首导航写“卷一 / 一”。
+
 ## 地球入口页：寰宇舆图
 
 `node build-globe.mjs` 把 `globe.json` 列出的各套合集画在同一个可旋转的地球上，输出到 `dist/series/globe/`（发布在站点的 `/globe/`）。各卷页面与数据都不改，地球页直接读各卷的 `book.js`。

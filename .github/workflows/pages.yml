@@ -37,6 +37,11 @@ jobs:
       - run: YUTU_SERIES=series/west node build-series.mjs
       - run: YUTU_SERIES=series/west node tools/smoke.js
       - run: sed -i '1i <!doctype html>\n<html lang="zh-CN">' dist/series/west/index.html
+      # 列国舆图（1945 年以来的国家与疆界，series/lieguo）：检查、构建到 dist/series/lieguo/，发布在 /lieguo/
+      - run: YUTU_SERIES=series/lieguo sh tools/check.sh
+      - run: YUTU_SERIES=series/lieguo node build-series.mjs
+      - run: YUTU_SERIES=series/lieguo node tools/smoke.js
+      - run: sed -i '1i <!doctype html>\n<html lang="zh-CN">' dist/series/lieguo/index.html
       # 地球入口页（globe.json 列出的各套合集画在同一个地球上）：构建到 dist/series/globe/
       - run: node build-globe.mjs
       - run: sed -i '1i <!doctype html>\n<html lang="zh-CN">' dist/series/globe/index.html

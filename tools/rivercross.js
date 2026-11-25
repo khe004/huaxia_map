@@ -76,6 +76,8 @@ for (const id of ids) {
   const out = [];
   for (const a of L.assign) {
     if (OK.has('*/' + a.n) || OK.has(id + '/' + a.n)) continue;
+    // UNIT_OVERRIDES 已逐块指定归属的（如列国舆图按今国界归属的各卷），不按“最近种子点”判断
+    if (Object.prototype.hasOwnProperty.call(X.UNIT_OVERRIDES, a.n)) continue;
     const u = U[a.i].c, s = S[a.j], rv = cross(u, [s.lon, s.lat]);
     if (!rv || riverIn(a.i)) continue;
     const d = t => { const dx = (t.lon - u[0]) * Math.cos(u[1] * Math.PI / 180), dy = t.lat - u[1]; return dx * dx + dy * dy; };

@@ -410,7 +410,7 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
 @media (prefers-reduced-motion: reduce) { .vol { transition: none; } .vol:hover { transform: none; } }
 </style>
 <main>
-  <h1>${esc(S.title)}<span class="seal">史</span></h1>
+  <h1>${esc(S.title)}<span class="seal">${esc(S.seal || '史')}</span></h1>
   <p class="sub">${esc(S.subtitle)}</p>
   <a class="start" href="${S.books[0].id}/index.html?at=start">从卷一读起 ›</a>${S.globe ? `<a class="start alt" href="${esc(S.globe)}">在地球上看 ›</a>` : ''}
   <div class="tabs" id="tabs" role="tablist" aria-label="目录">
