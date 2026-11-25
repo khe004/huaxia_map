@@ -129,6 +129,11 @@ const WORKS = {
   格雷戈里法兰克人史: { gut: 'History-of-the-Franks_74955/master/74955-0.txt' },
   查士丁尼法学阶梯: { gut: 'The-Institutes-of-Justinian_5983/master/5983.txt' },
   比德英吉利教会史: { gut: 'Bede-s-Ecclesiastical-History-of-England_38326/master/38326-0.txt' },
+  吉本衰亡史五: { gut: 'History-of-the-Decline-and-Fall-of-the-Roman-Empire---Volume-5_735/master/735.txt' },
+  吉本衰亡史六: { gut: 'History-of-the-Decline-and-Fall-of-the-Roman-Empire---Volume-6_736/master/736.txt' },
+  古兰经: { gut: 'The-Koran-Al-Qur-an_3434/master/3434.txt' },
+  盎格鲁撒克逊编年史: { gut: 'The-Anglo-Saxon-Chronicle_657/master/657.txt' },
+  贝奥武甫: { gut: 'Beowulf_981/master/981.txt' },
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
