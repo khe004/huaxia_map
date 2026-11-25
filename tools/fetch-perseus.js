@@ -134,6 +134,8 @@ const WORKS = {
   古兰经: { gut: 'The-Koran-Al-Qur-an_3434/master/3434.txt' },
   盎格鲁撒克逊编年史: { gut: 'The-Anglo-Saxon-Chronicle_657/master/657.txt' },
   贝奥武甫: { gut: 'Beowulf_981/master/981.txt' },
+  艾因哈德查理曼传: { gut: 'Early-Lives-of-Charlemagne-by-Eginhard-and-the-Monk-of-St-Gall-edited-by-Prof-A-J-Grant_48870/master/48870-0.txt' },
+  罗兰之歌: { gut: 'The-Song-of-Roland_391/master/391.txt' },
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
