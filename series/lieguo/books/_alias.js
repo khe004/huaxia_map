@@ -18,7 +18,7 @@ const ALIAS = {
   贾迈勒·阿卜杜勒·纳赛尔: ['纳赛尔', 'Gamal Abdel Nasser'], 伊德里斯一世: ['Idris I'], 伊斯梅尔·阿扎里: ['阿扎里', 'Ismail al-Azhari'], 海尔·塞拉西一世: ['塞拉西', 'Haile Selassie'],
   阿丹·阿卜杜拉·奥斯曼: ['Aden Abdullah Osman'], 马卡里奥斯三世: ['马卡里奥斯', 'Makarios III'], 阿卜杜拉·萨利姆·萨巴赫: ['Abdullah Al-Salim Al-Sabah'],
   穆罕默德·礼萨·巴列维: ['巴列维', 'Mohammad Reza Pahlavi'], 拉尔夫·本奇: ['本奇', 'Ralph Bunche'], 卡迈勒·马拉赫: ['马拉赫'],
-  费萨尔·本·阿卜杜勒-阿齐兹: ['费萨尔国王', 'King Faisal'], 阿卜杜拉·萨拉勒: ['萨拉勒', 'Abdullah al-Sallal'], 盖哈坦·沙比: ['沙比', 'Qahtan al-Shaabi'],
+  '费萨尔·本·阿卜杜勒-阿齐兹': ['费萨尔国王', 'King Faisal'], 阿卜杜拉·萨拉勒: ['萨拉勒', 'Abdullah al-Sallal'], 盖哈坦·沙比: ['沙比', 'Qahtan al-Shaabi'],
   卡布斯·本·赛义德: ['卡布斯', 'Qaboos bin Said'], 扎耶德·本·苏尔坦·阿勒纳哈扬: ['扎耶德', 'Sheikh Zayed'], 拉希德·本·赛义德·阿勒马克图姆: ['拉希德', 'Rashid bin Saeed'],
   伊萨·本·萨勒曼·阿勒哈利法: ['伊萨', 'Isa bin Salman'], 艾哈迈德·本·阿里·阿勒萨尼: ['Ahmad bin Ali Al Thani'], 安瓦尔·萨达特: ['萨达特', 'Anwar Sadat'],
   列维·艾希科尔: ['艾希科尔', 'Levi Eshkol'], 侯赛因·本·塔拉勒: ['侯赛因国王', 'King Hussein'], 乌姆·库勒苏姆: ['乌姆·库尔苏姆', 'Umm Kulthum'],
