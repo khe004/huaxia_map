@@ -22,6 +22,15 @@ const ALIAS = {
   卡布斯·本·赛义德: ['卡布斯', 'Qaboos bin Said'], 扎耶德·本·苏尔坦·阿勒纳哈扬: ['扎耶德', 'Sheikh Zayed'], 拉希德·本·赛义德·阿勒马克图姆: ['拉希德', 'Rashid bin Saeed'],
   伊萨·本·萨勒曼·阿勒哈利法: ['伊萨', 'Isa bin Salman'], 艾哈迈德·本·阿里·阿勒萨尼: ['Ahmad bin Ali Al Thani'], 安瓦尔·萨达特: ['萨达特', 'Anwar Sadat'],
   列维·艾希科尔: ['艾希科尔', 'Levi Eshkol'], 侯赛因·本·塔拉勒: ['侯赛因国王', 'King Hussein'], 乌姆·库勒苏姆: ['乌姆·库尔苏姆', 'Umm Kulthum'],
+  穆罕默德五世: ['Mohammed V'], 哈比卜·布尔吉巴: ['布尔吉巴', 'Habib Bourguiba'], 夸梅·恩克鲁玛: ['恩克鲁玛', 'Kwame Nkrumah'], 艾哈迈德·塞古·杜尔: ['塞古·杜尔', 'Sékou Touré'],
+  阿赫马杜·阿希乔: ['阿希乔', 'Ahmadou Ahidjo'], 西尔瓦努斯·奥林匹欧: ['奥林匹欧', 'Sylvanus Olympio'], 利奥波德·塞达尔·桑戈尔: ['桑戈尔', 'Léopold Sédar Senghor'], 莫迪博·凯塔: ['凯塔', 'Modibo Keïta'],
+  菲利贝尔·齐拉纳纳: ['齐拉纳纳', 'Philibert Tsiranana'], 约瑟夫·卡萨武布: ['卡萨武布', 'Joseph Kasa-Vubu'], 帕特里斯·卢蒙巴: ['卢蒙巴', 'Patrice Lumumba'], 莫伊兹·冲伯: ['冲伯', 'Moïse Tshombe'],
+  于贝尔·马加: ['马加', 'Hubert Maga'], 哈马尼·迪奥里: ['迪奥里', 'Hamani Diori'], 莫里斯·亚梅奥戈: ['亚梅奥戈', 'Maurice Yaméogo'], '费利克斯·乌弗埃-博瓦尼': ['乌弗埃-博瓦尼', 'Félix Houphouët-Boigny'],
+  弗朗索瓦·托姆巴巴耶: ['托姆巴巴耶', 'François Tombalbaye'], 戴维·达科: ['达科', 'David Dacko'], 富尔贝·尤卢: ['尤卢', 'Fulbert Youlou'], 莱昂·姆巴: ["Léon M'ba"],
+  阿布巴卡尔·塔法瓦·巴勒瓦: ['巴勒瓦', 'Abubakar Tafawa Balewa'], 纳姆迪·阿齐基韦: ['阿齐基韦', 'Nnamdi Azikiwe'], 穆赫塔尔·乌尔德·达达赫: ['达达赫', 'Moktar Ould Daddah'], 米尔顿·马尔加: ['Milton Margai'],
+  朱利叶斯·尼雷尔: ['尼雷尔', 'Julius Nyerere'], 格雷瓜尔·卡伊班达: ['卡伊班达', 'Grégoire Kayibanda'], 姆瓦布查四世: ['Mwambutsa IV'], 艾哈迈德·本·贝拉: ['本·贝拉', 'Ahmed Ben Bella'],
+  米尔顿·奥博特: ['奥博特', 'Milton Obote'], 达格·哈马舍尔德: ['哈马舍尔德', 'Dag Hammarskjöld'], 钦努阿·阿契贝: ['阿契贝', 'Chinua Achebe'], 玛丽·利基: ['Mary Leakey'],
+  阿贝贝·比基拉: ['比基拉', 'Abebe Bikila'], 约瑟夫·卡巴塞莱: ['卡巴塞莱', '大卡莱', 'Le Grand Kallé'],
 };
 // 同名异人：键写作“名|生年”，只给生年相符的那一位
 const aliasOf = (n, life) => { const m = String(life || '').match(/^约?(前)?(\d+)/), y = m ? (m[1] ? '-' : '') + m[2] : '';

@@ -8,6 +8,8 @@
 //   SKIP      [一级行政区名, …]：不画
 //   BIG       [西, 南, 东, 北]：画进底图的经纬度范围，范围外裁掉
 //   CUT       [[国家代码, 拼块名或 '*', [西, 南, 东, 北], 切出部分的名称（{n} 代原名）], …]：按经纬度框切开拼块，余下部分保留原名；按顺序依次切
+//   PSET      { 拼块名: 中文今地名 }：切开之后改写这些拼块的今国名（如摩洛哥一级行政区里属于西撒哈拉的部分）
+//   NB_SKIP   [国家代码, …]：不放进 nb 的国家（其范围已由别国的拼块画出）
 //   SIMPLIFY  简化比例（默认 '5%'）
 // 拼块属性：n 名称（Natural Earth 英文名），p 今国名（中文）。其余国家按国家放进 nb，只画陆地、不分拼块。
 const fs = require('fs'), path = require('path'), os = require('os'), { execFileSync } = require('child_process');
@@ -27,7 +29,7 @@ let seq = 0;
 const ms = (fc, args) => { const i = path.join(T, `c${seq}.json`), o = path.join(T, `c${seq++}.out.json`);
   fs.writeFileSync(i, JSON.stringify(fc));
   execFileSync(MS, ['-i', i, ...args, '-o', o, 'format=geojson'], { stdio: 'pipe' });
-  return JSON.parse(fs.readFileSync(o, 'utf8')).features.filter(x => x.geometry); };
+  const j = JSON.parse(fs.readFileSync(o, 'utf8')); return (j.features || (j.geometries ? j.geometries.map(g => ({ geometry: g })) : [])).filter(x => x.geometry); };
 const one = f => ({ type: 'FeatureCollection', features: [f] });
 
 let units = [];
@@ -53,8 +55,10 @@ for (const [a3, which, box, nn] of C.CUT || []) {
     if (outG) r.push({ ...u, properties: { ...u.properties, g: u.properties.g + '-b' + seq }, geometry: outG.geometry });
     return r; });
 }
+for (const u of units) if ((C.PSET || {})[u.properties.n]) u.properties.p = C.PSET[u.properties.n];
+const NBSKIP = new Set(C.NB_SKIP || []);
 for (const f of ADM0) {
-  const a3 = f.properties.ADM0_A3; if (CN[a3] || WHOLE[a3]) continue;
+  const a3 = f.properties.ADM0_A3; if (CN[a3] || WHOLE[a3] || NBSKIP.has(a3)) continue;
   const b = bboxOf(f.geometry); if (b[2] < BIG[0] || b[0] > BIG[2] || b[3] < BIG[1] || b[1] > BIG[3]) continue;
   let g = f.geometry;
   // 只取部分一级行政区作拼块的国家：nb 里扣掉这些拼块，免得重叠
