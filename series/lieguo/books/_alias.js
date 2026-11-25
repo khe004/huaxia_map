@@ -31,6 +31,14 @@ const ALIAS = {
   朱利叶斯·尼雷尔: ['尼雷尔', 'Julius Nyerere'], 格雷瓜尔·卡伊班达: ['卡伊班达', 'Grégoire Kayibanda'], 姆瓦布查四世: ['Mwambutsa IV'], 艾哈迈德·本·贝拉: ['本·贝拉', 'Ahmed Ben Bella'],
   米尔顿·奥博特: ['奥博特', 'Milton Obote'], 达格·哈马舍尔德: ['哈马舍尔德', 'Dag Hammarskjöld'], 钦努阿·阿契贝: ['阿契贝', 'Chinua Achebe'], 玛丽·利基: ['Mary Leakey'],
   阿贝贝·比基拉: ['比基拉', 'Abebe Bikila'], 约瑟夫·卡巴塞莱: ['卡巴塞莱', '大卡莱', 'Le Grand Kallé'],
+  阿贝德·卡鲁米: ['卡鲁米', 'Abeid Karume'], 乔莫·肯雅塔: ['肯雅塔', 'Jomo Kenyatta'], 黑斯廷斯·班达: ['班达', 'Hastings Banda'], 肯尼思·卡翁达: ['卡翁达', 'Kenneth Kaunda'],
+  达乌达·贾瓦拉: ['贾瓦拉', 'Dawda Jawara'], 伊恩·史密斯: ['Ian Smith'], 塞雷茨·卡马: ['Seretse Khama'], 莱布阿·乔纳森: ['Leabua Jonathan'], 奥杜梅古·奥朱古: ['奥朱古', 'Odumegwu Ojukwu'],
+  雅库布·戈翁: ['戈翁', 'Yakubu Gowon'], 西沃萨古尔·拉姆古兰: ['拉姆古兰', 'Seewoosagur Ramgoolam'], 索布扎二世: ['Sobhuza II'], 弗朗西斯科·马西亚斯·恩圭马: ['马西亚斯', 'Macías Nguema'],
+  哈桑二世: ['Hassan II'], 蒙博托·塞塞·塞科: ['蒙博托', 'Mobutu Sese Seko'], 路易斯·卡布拉尔: ['Luís Cabral'], 萨莫拉·马谢尔: ['马谢尔', 'Samora Machel'], 阿里斯蒂德斯·佩雷拉: ['Aristides Pereira'],
+  艾哈迈德·阿卜杜拉: ['Ahmed Abdallah'], 曼努埃尔·平托·达科斯塔: ['平托·达科斯塔', 'Manuel Pinto da Costa'], 阿戈斯蒂纽·内图: ['内图', 'Agostinho Neto'], 詹姆斯·曼查姆: ['曼查姆', 'James Mancham'],
+  哈桑·古莱德·阿普蒂敦: ['古莱德', 'Hassan Gouled Aptidon'], 罗伯特·穆加贝: ['穆加贝', 'Robert Mugabe'], 卡南·巴纳纳: ['Canaan Banana'], 胡斯尼·穆巴拉克: ['穆巴拉克', 'Hosni Mubarak'],
+  纳尔逊·曼德拉: ['曼德拉', 'Nelson Mandela'], 萨姆·努乔马: ['努乔马', 'Sam Nujoma'], 克里斯蒂安·巴纳德: ['巴纳德', 'Christiaan Barnard'], 穆罕默德·阿里: ['拳王阿里', 'Muhammad Ali'],
+  唐纳德·约翰森: ['约翰森', 'Donald Johanson'], 沃莱·索因卡: ['索因卡', 'Wole Soyinka'], 纳吉布·马哈福兹: ['马哈福兹', 'Naguib Mahfouz'],
 };
 // 同名异人：键写作“名|生年”，只给生年相符的那一位
 const aliasOf = (n, life) => { const m = String(life || '').match(/^约?(前)?(\d+)/), y = m ? (m[1] ? '-' : '') + m[2] : '';
