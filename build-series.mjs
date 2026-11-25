@@ -412,7 +412,7 @@ mark { background: color-mix(in srgb, var(--hl) 35%, transparent); color: inheri
 <main>
   <h1>${esc(S.title)}<span class="seal">${esc(S.seal || '史')}</span></h1>
   <p class="sub">${esc(S.subtitle)}</p>
-  <a class="start" href="${S.books[0].id}/index.html?at=start">从卷一读起 ›</a>${S.globe ? `<a class="start alt" href="${esc(S.globe)}">在地球上看 ›</a>` : ''}
+  <a class="start" href="${S.books[0].id}/index.html?at=start">从卷一读起 ›</a>${S.globe ? `<a class="start alt" href="${esc(S.globe)}" target="_blank" rel="noopener">在地球上看 ›</a>` : ''}
   <div class="tabs" id="tabs" role="tablist" aria-label="目录">
     <button type="button" role="tab" id="t-vols" data-tab="vols" aria-controls="vols" aria-selected="true">卷目</button><button type="button" role="tab" id="t-overview" data-tab="overview" aria-controls="overview" aria-selected="false" tabindex="-1">总览</button><button type="button" role="tab" id="t-people" data-tab="people" aria-controls="people" aria-selected="false" tabindex="-1">人物</button><button type="button" role="tab" id="t-events" data-tab="events" aria-controls="events" aria-selected="false" tabindex="-1">事件</button><button type="button" role="tab" id="t-search" data-tab="search" aria-controls="search" aria-selected="false" tabindex="-1">检索</button><button type="button" role="tab" id="t-about" data-tab="about" aria-controls="about" aria-selected="false" tabindex="-1">凡例</button>
   </div>

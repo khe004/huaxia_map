@@ -133,7 +133,7 @@ yutu/
 - 构建与检查同西方舆图：`YUTU_SERIES=series/lieguo node build-series.mjs`、`YUTU_SERIES=series/lieguo sh tools/check.sh`，发布在 `/lieguo/`。
 - 底图：`basemaps/eurasia/`（北欧亚，原苏联 15 国的 Natural Earth 一级行政区，`tools/units-eurasia.js` 生成拼块、`tools/waters-eurasia.js` 生成河湖；南千岛群岛从萨哈林州拆出、拜科努尔补作哈萨克斯坦的拼块）。地形用 `tools/terrain.js … eurasia`，z6 瓦片。
 - 归属：现代国界就是当时的加盟共和国界，所以每个共和国只设一个种子点，拼块一律用 `UNIT_OVERRIDES` 指定，不靠“最近”；`tools/rivercross.js` 不检查已逐块指定的拼块。
-- 体例：只记疆域变动与文化、科技大事，不写评价，政治人物不入人物表；事件写到日（`mo` 用 `md(月, 日)` 排序，`cal` 显示日期）。已宣布独立而未获承认、或主权有争议的地块按实际管辖上色、加 `q` 叠斜线，图例文字用 `BOOK.hatchNote`。不收受版权保护的引文。
+- 体例：只记疆域变动与文化、科技大事，不写评价，各国领导人只写职务与任期；事件写到日（`mo` 用 `md(月, 日)` 排序，`cal` 显示日期）。已宣布独立而未获承认、或主权有争议的地块按实际管辖上色、加 `q` 叠斜线，图例文字用 `BOOK.hatchNote`。不收受版权保护的引文。
 - `series.json` 可写 `seal` 改目录页印章字（默认“史”）；只有一卷的合集，卷首导航写“卷一 / 一”。
 
 ## 地球入口页：寰宇舆图
