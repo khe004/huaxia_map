@@ -42,6 +42,10 @@ const ALIAS = {
   维利·勃兰特: ['勃兰特', 'Willy Brandt'], 瓦尔特·乌布利希: ['乌布利希', 'Walter Ulbricht'], 埃里希·昂纳克: ['昂纳克', 'Erich Honecker'], 尤利乌斯·拉布: ['拉布', 'Julius Raab'],
   利奥波德·菲格尔: ['菲格尔', 'Leopold Figl'], 约瑟夫·西伦凯维兹: ['西伦凯维兹', 'Józef Cyrankiewicz'], 乔治·博尔格·奥利维尔: ['博尔格·奥利维尔', 'George Borg Olivier'], 乌尔霍·吉科宁: ['吉科宁', 'Urho Kekkonen'],
   弗朗西斯·克里克: ['克里克', 'Francis Crick'], 罗莎琳德·富兰克林: ['富兰克林', 'Rosalind Franklin'], 谢尔盖·科罗廖夫: ['科罗廖夫', 'Sergei Korolev'], 尤里·加加林: ['加加林', 'Yuri Gagarin'],
+  米兰·库昌: ['库昌', 'Milan Kučan'], 弗拉尼奥·图季曼: ['图季曼', 'Franjo Tuđman'], 阿利亚·伊泽特贝戈维奇: ['伊泽特贝戈维奇', 'Alija Izetbegović'], 基罗·格利戈罗夫: ['格利戈罗夫', 'Kiro Gligorov'],
+  斯洛博丹·米洛舍维奇: ['米洛舍维奇', 'Slobodan Milošević'], 沃伊斯拉夫·科什图尼察: ['科什图尼察', 'Vojislav Koštunica'], 鲍里斯·塔迪奇: ['塔迪奇', 'Boris Tadić'], 米洛·久卡诺维奇: ['久卡诺维奇', 'Milo Đukanović'],
+  哈希姆·萨奇: ['萨奇', 'Hashim Thaçi'], 法特米尔·塞迪乌: ['塞迪乌', 'Fatmir Sejdiu'], 赛勒斯·万斯: ['万斯', 'Cyrus Vance'], 理查德·霍尔布鲁克: ['霍尔布鲁克', 'Richard Holbrooke'],
+  马尔蒂·阿赫蒂萨里: ['阿赫蒂萨里', 'Martti Ahtisaari'], 埃米尔·库斯图里察: ['库斯图里察', 'Emir Kusturica'], 戈兰·伊万尼塞维奇: ['伊万尼塞维奇', 'Goran Ivanišević'], 玛丽亚·谢里福维奇: ['谢里福维奇', 'Marija Šerifović'],
 };
 // 同名异人：键写作“名|生年”，只给生年相符的那一位
 const aliasOf = (n, life) => { const m = String(life || '').match(/^约?(前)?(\d+)/), y = m ? (m[1] ? '-' : '') + m[2] : '';
