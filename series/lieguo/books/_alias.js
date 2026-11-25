@@ -39,6 +39,9 @@ const ALIAS = {
   哈桑·古莱德·阿普蒂敦: ['古莱德', 'Hassan Gouled Aptidon'], 罗伯特·穆加贝: ['穆加贝', 'Robert Mugabe'], 卡南·巴纳纳: ['Canaan Banana'], 胡斯尼·穆巴拉克: ['穆巴拉克', 'Hosni Mubarak'],
   纳尔逊·曼德拉: ['曼德拉', 'Nelson Mandela'], 萨姆·努乔马: ['努乔马', 'Sam Nujoma'], 克里斯蒂安·巴纳德: ['巴纳德', 'Christiaan Barnard'], 穆罕默德·阿里: ['拳王阿里', 'Muhammad Ali'],
   唐纳德·约翰森: ['约翰森', 'Donald Johanson'], 沃莱·索因卡: ['索因卡', 'Wole Soyinka'], 纳吉布·马哈福兹: ['马哈福兹', 'Naguib Mahfouz'],
+  维利·勃兰特: ['勃兰特', 'Willy Brandt'], 瓦尔特·乌布利希: ['乌布利希', 'Walter Ulbricht'], 埃里希·昂纳克: ['昂纳克', 'Erich Honecker'], 尤利乌斯·拉布: ['拉布', 'Julius Raab'],
+  利奥波德·菲格尔: ['菲格尔', 'Leopold Figl'], 约瑟夫·西伦凯维兹: ['西伦凯维兹', 'Józef Cyrankiewicz'], 乔治·博尔格·奥利维尔: ['博尔格·奥利维尔', 'George Borg Olivier'], 乌尔霍·吉科宁: ['吉科宁', 'Urho Kekkonen'],
+  弗朗西斯·克里克: ['克里克', 'Francis Crick'], 罗莎琳德·富兰克林: ['富兰克林', 'Rosalind Franklin'], 谢尔盖·科罗廖夫: ['科罗廖夫', 'Sergei Korolev'], 尤里·加加林: ['加加林', 'Yuri Gagarin'],
 };
 // 同名异人：键写作“名|生年”，只给生年相符的那一位
 const aliasOf = (n, life) => { const m = String(life || '').match(/^约?(前)?(\d+)/), y = m ? (m[1] ? '-' : '') + m[2] : '';
