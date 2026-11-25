@@ -115,6 +115,11 @@ const WORKS = {
   尤利安一: { gut: 'The-Works-of-the-Emperor-Julian-Vol-1_48664/master/48664-0.txt' },
   尤利安二: { gut: 'The-Works-of-the-Emperor-Julian-Vol-2_48768/master/48768-0.txt' },
   君士坦丁传记: { gut: 'Constantine-the-Great-The-reorganization-of-the-Empire-and-the-triumph-of-the-Church_68703/master/68703-0.txt' },
+  吉本衰亡史三: { gut: 'History-of-the-Decline-and-Fall-of-the-Roman-Empire---Volume-3_733/master/733.txt' },
+  吉本衰亡史四: { gut: 'History-of-the-Decline-and-Fall-of-the-Roman-Empire---Volume-4_734/master/734.txt' },
+  奥古斯丁忏悔录: { gut: 'The-Confessions-of-St.-Augustine_3296/master/3296.txt' },
+  上帝之城一: { gut: 'The-City-of-God-Volume-I_45304/master/45304-0.txt' },
+  约达尼斯哥特史: { gut: 'The-Origin-and-Deeds-of-the-Goths_14809/master/14809.txt' },
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
