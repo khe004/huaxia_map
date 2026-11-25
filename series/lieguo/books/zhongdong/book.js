@@ -104,6 +104,7 @@ const SEEDS_RAW = `
 // 每个今天的一级行政区（Natural Earth 英文名）归哪个种子点；同名的几块（沙特阿拉伯与埃及的 Ash Sharqiyah、沙特阿拉伯与也门的 Al Jawf）不写，按最近的种子点归属
 const UNIT_OVERRIDES = Object.fromEntries([
   ['塞浦路斯', ['Larnaca', 'Northern Cyprus', 'Famagusta', 'Nicosia', 'Limassol', 'Paphos', 'United Nations Buffer Zone in Cyprus']],
+  ['叙利亚', ['Golan Heights']],
   ['以色列', ['HaDarom', 'HaZafon', 'Haifa', 'HaMerkaz', 'Jerusalem', 'Tel Aviv']],
   ['加沙', ['Gaza Strip']],
   ['西岸', ['West Bank']],

@@ -5,6 +5,8 @@ module.exports = {
     QAT: '卡塔尔', BHR: '巴林', KWT: '科威特', IRN: '伊朗', TUR: '土耳其', CYP: '塞浦路斯', CYN: '塞浦路斯' },
   WHOLE: { CNM: '塞浦路斯', WSB: '塞浦路斯', ESB: '塞浦路斯', BRT: '比尔泰维勒' },
   SKIP: [],
+  // 戈兰高地：Natural Earth 把它画在以色列北部区里，按约旦河—加利利海东岸（约东经 35.64 度）切出
+  CUT: [['ISR', 'HaZafon', [35.64, 32.6, 36, 33.45], 'Golan Heights']],
   BIG: [5, -6, 68, 44],
   WATERS: {
     BOX: [8, -3, 64, 43],
