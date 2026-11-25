@@ -106,6 +106,11 @@ const WORKS = {
   尤维纳利斯讽刺诗: { gut: 'The-Satires-of-Juvenal-Persius-Sulpicia-and-Lucilius_50657/master/50657-0.txt' }, // Evans 译（1869）
   马可沉思录: { gut: 'Thoughts-of-Marcus-Aurelius-Antoninus_15877/master/15877.txt' },               // George Long 译（1862）
   爱比克泰德: { gut: 'A-Selection-from-the-Discourses-of-Epictetus-with-the-Encheiridion_10661/master/10661.txt' }, // George Long 译
+  吉本衰亡史一: { gut: 'History-of-the-Decline-and-Fall-of-the-Roman-Empire---Volume-1_731/master/731.txt' }, // 吉本《罗马帝国衰亡史》第一卷（1776），书中转述狄奥、赫罗狄安、《罗马帝王纪》
+  普罗提诺: { gut: 'Plotinos--Complete-Works-v.-1In-Chronological-Order-Grouped-in-Four-Periods_42930/master/42930.txt' }, // Guthrie 译（1918），卷首附波菲利《普罗提诺传》
+  奥利金一: { gut: 'The-writings-of-Origen-Vol-1-of-2_70561/master/70561-0.txt' },          // 《驳塞尔苏斯》等，Crombie 译（1869）
+  奥利金二: { gut: 'The-writings-of-Origen-vol-2-of-2_70693/master/70693-0.txt' },
+  阿米阿努斯: { gut: 'The-Roman-History-of-Ammianus-Marcellinus--13-During-the-Reigns-of-the-Emperors-Constantius-J__28587/master/28587.txt' }, // Yonge 译（1862）
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
