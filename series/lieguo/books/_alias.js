@@ -14,6 +14,10 @@ const ALIAS = {
   保大: ['阮福晪', 'Bảo Đại'], 曼努埃尔·罗哈斯: ['罗哈斯', 'Manuel Roxas'], 銮披汶·颂堪: ['銮披汶', '披汶', 'Plaek Phibunsongkhram'], 西萨旺·冯: ['Sisavang Vong'],
   诺罗敦·西哈努克: ['西哈努克', 'Norodom Sihanouk'], 汤川秀树: ['Yukawa Hideki'], 黑泽明: ['Kurosawa Akira'], 本多猪四郎: ['Honda Ishirō'],
   汤姆·基尔伯恩: ['基尔伯恩', 'Tom Kilburn'], 弗雷德里克·威廉斯: ['Frederic Williams'],
+  '戴维·本-古里安': ['本-古里安', '本古里安', 'David Ben-Gurion'], 阿卜杜拉一世: ['Abdullah I'], 舒克里·库阿特利: ['库阿特利', 'Shukri al-Quwatli'],
+  贾迈勒·阿卜杜勒·纳赛尔: ['纳赛尔', 'Gamal Abdel Nasser'], 伊德里斯一世: ['Idris I'], 伊斯梅尔·阿扎里: ['阿扎里', 'Ismail al-Azhari'], 海尔·塞拉西一世: ['塞拉西', 'Haile Selassie'],
+  阿丹·阿卜杜拉·奥斯曼: ['Aden Abdullah Osman'], 马卡里奥斯三世: ['马卡里奥斯', 'Makarios III'], 阿卜杜拉·萨利姆·萨巴赫: ['Abdullah Al-Salim Al-Sabah'],
+  穆罕默德·礼萨·巴列维: ['巴列维', 'Mohammad Reza Pahlavi'], 拉尔夫·本奇: ['本奇', 'Ralph Bunche'], 卡迈勒·马拉赫: ['马拉赫'],
 };
 // 同名异人：键写作“名|生年”，只给生年相符的那一位
 const aliasOf = (n, life) => { const m = String(life || '').match(/^约?(前)?(\d+)/), y = m ? (m[1] ? '-' : '') + m[2] : '';

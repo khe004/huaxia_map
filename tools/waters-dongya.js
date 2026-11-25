@@ -1,4 +1,4 @@
-// 生成南亚底图包的水系 basemaps/dongya/geo.json（rv 河流、lk 湖泊），做法与 tools/waters-europe.js 相同，范围与译名不同（东亚与东南亚）。
+// 生成东亚与东南亚底图包的水系 basemaps/dongya/geo.json（rv 河流、lk 湖泊），做法与 tools/waters-europe.js 相同，范围与译名不同。
 // 用法：node tools/waters-dongya.js <数据目录>（在 tools/ 下 npm i 之后）
 // 数据目录里放 Natural Earth 1:1000 万的 ne_10m_rivers_lake_centerlines.geojson、ne_10m_lakes.geojson、ne_10m_lakes_europe.geojson。
 // 河流：范围内的全部河道，主要河流译成中文名（ZH），m:1 为加粗的大河；近代开凿的运河（苏伊士运河等）不画。
