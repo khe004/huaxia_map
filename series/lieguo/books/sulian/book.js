@@ -69,7 +69,7 @@ const FACTIONS = {
   tj:   { color: '#a89a40', name: () => '塔吉克斯坦共和国', mapName: () => '塔吉克斯坦' },
   // 只用于人物的国籍，不上地图
   jp:   { color: '#d8d0c8', name: () => '日本', mapName: () => '日本' },
-  gb:   { color: '#c8d0d8', name: () => '英国', mapName: () => '英国' },
+  gb:   { color: '#8fa0b8', name: () => '英国', mapName: () => '英国' },
   at:   { color: '#d8c8c8', name: () => '奥地利', mapName: () => '奥地利' },
 };
 

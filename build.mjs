@@ -88,7 +88,9 @@ if (SERIES_MODE) {
   SERIES.people = {};
   // 只有 books/_people.js 登记的才算同一人；未登记的同名者（如西晋刘毅与东晋刘毅）各归各卷，不互相补全经历
   for (const n of Object.keys(seen)) if (n[0] !== '\0' && common(n, id) && new Set(seen[n]).size > 1) SERIES.people[n] = seen['\0' + n] || [];
-  BASEMAP.terrain = BASEMAP.terrain.map(t => ({ ...t, href: '../' + t.href }));
+  // 地形图放在合集根目录，各卷共用；与合集 basemap 不同的底图（如列国舆图各地区的卷）加底图名前缀，免得互相覆盖
+  const pre = BOOK.basemap === (SERIES.basemap || 'china') ? '' : BOOK.basemap + '-';
+  BASEMAP.terrain = BASEMAP.terrain.map(t => ({ ...t, src: t.href, href: '../' + pre + t.href }));
 }
 // 嵌进 <script> 的数据与代码：</script 写成 <\/script（在字符串里等价），免得提前结束脚本
 const inScript = s => s.replace(/<\/(script)/gi, '<\\/$1');
@@ -106,6 +108,6 @@ const out = new URL(SERIES_MODE ? `./dist/${OUT}/${id}/` : `./dist/${id}/`, impo
 mkdirSync(out, { recursive: true });
 // 合集里的分卷是独立网页，要自带文档头
 writeFileSync(new URL('index.html', out), `<!doctype html>\n<html lang="zh-CN">\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n${html}`);
-if (SERIES_MODE) for (const t of BASEMAP.terrain) copyFileSync(new URL(bm + t.href.slice(3), import.meta.url), new URL(t.href, out));
+if (SERIES_MODE) for (const t of BASEMAP.terrain) copyFileSync(new URL(bm + t.src, import.meta.url), new URL(t.href, out));
 else for (const t of BASEMAP.terrain) copyFileSync(new URL(bm + t.href, import.meta.url), new URL(t.href, out));
 console.log(SERIES_MODE ? `dist/${OUT}/${id}/index.html` : `dist/${id}/index.html`, (html.length / 1024).toFixed(1) + ' KB', `· ${EVENTS.length} 事件 · ${PEOPLE_RAW.length} 人物`);

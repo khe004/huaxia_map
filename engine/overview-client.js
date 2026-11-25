@@ -4,16 +4,20 @@ function renderO() {
   const fy = y => (y < 0 ? '前 ' + -y : '' + y), O = OV, N = O.frames.length;
   const CN = n => { const D = '〇一二三四五六七八九', t = Math.floor(n / 10), o = n % 10; return n < 10 ? D[n] : (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
   const map = $('#ovmap');
-  map.innerHTML = '<path class="ovnb" d="' + O.nb + '"/><g class="ovu">' + O.units.map(d => '<path d="' + d + '"/>').join('') + '</g><g class="ovl"></g>';
-  const P = [...map.querySelectorAll('.ovu path')], gl = map.querySelector('.ovl'), rg = $('#ovr');
+  // 几卷底图不同时（O.maps），按帧的底图 b 换图
+  let P, gl, mb = null;
+  const setMap = M => { map.innerHTML = '<path class="ovnb" d="' + M.nb + '"/><g class="ovu">' + M.units.map(d => '<path d="' + d + '"/>').join('') + '</g><g class="ovl"></g>';
+    if (M.vb) map.setAttribute('viewBox', M.vb); P = [...map.querySelectorAll('.ovu path')]; gl = map.querySelector('.ovl'); };
+  if (!O.maps) setMap(O);
+  const rg = $('#ovr');
   rg.max = N - 1;
   // 势力色与陆地底色按引擎的比例调和（与各卷地图的色块一致），随明暗主题重算
   const hex = h => { h = h.trim().replace('#', ''); if (h.length === 3) h = h.replace(/./g, c => c + c); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); };
   const mix = (a, b, k) => { const A = hex(a), B = hex(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * k)).join(',') + ')'; };
   let cur = 0;
   // 朝代条带
-  const PX = 1.3, Y0 = (O.strip || [-1100])[0], Y1 = (O.strip || [0, 1949])[1], LH = 19, TOP = 22, X = y => (y - Y0) * PX, SW = X(Y1) + 40, SH = TOP + DY.lanes * LH + 6;
-  const ticks = []; for (let y = Math.ceil((Y0 + 1) / 100) * 100; y <= Y1; y += 100) ticks.push(y);
+  const PX = O.stripPx || 1.3, TS = O.stripTick || 100, Y0 = (O.strip || [-1100])[0], Y1 = (O.strip || [0, 1949])[1], LH = 19, TOP = 22, X = y => (y - Y0) * PX, SW = X(Y1) + 40, SH = TOP + DY.lanes * LH + 6;
+  const ticks = []; for (let y = Math.ceil((Y0 + 1) / TS) * TS; y <= Y1; y += TS) ticks.push(y);
   $('#ovstrip').innerHTML = '<svg width="' + SW + '" height="' + SH + '" viewBox="0 0 ' + SW + ' ' + SH + '">' +
     ticks.map(y => '<line class="tk" x1="' + X(y) + '" x2="' + X(y) + '" y1="14" y2="' + SH + '"/><text class="tkl" x="' + (X(y) + 3) + '" y="11">' + fy(y) + '</text>').join('') +
     DY.rows.map(([n, a, b, g, l]) => { const x = X(Math.max(a, Y0)), w = Math.max(2, X(b) - x), y = TOP + l * LH, fits = w > n.length * 12 + 6;
@@ -24,6 +28,7 @@ function renderO() {
   // 谭图总图年份的快捷按钮
   $('#ovrep').innerHTML = O.frames.map((f, i) => f.rep ? '<button type="button" data-i="' + i + '">' + E(f.rep) + '<small>' + fy(f.y) + '</small></button>' : '').join('');
   function draw(i, keepScroll) {
+    if (O.maps && O.frames[i].b !== mb) { mb = O.frames[i].b; setMap(O.maps[mb]); }
     cur = i; rg.value = i; const F = O.frames[i], B = O.books[F.k], cs = getComputedStyle(document.documentElement), land = cs.getPropertyValue('--land');
     const fill = F.f.map(x => mix(land, x[0], 0.6));
     for (let u = 0; u < P.length; u++) { const c = F.a.charCodeAt(u) - 48; if (c >= 0) { P[u].style.fill = fill[c]; P[u].style.stroke = fill[c]; } else { P[u].style.fill = ''; P[u].style.stroke = ''; } }

@@ -14,16 +14,18 @@ const fy = y => (y < 0 ? `前${-y}` : `${y}`);
 // r 读仓库根目录的文件（底图），rd 读合集根目录的文件（各卷）；不传 rd 时同 r
 // 另一套合集可在 series.json 里写 basemap（底图包）、overviewYears（[[年, 名], …] 代替谭图总图年份）、repLabel（帧说明，{} 处填名）、strip（纪年条带的起止年）
 export function overview(S, r, rd = r) {
-  const G = JSON.parse(r(`./basemaps/${S.basemap || 'china'}/overview.json`));
+  // 底图包：各卷按 BOOK.basemap（未写的取 series.json 的 basemap）；几卷底图不同时（如列国舆图），每帧注明所用底图 b，页面按帧换图
+  const GS = {}, gOf = bm => (GS[bm] ||= JSON.parse(r(`./basemaps/${bm}/overview.json`)));
   const vols = S.books.map(b => {
     const c = {}; vm.createContext(c);
     vm.runInContext(rd(`./books/${b.id}/book.js`) + ';this.X={BOOK,FACTIONS,SEEDS_RAW,SNAPSHOTS,EVENTS,UNIT_OVERRIDES:typeof UNIT_OVERRIDES!=="undefined"?UNIT_OVERRIDES:{}}', c);
     const X = c.X, ts = X.EVENTS.map(e => e.y + (e.mo - 1) / 12);
-    return { id: b.id, X, L: land(X), t0: Math.min(...ts), t1: Math.max(...ts) };
+    const bm = X.BOOK.basemap || S.basemap || 'china';
+    return { id: b.id, X, L: land(X), bm, G: gOf(bm), t0: Math.min(...ts), t1: Math.max(...ts) };
   });
   // 一帧：某卷某时刻各拼块的势力（帧内调色板序号，'.' 为不着色），以及标签位置
   const frame = (k, t, y, rep) => {
-    const V = vols[k], cur = stateAt(V.X, t), pal = [], pi = new Map(), a = new Array(G.units.length).fill('.');
+    const V = vols[k], G = V.G, cur = stateAt(V.X, t), pal = [], pi = new Map(), a = new Array(G.units.length).fill('.');
     const acc = [];
     for (const u of V.L.assign) {
       const f = cur[u.j], F = V.X.FACTIONS[f];
@@ -42,9 +44,11 @@ export function overview(S, r, rd = r) {
       if (o.A > 900) { const mx = o.X / o.A, my = o.Y / o.A; let bd = Infinity; for (const i of o.us) { const [x, yy] = G.c[i], d = (x - mx) ** 2 + (yy - my) ** 2; if (d < bd) { bd = d; lx = x; ly = yy; } } }
       return [F.color, mn(F, f), nm(F, f), lx, ly, Math.round(o.A)];
     });
-    return { t, y, k, rep: rep || null, f: fs, a: a.join('') };
+    const fr = { t, y, k, rep: rep || null, f: fs, a: a.join('') };
+    if (multi) fr.b = V.bm;
+    return fr;
   };
-  const frames = [];
+  const multi = Object.keys(GS).length > 1, frames = [];
   // 各卷卷末
   vols.forEach((V, k) => frames.push(frame(k, V.t1, Math.floor(V.t1), null)));
   // 谭图总图年份：落在哪卷就取哪卷（几卷都含时取离两端最远的一卷），取该年年中
@@ -57,10 +61,14 @@ export function overview(S, r, rd = r) {
   frames.sort((p, q) => p.t - q.t || (p.rep ? 1 : -1));
   // 同一年的卷末帧与总图帧并存时只留总图帧
   const out = frames.filter((f, i) => !(!f.rep && frames.some(g => g !== f && g.rep && g.y === f.y)));
+  const G = gOf(S.basemap || 'china');
   const o = { w: G.w, h: G.h, units: G.units, nb: G.nb, frames: out, books: vols.map(V => [V.id, V.X.BOOK.brand, V.X.BOOK.range]) };
+  if (multi) { delete o.units; delete o.nb; o.maps = Object.fromEntries(Object.entries(GS).map(([k, g]) => [k, { units: g.units, nb: g.nb, vb: (S.overviewVb || {})[k] || g.vb || '-170 -110 1250 990' }])); }
   // 华夏舆图沿用原有的默认值，不写进数据（目录页产物不变）
   if (S.repLabel) o.repLabel = S.repLabel;
   if (S.strip) o.strip = S.strip;
+  if (S.stripPx) o.stripPx = S.stripPx;
+  if (S.stripTick) o.stripTick = S.stripTick;
   Object.defineProperty(o, 'vb', { value: G.vb || '-170 -110 1250 990', enumerable: false });
   return o;
 }
