@@ -13,7 +13,7 @@
   },
   "range": [
     -5000,
-    1950
+    1992
   ],
   "jump": [
     [
@@ -40,6 +40,11 @@
       "漠北",
       105,
       46
+    ],
+    [
+      "苏联",
+      60,
+      55
     ]
   ],
   "series": [
@@ -56,6 +61,13 @@
       "site": "west/",
       "color": "#3a7ab0",
       "dark": "#6aa6dc"
+    },
+    {
+      "name": "列国舆图",
+      "dir": "series/lieguo/",
+      "site": "lieguo/",
+      "color": "#3f8f5a",
+      "dark": "#6cc28a"
     }
   ],
   "terrain": {

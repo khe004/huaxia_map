@@ -1,0 +1,42 @@
+<!-- 列国舆图目录页“凡例”页签的正文，由 build-series.mjs 嵌入；{{…}} 在构建时替换 -->
+<div class="about">
+  <p class="lead">列国舆图把 1945 年以来世界上国家与疆界的变动编成可以交互的地图，目前共{{books}}卷。只记客观的事实：哪一天、哪块地方、从谁归谁、依据哪份宣言、法令或条约；不评价各方的是非，政治只写到与疆界有关的程度。文化与科技的大事（航天、体育、建筑、城市等）也收，落在它发生的地点。</p>
+
+  <h3>疆域</h3>
+  <ul>
+    <li><b>拼块。</b>地图以今天的行政区为拼块，按当时所属的国家（或加盟共和国、占领区）上色。欧洲各卷用 Eurostat 的 NUTS 分区（德国到州下的行政区，奥地利、波兰等到更小的地区），原苏联各国用 Natural Earth 的一级行政区。新国界与原有行政界线重合的，界线基本准确；占领区、割让地区与今天的行政区对不上的，只能取近似，在各卷注明。</li>
+    <li><b>何时变化。</b>疆域按“快照”变化，每条快照落在描述这次变动的事件上。鼠标移到地块上，会显示它从哪年哪月、因哪个事件归属现在的一方。</li>
+    <li><b>斜线。</b>已宣布独立而尚未得到承认的地方，以及主权存在争议的地方，叠斜线。争议地区一律按实际管辖上色，悬停只写一句事实（谁在管辖、谁主张主权），不判断哪一方有理。</li>
+    <li><b>国名。</b>用中国外交部的通行译名；当时的国名写在势力名里。</li>
+  </ul>
+
+  <h3>纪年</h3>
+  <ul>
+    <li>公元纪年，事件写到日。独立的日期取该国宣布或法令生效的日子；加入联合国的日期另外写明。</li>
+  </ul>
+
+  <h3>事件</h3>
+  <ul>
+    <li>事件分政事、外交、民生、文化几类，文化与科技单独一线。战争只以结果出现（分界线在哪、哪天生效），不写过程与伤亡。人物表收文化、科学、航天、体育人物，以及与疆域变动直接相关的各国领导人；领导人只写职务与任期，不作评价。</li>
+    <li>每个事件注明依据的文件类别。</li>
+  </ul>
+
+  <h3>引文</h3>
+  <ul>
+    <li>这一时期的文字大多仍在版权期内，所以正文全部自己写，不摘录书籍、报刊、歌词或讲话；需要时只引不受著作权保护的官方文件条文。目前各卷没有引文。</li>
+  </ul>
+
+  <h3>数据下载</h3>
+  <ul>
+    <li><b>事件</b>：<a href="data/events.csv" target="_blank" rel="noopener">CSV</a> · <a href="data/events.json" target="_blank" rel="noopener">JSON</a>。</li>
+    <li><b>人物</b>：<a href="data/people.csv" target="_blank" rel="noopener">CSV</a> · <a href="data/people.json" target="_blank" rel="noopener">JSON</a>。</li>
+    <li><b>疆域</b>：<a href="data/territory.json" target="_blank" rel="noopener">JSON</a>。</li>
+    <li>CSV 是带 BOM 的 UTF-8，Excel 可以直接打开。按 CC BY-SA 4.0 使用，署名写“列国舆图”。</li>
+  </ul>
+
+  <h3>纠错</h3>
+  <p>每个事件和人物页的末尾有“纠错”链接，会在 GitHub 上新开一条问题；请写明问题和依据。也可以直接在 <a href="https://github.com/khe004/huaxia_map/issues" target="_blank" rel="noopener">github.com/khe004/huaxia_map</a> 提出。</p>
+
+  <h3>许可</h3>
+  <p>代码用 MIT 许可；各卷文字与数据、底图的加工结果用 CC BY-SA 4.0。地图数据：Eurostat（NUTS，© EuroGeographics）、Natural Earth（行政区、河湖与海岸，公有领域）、AWS Terrarium 高程。</p>
+</div>

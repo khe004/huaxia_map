@@ -453,7 +453,7 @@ function renderTerritory() {
   for (const n of Object.keys(OUTER)) { const f = outerOf(n, T); if (f && !counts.some(c => c[0] === f)) counts.push([f, 0]); }
   $('#legend').innerHTML = groupByRealm(counts, T).map(([rn, , fs], gi) => (rn ? `${gi ? '<b class="br"></b>' : ''}<span class="rg">${rn}</span>` : '') + fs.map(([f]) => `<span><i style="background:${fColor(f)}"></i>${fName(f, T)}</span>`).join('')).join('') +
     [...new Set(LINES.filter(l => lineOn(l, T)).map(l => l.k))].map(k => `<span class="lk"><i class="lsw ln-${k}"></i>${LK[k]}</span>`).join('') +
-    (Q.size ? '<span class="qn"><i class="hatch"></i>斜线：归属存疑或只是名义</span>' : '') +
+    (Q.size ? `<span class="qn"><i class="hatch"></i>${B.hatchNote || '斜线：归属存疑或只是名义'}</span>` : '') +
     (B.regions?.legendNote ? `<span class="note">· ${B.regions.legendNote}</span>` : '');
   cityText.text(d => cityName(d, T));
   cityG.style('display', d => (cityName(d, T) ? null : 'none')).classed('cap', d => cityCap(d, T));
@@ -594,7 +594,7 @@ function ovSpan(b, a) {
 if (SER) {
   const prev = SER.books[serIdx - 1], next = SER.books[serIdx + 1];
   const nav = $('#series'); nav.hidden = false;
-  nav.innerHTML = `<span class="pos">卷${serIdx ? cnNum(serIdx + 1) : '一'} / ${cnNum(SER.books.length)}</span>`
+  nav.innerHTML = `<span class="pos">卷${serIdx ? cnNum(serIdx + 1) : '一'} / ${SER.books.length === 1 ? '一' : cnNum(SER.books.length)}</span>`
     + `<a class="btn" href="../index.html" title="全部卷目">目录</a>`
     + (prev ? `<a class="btn" href="${bookHref(prev, 'end')}" title="上一卷：${esc(prev.brand)}（${esc(prev.years)}），从结尾读起">‹ ${esc(prev.brand)}</a>` : '');
   const ov = overlapNote(prev, SER.books[serIdx]);
