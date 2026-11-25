@@ -128,12 +128,13 @@ yutu/
 
 ## 第三套合集：列国舆图
 
-`series/lieguo/` 画 1945 年以来的国家与疆界，按年代与地区分卷，目前有《战后重划》（`zhanhou`，1945–1949，欧洲）与《苏联解体》（`sulian`，1990–1992）。规划（系列名、止于 2011 年、14 卷卷目、体例与取材规则）见项目的规划文档。
+`series/lieguo/` 画 1945 年以来的国家与疆界，按年代与地区分卷，目前有《战后重划》（`zhanhou`，1945–1949，欧洲）、《南亚分治》（`fenzhi`，1947–1954）与《苏联解体》（`sulian`，1990–1992）。规划（系列名、止于 2011 年、14 卷卷目、体例与取材规则）见项目的规划文档。
 
 - 构建与检查同西方舆图：`YUTU_SERIES=series/lieguo node build-series.mjs`、`YUTU_SERIES=series/lieguo sh tools/check.sh`，发布在 `/lieguo/`。
 - 底图：`basemaps/eurasia/`（北欧亚，原苏联 15 国的 Natural Earth 一级行政区，`tools/units-eurasia.js` 生成拼块、`tools/waters-eurasia.js` 生成河湖；南千岛群岛从萨哈林州拆出、拜科努尔补作哈萨克斯坦的拼块）。地形用 `tools/terrain.js … eurasia`，z6 瓦片。
 - 各卷底图不同：`BOOK.basemap` 按地区取（欧洲卷用 `europe`，原苏联用 `eurasia`）。合集 `series.json` 的 `basemap` 只是默认值；地形图放在合集根目录共用，与默认底图不同的卷加底图名前缀（如 `europe-terrain.webp`）；目录页“总览”按帧换底图（`overviewVb` 可按底图改总览的取景）；`tools/rivercross.js` 按各卷的底图查。目录页纪年条带可写 `strip`、`stripPx`（每年像素，默认 1.3）、`stripTick`（刻度间隔，默认 100 年）。
 - 《战后重划》：占领区、割让地区按今天的行政区取近似（德国 NUTS-2，奥地利、波兰 NUTS-3）；每个国家、占领区、待定地区一个种子点，拼块用 `UNIT_OVERRIDES` 逐块指定，只有与瑞士州名重名的 `Freiburg`、`Jura` 按最近种子点（`UNIT_OVERRIDES` 按名称匹配，不分国家）。小块的占领区、托管区用 `hideLabel` 不标势力名。
+- 《南亚分治》：底图 `basemaps/southasia/`（Natural Earth 一级行政区，`tools/units-southasia.js`、`tools/waters-southasia.js`，锡亚琴冰川补作拼块；地形 z6）。印度、巴基斯坦都有名为 `Punjab` 的拼块，不写进 `UNIT_OVERRIDES`，靠两侧的种子点按最近归属；印度按地区多放几个种子点，国名标签才落在中部。
 - 归属：现代国界就是当时的加盟共和国界，所以每个共和国只设一个种子点，拼块一律用 `UNIT_OVERRIDES` 指定，不靠“最近”；`tools/rivercross.js` 不检查已逐块指定的拼块。
 - 体例：只记疆域变动与文化、科技大事，不写评价，各国领导人只写职务与任期；事件写到日（`mo` 用 `md(月, 日)` 排序，`cal` 显示日期）。已宣布独立而未获承认、或主权有争议的地块按实际管辖上色、加 `q` 叠斜线，图例文字用 `BOOK.hatchNote`。不收受版权保护的引文。
 - `series.json` 可写 `seal` 改目录页印章字（默认“史”）；只有一卷的合集，卷首导航写“卷一 / 一”。
