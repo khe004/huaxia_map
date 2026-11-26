@@ -144,6 +144,9 @@ const WORKS = {
   阿伯拉尔苦难史: { gut: 'Historia-Calamitatum_14268/master/14268.txt' },
   威尔士巡行记: { gut: 'The-itinerary-of-Archbishop-Baldwin-through-Wales_1148/master/1148-0.txt' },
   大宪章: { gut: 'The-Magna-Carta_10000/master/10000.txt' },                                   // 大宪章英译（古腾堡本）
+  马可波罗一: { gut: 'The-Travels-of-Marco-Polo---Volume-1_10636/master/10636.txt' },        // 马可·波罗游记，Yule 英译、Cordier 修订（1903）
+  马可波罗二: { gut: 'The-Travels-of-Marco-Polo---Volume-2_12410/master/12410.txt' },
+  神曲: { gut: 'Divine-Comedy-Longfellow-s-Translation-Complete_1004/master/1004.txt' },                // 但丁《神曲》，朗费罗英译（1867）
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
