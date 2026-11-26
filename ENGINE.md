@@ -51,6 +51,7 @@ yutu/
 | `peopleGroups` `otherGroup` | 人物页的阵营分组 `[[势力, 组名], …]` 及其余人物的组名 |
 | `storyDefault` | 交汇图默认显示的人物 |
 | `searchHint` `notes` `musicTitle` | 搜索框提示、本年面板底部说明、背景音按钮的悬停文字 |
+| `outsideLabels` | 设为 false 时，范围外的今国名、今省名不常显，只在放大或打开今行政区时显示（世界底图各卷用） |
 
 ### 地图与疆域
 

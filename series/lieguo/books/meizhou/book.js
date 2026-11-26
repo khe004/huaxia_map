@@ -26,6 +26,7 @@ const BOOK = {
   range: [1961, 1984],
   startYear: 1961,
   baseFaction: 'us',
+  outsideLabels: false,
   viewMax: 12,
   view: [[128, 32], [180, 30], [-120, 50], [-55, 48], [-34, -8], [-70, -56], [150, -48], [128, -12]],
   scope: { provinces: SCOPE },

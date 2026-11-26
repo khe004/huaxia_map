@@ -55,6 +55,9 @@ const ALIAS = {
   林登·平德林: ['平德林', 'Lynden Pindling'], 埃里克·盖里: ['盖里', 'Eric Gairy'], 亨克·阿龙: ['阿龙', 'Henck Arron'], 彼得·凯尼洛雷亚: ['凯尼洛雷亚', 'Peter Kenilorea'], 伊雷米亚·塔巴伊: ['塔巴伊', 'Ieremia Tabai'],
   沃尔特·利尼: ['利尼', 'Walter Lini'], 乔治·普赖斯: ['普赖斯', 'George Price'], 维尔·伯德: ['伯德', 'Vere Bird'], 肯尼迪·西蒙兹: ['西蒙兹', 'Kennedy Simmonds'], 奥马尔·托里霍斯: ['托里霍斯', 'Omar Torrijos'],
   约翰·肯尼迪: ['肯尼迪', 'John F. Kennedy'], 吉米·卡特: ['卡特', 'Jimmy Carter'], 尼尔·阿姆斯特朗: ['阿姆斯特朗', 'Neil Armstrong'], 贝利: ['Pelé'], 约恩·乌松: ['乌松', 'Jørn Utzon'],
+  赫尔穆特·科尔: ['科尔', 'Helmut Kohl'], 洛塔尔·德梅齐埃: ['德梅齐埃', 'Lothar de Maizière'], 瓦茨拉夫·哈维尔: ['哈维尔', 'Václav Havel'], 瓦茨拉夫·克劳斯: ['克劳斯', 'Václav Klaus'],
+  弗拉迪米尔·梅恰尔: ['梅恰尔', 'Vladimír Mečiar'], 阿里·阿卜杜拉·萨利赫: ['萨利赫', 'Ali Abdullah Saleh'], 阿里·萨利姆·比德: ['比德', 'Ali Salem al-Beidh'], 伊萨亚斯·阿费沃基: ['伊萨亚斯', 'Isaias Afwerki'],
+  梅莱斯·泽纳维: ['梅莱斯', 'Meles Zenawi'], 阿马塔·卡布阿: ['卡布阿', 'Amata Kabua'], 莱昂纳德·伯恩斯坦: ['伯恩斯坦', 'Leonard Bernstein'], '蒂姆·伯纳斯-李': ['伯纳斯-李', 'Tim Berners-Lee'],
 };
 // 同名异人：键写作“名|生年”，只给生年相符的那一位
 const aliasOf = (n, life) => { const m = String(life || '').match(/^约?(前)?(\d+)/), y = m ? (m[1] ? '-' : '') + m[2] : '';

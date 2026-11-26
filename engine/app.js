@@ -296,10 +296,10 @@ const gModern = root.append('g').attr('class', 'modern');
 gModern.selectAll('path').data(GEO.cn.features).join('path').attr('d', path);
 
 const gLabels = root.append('g');
-// 不在本书范围内（或只部分纳入）的今省区，始终显示省名
+// 不在本书范围内（或只部分纳入）的今省区，始终显示省名（BOOK.outsideLabels 为 false 时不常显，如世界底图各卷）
 const OUTSIDE = new Set(GEO.cn.features.map(f => f.properties.n).filter(n => !(SC.provinces || []).includes(n)));
 const provLbl = gLabels.append('g').selectAll('text').data(GEO.cn.features.filter(f => !(BASEMAP.noProvLabel || ['香港', '澳门']).includes(f.properties.n))).join('text')
-  .attr('class', f => 'lbl prov-lbl' + (OUTSIDE.has(f.properties.n) ? ' always' : '')).attr('text-anchor', 'middle')
+  .attr('class', f => 'lbl prov-lbl' + (OUTSIDE.has(f.properties.n) && BOOK.outsideLabels !== false ? ' always' : '')).attr('text-anchor', 'middle')
   .attr('transform', f => { const c = proj(d3.geoCentroid(f)); return `translate(${c})`; })
   .text(f => '今' + f.properties.n);
 const zhouLbl = gLabels.append('g').selectAll('text').data(ZHOU_LABELS).join('text')
