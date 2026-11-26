@@ -6,6 +6,7 @@ const fs = require('fs'), vm = require('vm'), path = require('path');
 const R = require('./root.js').R;
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : require('./books.js')();
 const OK = new Set([
+  'sanshi:西班牙的腓力三世', 'sanshi:西班牙的腓力四世', 'sanshi:普法尔茨的腓特烈五世', // 腓特烈五世：普法尔茨选帝侯，只做了一冬波希米亚国王； // 兼领葡萄牙（1580–1640）
   'feili:西班牙的腓力二世', 'feili:查理五世', // 腓力二世 1580 年兼领葡萄牙；查理五世本卷开头已把帝国交给斐迪南
   'chuhan:韩信',  // 汉所封齐王、楚王，楚汉战争中一直是汉将
   'chuhan:彭越',  // 汉所封梁王，楚汉战争中附汉
@@ -16,7 +17,7 @@ const OK = new Set([
   'kelaodi:加尔巴', 'kelaodi:维特利乌斯', 'kelaodi:韦斯巴芗', // 四帝之年：先为起兵一方之首，后为罗马皇帝   // 黑山军 205 年降曹，本卷（200–220）主要是曹操部属
 ]);
 // 势力名里写出、但不必收入人物表的（只作年代标识或泛称）：'书:人名'
-const NAMED_OK = new Set(['feili:亨利四世', 'feili:腓力二世', 'feili:奥斯曼', 'feili:亨利二世', 'feili:亨利三世', 'feili:腓力三世', 'gaige:腓力二世', 'gaige:帖木儿', 'gaige:奥斯曼', 'gaige:路易二世', 'gaige:亨利二世', 'gaige:曼努埃尔一世', 'hanghai:盖隆', 'hanghai:帖木儿', 'hanghai:奥斯曼', 'hanghai:路易二世', 'hanghai:安娜', 'hanghai:曼努埃尔一世', 'hanghai:亨利七世', 'xianluo:盖隆', 'xianluo:亨利六世', 'xianluo:帖木儿', 'xianluo:奥斯曼', 'xianluo:弗拉基米尔', 'luoma:马麦', 'buni:马麦', 'zhende:亨利四世', 'zhende:亨利五世', 'zhende:亨利六世', 'zhende:奥斯曼', 'zhende:弗拉基米尔', 'heisi:约翰二世', 'heisi:查理五世', 'heisi:查理六世', 'heisi:弗拉基米尔', 'heisi:阿森', 'heisi:奥斯曼', 'dongjin:腓力六世', 'aka:奥斯曼', 'aka:亨利三世', 'aka:弗拉基米尔', 'aka:赞吉', 'aka:阿森', 'jiaohuang:马略', 'jiaohuang:亨利三世', 'jiaohuang:弗拉基米尔', 'jiaohuang:赞吉', 'jiaohuang:阿森', 'weijing:赞吉', 'salading:马略', 'salading:法蒂玛', 'salading:弗拉基米尔', 'salading:鲁本', 'salading:威廉二世', 'salading:熙德', 'xuren:马略', 'xuren:法蒂玛', 'qiannian:法蒂玛', 'weijing:罗曼努斯二世', 'qiannian:马蒙', 'qiannian:阿尔帕德', 'weijing:法蒂玛', 'weijing:鲁斯塔姆', 'weijing:塔希尔', 'chaliman:君士坦丁', 'chaliman:米海尔三世', 'chaliman:鲁斯塔姆', 
+const NAMED_OK = new Set(['sanshi:亨利四世', 'sanshi:腓力二世', 'sanshi:穆罕默德', 'sanshi:奥斯曼', 'sanshi:腓力三世', 'sanshi:腓力四世', 'feili:西班牙的腓力三世', 'feili:亨利四世', 'feili:腓力二世', 'feili:奥斯曼', 'feili:亨利二世', 'feili:亨利三世', 'feili:腓力三世', 'gaige:腓力二世', 'gaige:帖木儿', 'gaige:奥斯曼', 'gaige:路易二世', 'gaige:亨利二世', 'gaige:曼努埃尔一世', 'hanghai:盖隆', 'hanghai:帖木儿', 'hanghai:奥斯曼', 'hanghai:路易二世', 'hanghai:安娜', 'hanghai:曼努埃尔一世', 'hanghai:亨利七世', 'xianluo:盖隆', 'xianluo:亨利六世', 'xianluo:帖木儿', 'xianluo:奥斯曼', 'xianluo:弗拉基米尔', 'luoma:马麦', 'buni:马麦', 'zhende:亨利四世', 'zhende:亨利五世', 'zhende:亨利六世', 'zhende:奥斯曼', 'zhende:弗拉基米尔', 'heisi:约翰二世', 'heisi:查理五世', 'heisi:查理六世', 'heisi:弗拉基米尔', 'heisi:阿森', 'heisi:奥斯曼', 'dongjin:腓力六世', 'aka:奥斯曼', 'aka:亨利三世', 'aka:弗拉基米尔', 'aka:赞吉', 'aka:阿森', 'jiaohuang:马略', 'jiaohuang:亨利三世', 'jiaohuang:弗拉基米尔', 'jiaohuang:赞吉', 'jiaohuang:阿森', 'weijing:赞吉', 'salading:马略', 'salading:法蒂玛', 'salading:弗拉基米尔', 'salading:鲁本', 'salading:威廉二世', 'salading:熙德', 'xuren:马略', 'xuren:法蒂玛', 'qiannian:法蒂玛', 'weijing:罗曼努斯二世', 'qiannian:马蒙', 'qiannian:阿尔帕德', 'weijing:法蒂玛', 'weijing:鲁斯塔姆', 'weijing:塔希尔', 'chaliman:君士坦丁', 'chaliman:米海尔三世', 'chaliman:鲁斯塔姆', 
   'zhaoxuan:狐鹿姑单于', 'zhaoxuan:乌珠留若鞮单于', // 匈奴图例按年标注在位单于，本卷事件不涉其本人
   'qunxiong:檀石槐', 'chibi:檀石槐',               // “檀石槐后裔诸部”是泛称
   'sanguo:刘焉', 'sanguo:士燮', 'sanguo:张杨', 'sanguo:公孙度', // 《三国演义》单行本：图例沿用割据者名，演义情节未写其人
