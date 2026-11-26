@@ -205,6 +205,13 @@ const WORKS = {
   批评论: { gut: 'An-Essay-on-Criticism_7409/master/7409.txt' }, // 蒲柏《批评论》
   神正论: { gut: 'TheodicyEssays-on-the-Goodness-of-God-the-Freedom-of-Man-and-the-Origin-of-Evil_17147/master/17147.txt' }, // 莱布尼茨《神正论》，Huggard 英译
   鲁滨孙漂流记: { gut: 'The-Life-and-Adventures-of-Robinson-Crusoe_521/master/521.txt' }, // 笛福
+  格列佛游记: { gut: 'Gulliver-s-Travels_829/master/829.txt' }, // 斯威夫特
+  哲学通信: { gut: 'Letters-on-England_2445/master/2445.txt' }, // 伏尔泰《哲学通信》，英译
+  人性论: { gut: 'A-Treatise-of-Human-Nature_4705/master/4705.txt' }, // 休谟
+  汤姆琼斯: { gut: 'History-of-Tom-Jones-a-Foundling_6593/master/6593.txt' }, // 菲尔丁
+  致富之道: { gut: 'Franklin-s-Way-to-Wealthor-Poor-Richard-Improved-_43855/master/43855.txt' }, // 富兰克林
+  老实人: { gut: 'Candide_19942/master/19942.txt' }, // 伏尔泰《老实人》，英译
+  社会契约论: { gut: 'The-Social-Contract--amp--Discourses_46333/master/46333.txt' }, // 卢梭，Cole 英译
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };

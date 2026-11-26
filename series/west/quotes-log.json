@@ -244,5 +244,11 @@
   "quotes": 8,
   "found": 8,
   "missing": []
+ },
+ "beide": {
+  "date": "2026-11-26",
+  "quotes": 7,
+  "found": 7,
+  "missing": []
  }
 }
