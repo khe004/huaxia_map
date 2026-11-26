@@ -165,6 +165,14 @@ const WORKS = {
   乌托邦: { gut: 'Utopia_2130/master/2130.txt' },                                          // 莫尔《乌托邦》，Burnet 英译
   达芬奇笔记: { gut: 'The-Notebooks-of-Leonardo-Da-Vinci-Complete_5000/master/5000-8.txt' }, // 《达·芬奇笔记》，Richter 英译（1888）
   愚人颂: { gut: 'The-Praise-of-Folly_9371/master/9371.txt' },                              // 伊拉斯谟《愚人颂》，Wilson 英译（1668）
+  迪亚斯一: { gut: 'The-Memoirs-of-the-Conquistador-Bernal-Diaz-del-Castillo-Vol-1--of-2---13-Written-by-Himself-__32474/master/32474.txt' }, // 贝尔纳尔·迪亚斯《征服新西班牙信史》，Lockhart 英译（1844），卷一
+  罗耀拉自传: { gut: 'The-Autobiography-of-St.-Ignatius_24534/master/24534.txt' },          // 《罗耀拉自传》，O'Conor 英译（1900）
+  切利尼自传: { gut: 'The-Autobiography-of-Benvenuto-Cellini_4028/master/4028-8.txt' },      // 切利尼《自传》，Symonds 英译
+  福克斯殉道史: { gut: 'Fox-s-Book-of-MartyrsDeaths-of-the-Primitive-Protestant-Martyrs_22400/master/22400.txt' }, // 福克斯《殉道者之书》
+  基督徒的自由: { gut: 'Concerning-Christian-Liberty--with-Letter-of-Martin-Luther-to-Pope-Leo-X._1911/master/1911.txt' }, // 路德《论基督徒的自由》及致利奥十世书，Wace 与 Buchheim 英译
+  路德桌边谈: { gut: 'Selections-from-the-Table-Talk-of-Martin-Luther_9841/master/9841.txt' }, // 《路德桌边谈》，Hazlitt 英译
+  名著序言: { gut: 'Prefaces-and-Prologues-to-Famous-Bookswith-Introductions-Notes-and-Illustrations_13182/master/13182.txt' }, // 《哈佛古典丛书》第三十九卷，收哥白尼《天体运行论》献词等
+  巨人传: { gut: 'Gargantua-and-Pantagruel_1200/master/1200.txt' },                        // 拉伯雷《巨人传》，Urquhart 与 Motteux 英译
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
