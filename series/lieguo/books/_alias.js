@@ -50,6 +50,11 @@ const ALIAS = {
   穆罕默德·阿尤布·汗: ['阿尤布·汗', 'Ayub Khan'], 佐勒菲卡尔·阿里·布托: ['布托', 'Zulfikar Ali Bhutto'], 谢赫·穆吉布·拉赫曼: ['穆吉布', 'Sheikh Mujibur Rahman'], 西丽玛沃·班达拉奈克: ['班达拉奈克夫人', 'Sirimavo Bandaranaike'],
   易卜拉欣·纳西尔: ['纳西尔', 'Ibrahim Nasir'], 巴尔登·顿珠·南嘉: ['南嘉', 'Palden Thondup Namgyal'], 苏哈托: ['Suharto'], 佐藤荣作: ['佐藤', 'Eisaku Sato'], 迈克尔·索马雷: ['索马雷', 'Michael Somare'],
   哈桑纳尔·博尔基亚: ['博尔基亚', 'Hassanal Bolkiah'], 丹下健三: ['Kenzo Tange'], 萨蒂什·达万: ['达万', 'Satish Dhawan'], 阿卜杜勒·卡拉姆: ['卡拉姆', 'A. P. J. Abdul Kalam'],
+  马列托阿·塔努马菲利二世: ['马列托阿', 'Malietoa Tanumafili II'], 亚历山大·巴斯塔曼特: ['巴斯塔曼特', 'Alexander Bustamante'], 埃里克·威廉斯: ['Eric Williams'], 福布斯·伯纳姆: ['伯纳姆', 'Forbes Burnham'],
+  埃罗尔·巴罗: ['巴罗', 'Errol Barrow'], 哈默·德罗伯特: ['德罗伯特', 'Hammer DeRoburt'], 陶法阿豪·图普四世: ['图普四世', 'Taufaʻahau Tupou IV'], 拉图·卡米塞塞·马拉: ['马拉', 'Ratu Mara'],
+  林登·平德林: ['平德林', 'Lynden Pindling'], 埃里克·盖里: ['盖里', 'Eric Gairy'], 亨克·阿龙: ['阿龙', 'Henck Arron'], 彼得·凯尼洛雷亚: ['凯尼洛雷亚', 'Peter Kenilorea'], 伊雷米亚·塔巴伊: ['塔巴伊', 'Ieremia Tabai'],
+  沃尔特·利尼: ['利尼', 'Walter Lini'], 乔治·普赖斯: ['普赖斯', 'George Price'], 维尔·伯德: ['伯德', 'Vere Bird'], 肯尼迪·西蒙兹: ['西蒙兹', 'Kennedy Simmonds'], 奥马尔·托里霍斯: ['托里霍斯', 'Omar Torrijos'],
+  约翰·肯尼迪: ['肯尼迪', 'John F. Kennedy'], 吉米·卡特: ['卡特', 'Jimmy Carter'], 尼尔·阿姆斯特朗: ['阿姆斯特朗', 'Neil Armstrong'], 贝利: ['Pelé'], 约恩·乌松: ['乌松', 'Jørn Utzon'],
 };
 // 同名异人：键写作“名|生年”，只给生年相符的那一位
 const aliasOf = (n, life) => { const m = String(life || '').match(/^约?(前)?(\d+)/), y = m ? (m[1] ? '-' : '') + m[2] : '';

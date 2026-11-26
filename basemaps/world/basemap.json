@@ -1,0 +1,21 @@
+{
+  "name": "世界",
+  "size": [1000, 500],
+  "projection": {
+    "type": "equalEarth",
+    "rotate": [-150, 0],
+    "fitPadding": [[10, 10], [990, 490]],
+    "fitPoints": [[-29.6, 0], [-30.4, 0], [150, 80], [150, -58]]
+  },
+  "pan": [[-300, -250], [1300, 750]],
+  "natline": false,
+  "noProvLabel": [],
+  "bigRivers": ["亚马孙河", "密西西比河", "尼罗河", "长江", "刚果河", "黄河", "伏尔加河", "多瑙河"],
+  "terrain": [
+    { "href": "terrain.webp", "layer": "base", "ext": [-20, -20, 1020, 520] },
+    { "href": "terrain-relief.webp", "layer": "relief", "ext": [-20, -20, 1020, 520] }
+  ],
+  "countryLabels": [],
+  "overviewView": [0, 0, 1000, 500],
+  "modernToggle": "今行政区"
+}

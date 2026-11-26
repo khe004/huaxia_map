@@ -177,7 +177,7 @@ if (UNITS.objects.nb) {
 rewind(GEO.cn); rewind(GEO.nb); rewind(GEO.cnout);
 const svg = d3.select('#map').attr('viewBox', `0 0 ${W} ${H}`);
 const PJ = BASEMAP.projection;
-const proj = ({ conicEqualArea: d3.geoConicEqualArea, conicConformal: d3.geoConicConformal, mercator: d3.geoMercator, equirectangular: d3.geoEquirectangular })[PJ.type]()
+const proj = ({ conicEqualArea: d3.geoConicEqualArea, conicConformal: d3.geoConicConformal, mercator: d3.geoMercator, equirectangular: d3.geoEquirectangular, equalEarth: d3.geoEqualEarth })[PJ.type]()
   .rotate(PJ.rotate || [0, 0]);
 if (PJ.parallels && proj.parallels) proj.parallels(PJ.parallels);
 proj.fitExtent(PJ.fitPadding, { type: 'MultiPoint', coordinates: PJ.fitPoints });
