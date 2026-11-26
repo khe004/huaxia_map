@@ -173,6 +173,15 @@ const WORKS = {
   路德桌边谈: { gut: 'Selections-from-the-Table-Talk-of-Martin-Luther_9841/master/9841.txt' }, // 《路德桌边谈》，Hazlitt 英译
   名著序言: { gut: 'Prefaces-and-Prologues-to-Famous-Bookswith-Introductions-Notes-and-Illustrations_13182/master/13182.txt' }, // 《哈佛古典丛书》第三十九卷，收哥白尼《天体运行论》献词等
   巨人传: { gut: 'Gargantua-and-Pantagruel_1200/master/1200.txt' },                        // 拉伯雷《巨人传》，Urquhart 与 Motteux 英译
+  布斯贝克一: { gut: 'The-Life-and-Letters-of-Ogier-Ghiselin-de-Busbecq-Vol-1-of-2_53629/master/53629-0.txt' }, // 布斯贝克《土耳其书信》，Forster 与 Daniell 英译（1881），卷一
+  布斯贝克二: { gut: 'The-Life-and-Letters-of-Ogier-Ghiselin-de-Busbecq-Vol-2-of-2_53630/master/53630-0.txt' }, // 卷二
+  蒙田随笔: { gut: 'Essays-of-Michel-de-Montaigne---Complete_3600/master/3600.txt' },          // 蒙田《随笔集》，Cotton 英译、Hazlitt 编
+  特蕾莎自传: { gut: 'The-Life-of-St.-Teresa-of-Jesus-of-the-Order-of-Our-Lady-of-Carmel_8120/master/8120.txt' }, // 阿维拉的特蕾莎《自传》，David Lewis 英译
+  玛格丽特回忆录: { gut: 'Memoirs-and-Historical-Chronicles-of-the-Courts-of-Europe--13-Memoirs-of-Marguerite-de-Valois__12967/master/12967.txt' }, // 瓦卢瓦的玛格丽特《回忆录》英译
+  莫特利: { gut: 'The-Rise-of-the-Dutch-Republic---Complete--1555-84-_4836/master/4836.txt' }, // 莫特利《荷兰共和国的兴起》（1856）
+  堂吉诃德: { gut: 'Don-Quixote_996/master/996.txt' }, // 塞万提斯《堂吉诃德》，Ormsby 英译
+  罗密欧与朱丽叶: { gut: 'The-Tragedy-of-Romeo-and-Juliet_1112/master/1112.txt' }, // 莎士比亚
+  少年哈克卢伊特: { gut: 'The-Boy-s-Hakluyt-English-Voyages-of-Adventure-and-Discovery_57917/master/57917-0.txt' }, // 哈克卢伊特《英格兰民族的主要航海》节选
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
