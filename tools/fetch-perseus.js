@@ -151,10 +151,20 @@ const WORKS = {
   十日谈: { gut: 'The-Decameron-of-Giovanni-Boccaccio_23700/master/23700.txt' },          // 薄伽丘《十日谈》，John Payne 英译（1886）
   坎特伯雷故事: { gut: 'The-Canterbury-Tales-and-Other-Poems_2383/master/2383.txt' },          // 乔叟《坎特伯雷故事》，Skeat 校订的中古英语原文
   蒙斯特雷莱七: { gut: 'The-Chronicles-of-Enguerrand-de-Monstrelet-Vol-7-of-13-Containing-an-account-of-the-cruel-civ__58083/master/58083-8.txt' }, // 卷七 1430–1436
+  蒙斯特雷莱八: { gut: 'The-Chronicles-of-Enguerrand-de-Monstrelet-Volume-08-of-13-containing-an-account-of-the-cruel__63913/master/63913-0.txt' }, // 卷八 1436–1444
+  帕斯顿书信二: { gut: 'The-Paston-Letters-Volume-II--of-6-New-Complete-Library-Edition_40989/master/40989-0.txt' }, // 《帕斯顿书信》，Gairdner 编（1904），卷二
+  帕斯顿书信三: { gut: 'The-Paston-Letters-Volume-III--of-6-New-Complete-Library-Edition_41024/master/41024-0.txt' }, // 卷三
   效法基督: { gut: 'The-Imitation-of-Christ_1653/master/1653.txt' },                          // 托马斯·厄·肯培《效法基督》，Benham 英译
   蒙斯特雷莱四: { gut: 'The-Chronicles-of-Enguerrand-de-Monstrelet-Vol-4-Containing-an-account-of-the-cruel-civil-war__52889/master/52889-8.txt' }, // 蒙斯特雷莱《编年史》，Johnes 英译（1809），卷四 1413–1418
   蒙斯特雷莱五: { gut: 'The-chronicles-of-Enguerrand-de-Monstrelet-Vol-05-of-13-b-containing-an-account-of-the-cruel-__73983/master/73983-0.txt' }, // 卷五 1418–1422
   蒙斯特雷莱六: { gut: 'The-Chronicles-of-Enguerrand-de-Monstrelet-Vol-06-of-13-Containing-an-account-of-the-cruel-ci__64948/master/64948-0.txt' }, // 卷六 1422–1430
+  达伽马日记: { gut: 'A-Journal-of-the-First-Voyage-of-Vasco-da-Gama-1497-1499_46440/master/46440-0.txt' }, // 《达伽马第一次航行日记》，Ravenstein 英译（1898）
+  哥伦布书信: { gut: 'The-Life-of-Columbus--13-From-His-Own-Letters-and-Journals-and-Other-Documents-of-His-Time_1492/master/1492-0.txt' }, // 据哥伦布本人书信与航海日志写成的传记，收有书信与日志的英译
+  韦斯普奇书信: { gut: 'The-Letters-of-Amerigo-Vespucciand-other-documents-illustrative-of-his-career_36924/master/36924-8.txt' }, // 《韦斯普奇书信》，Markham 英译（1894）
+  君主论: { gut: 'The-Prince_1232/master/1232.txt' },                                      // 马基雅维利《君主论》，Marriott 英译
+  乌托邦: { gut: 'Utopia_2130/master/2130.txt' },                                          // 莫尔《乌托邦》，Burnet 英译
+  达芬奇笔记: { gut: 'The-Notebooks-of-Leonardo-Da-Vinci-Complete_5000/master/5000-8.txt' }, // 《达·芬奇笔记》，Richter 英译（1888）
+  愚人颂: { gut: 'The-Praise-of-Folly_9371/master/9371.txt' },                              // 伊拉斯谟《愚人颂》，Wilson 英译（1668）
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
