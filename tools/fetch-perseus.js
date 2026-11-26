@@ -141,6 +141,8 @@ const WORKS = {
   中世纪史料集: { gut: 'A-Source-Book-for-Mediaeval-HistorySelected-Documents-illustrating-the-History-of-Europe-in-t__42707/master/42707.txt' },
   马姆斯伯里的威廉: { gut: 'William-of-Malmesbury-s-Chronicle-of-the-Kings-of-England-From-the-earliest-period-to-the-rei__50778/master/50778-0.txt' },
   熙德编年史: { gut: 'Chronicle-of-the-Cid_8491/master/8491.txt' },
+  阿伯拉尔苦难史: { gut: 'Historia-Calamitatum_14268/master/14268.txt' },
+  威尔士巡行记: { gut: 'The-itinerary-of-Archbishop-Baldwin-through-Wales_1148/master/1148-0.txt' },
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
