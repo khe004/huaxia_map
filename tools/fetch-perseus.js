@@ -190,6 +190,15 @@ const WORKS = {
   哈姆雷特: { gut: 'Hamlet_1787/master/1787.txt' }, // 莎士比亚
   培根随笔: { gut: 'The-Essays-or-Counsels-Civil-and-Moral_575/master/575.txt' }, // 培根《随笔》
   哈维心血运动: { gut: 'An-Anatomical-Disquisition-on-the-Motion-of-the-Heart-Blood-in-Animals-The-Circulation-of-the__67065/master/67065-0.txt' }, // 哈维《心血运动论》，Willis 英译
+  佩皮斯日记: { gut: 'The-Diary-of-Samuel-Pepys---Complete_4200/master/4200.txt' }, // 佩皮斯日记
+  失乐园: { gut: 'Paradise-Lost_26/master/26.txt' }, // 弥尔顿
+  利维坦: { gut: 'Leviathan_3207/master/3207.txt' }, // 霍布斯
+  帕斯卡思想录: { gut: 'The-Thoughts-of-Blaise-Pascal_46921/master/46921.txt' }, // 帕斯卡《思想录》，Paul 英译
+  伪君子: { gut: 'Tartuffe--Or-The-Hypocrite_2027/master/2027.txt' }, // 莫里哀《伪君子》，Page 英译
+  伦理学: { gut: 'Ethics_3800/master/3800.txt' }, // 斯宾诺莎《伦理学》，Elwes 英译
+  拉罗什富科箴言: { gut: 'Reflections--or-Sentences-and-Moral-Maxims_9105/master/9105.txt' }, // 拉罗什富科《箴言集》
+  伊夫林日记二: { gut: 'The-Diary-of-John-Evelyn-Volume-II--of-2-_42081/master/42081.txt' }, // 伊夫林日记卷二
+  天路历程: { gut: 'The-Pilgrim-s-Progress-from-this-world-to-that-which-is-to-come--13-Delivered-under-the-similit__131/master/131.txt' }, // 班扬
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
