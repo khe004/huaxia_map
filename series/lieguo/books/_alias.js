@@ -46,6 +46,10 @@ const ALIAS = {
   斯洛博丹·米洛舍维奇: ['米洛舍维奇', 'Slobodan Milošević'], 沃伊斯拉夫·科什图尼察: ['科什图尼察', 'Vojislav Koštunica'], 鲍里斯·塔迪奇: ['塔迪奇', 'Boris Tadić'], 米洛·久卡诺维奇: ['久卡诺维奇', 'Milo Đukanović'],
   哈希姆·萨奇: ['萨奇', 'Hashim Thaçi'], 法特米尔·塞迪乌: ['塞迪乌', 'Fatmir Sejdiu'], 赛勒斯·万斯: ['万斯', 'Cyrus Vance'], 理查德·霍尔布鲁克: ['霍尔布鲁克', 'Richard Holbrooke'],
   马尔蒂·阿赫蒂萨里: ['阿赫蒂萨里', 'Martti Ahtisaari'], 埃米尔·库斯图里察: ['库斯图里察', 'Emir Kusturica'], 戈兰·伊万尼塞维奇: ['伊万尼塞维奇', 'Goran Ivanišević'], 玛丽亚·谢里福维奇: ['谢里福维奇', 'Marija Šerifović'],
+  东姑·阿卜杜勒·拉赫曼: ['东姑', '拉赫曼', 'Tunku Abdul Rahman'], 李光耀: ['Lee Kuan Yew'], 拉尔·巴哈杜尔·夏斯特里: ['夏斯特里', 'Lal Bahadur Shastri'], 英迪拉·甘地: ['甘地夫人', 'Indira Gandhi'],
+  穆罕默德·阿尤布·汗: ['阿尤布·汗', 'Ayub Khan'], 佐勒菲卡尔·阿里·布托: ['布托', 'Zulfikar Ali Bhutto'], 谢赫·穆吉布·拉赫曼: ['穆吉布', 'Sheikh Mujibur Rahman'], 西丽玛沃·班达拉奈克: ['班达拉奈克夫人', 'Sirimavo Bandaranaike'],
+  易卜拉欣·纳西尔: ['纳西尔', 'Ibrahim Nasir'], 巴尔登·顿珠·南嘉: ['南嘉', 'Palden Thondup Namgyal'], 苏哈托: ['Suharto'], 佐藤荣作: ['佐藤', 'Eisaku Sato'], 迈克尔·索马雷: ['索马雷', 'Michael Somare'],
+  哈桑纳尔·博尔基亚: ['博尔基亚', 'Hassanal Bolkiah'], 丹下健三: ['Kenzo Tange'], 萨蒂什·达万: ['达万', 'Satish Dhawan'], 阿卜杜勒·卡拉姆: ['卡拉姆', 'A. P. J. Abdul Kalam'],
 };
 // 同名异人：键写作“名|生年”，只给生年相符的那一位
 const aliasOf = (n, life) => { const m = String(life || '').match(/^约?(前)?(\d+)/), y = m ? (m[1] ? '-' : '') + m[2] : '';
