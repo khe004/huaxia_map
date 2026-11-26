@@ -13,7 +13,7 @@ const OK = new Set([
   'kelaodi:加尔巴', 'kelaodi:维特利乌斯', 'kelaodi:韦斯巴芗', // 四帝之年：先为起兵一方之首，后为罗马皇帝   // 黑山军 205 年降曹，本卷（200–220）主要是曹操部属
 ]);
 // 势力名里写出、但不必收入人物表的（只作年代标识或泛称）：'书:人名'
-const NAMED_OK = new Set(['xuren:马略', 'xuren:法蒂玛', 'qiannian:法蒂玛', 'weijing:罗曼努斯二世', 'qiannian:马蒙', 'qiannian:阿尔帕德', 'weijing:法蒂玛', 'weijing:鲁斯塔姆', 'weijing:塔希尔', 'chaliman:君士坦丁', 'chaliman:米海尔三世', 'chaliman:鲁斯塔姆', 
+const NAMED_OK = new Set(['weijing:赞吉', 'salading:马略', 'salading:法蒂玛', 'salading:弗拉基米尔', 'salading:鲁本', 'salading:威廉二世', 'salading:熙德', 'xuren:马略', 'xuren:法蒂玛', 'qiannian:法蒂玛', 'weijing:罗曼努斯二世', 'qiannian:马蒙', 'qiannian:阿尔帕德', 'weijing:法蒂玛', 'weijing:鲁斯塔姆', 'weijing:塔希尔', 'chaliman:君士坦丁', 'chaliman:米海尔三世', 'chaliman:鲁斯塔姆', 
   'zhaoxuan:狐鹿姑单于', 'zhaoxuan:乌珠留若鞮单于', // 匈奴图例按年标注在位单于，本卷事件不涉其本人
   'qunxiong:檀石槐', 'chibi:檀石槐',               // “檀石槐后裔诸部”是泛称
   'sanguo:刘焉', 'sanguo:士燮', 'sanguo:张杨', 'sanguo:公孙度', // 《三国演义》单行本：图例沿用割据者名，演义情节未写其人
