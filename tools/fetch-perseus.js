@@ -199,6 +199,12 @@ const WORKS = {
   拉罗什富科箴言: { gut: 'Reflections--or-Sentences-and-Moral-Maxims_9105/master/9105.txt' }, // 拉罗什富科《箴言集》
   伊夫林日记二: { gut: 'The-Diary-of-John-Evelyn-Volume-II--of-2-_42081/master/42081.txt' }, // 伊夫林日记卷二
   天路历程: { gut: 'The-Pilgrim-s-Progress-from-this-world-to-that-which-is-to-come--13-Delivered-under-the-similit__131/master/131.txt' }, // 班扬
+  政府论: { gut: 'Second-Treatise-of-Government_7370/master/7370.txt' }, // 洛克《政府论》下篇
+  人类理解论: { gut: 'An-Essay-Concerning-Humane-Understanding-Volume-1--13-MDCXC-Based-on-the-2nd-Edition-Books-1-__10615/master/10615.txt' }, // 洛克《人类理解论》卷一
+  光学: { gut: 'Opticks--13-Or-A-Treatise-of-the-Reflections-Refractions-Inflections-and-Colours-of-Light_33504/master/33504.txt' }, // 牛顿《光学》
+  批评论: { gut: 'An-Essay-on-Criticism_7409/master/7409.txt' }, // 蒲柏《批评论》
+  神正论: { gut: 'TheodicyEssays-on-the-Goodness-of-God-the-Freedom-of-Man-and-the-Origin-of-Evil_17147/master/17147.txt' }, // 莱布尼茨《神正论》，Huggard 英译
+  鲁滨孙漂流记: { gut: 'The-Life-and-Adventures-of-Robinson-Crusoe_521/master/521.txt' }, // 笛福
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
