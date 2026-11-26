@@ -182,6 +182,14 @@ const WORKS = {
   堂吉诃德: { gut: 'Don-Quixote_996/master/996.txt' }, // 塞万提斯《堂吉诃德》，Ormsby 英译
   罗密欧与朱丽叶: { gut: 'The-Tragedy-of-Romeo-and-Juliet_1112/master/1112.txt' }, // 莎士比亚
   少年哈克卢伊特: { gut: 'The-Boy-s-Hakluyt-English-Voyages-of-Adventure-and-Discovery_57917/master/57917-0.txt' }, // 哈克卢伊特《英格兰民族的主要航海》节选
+  席勒三十年战争: { gut: 'The-Thirty-Years-War---Complete_6775/master/6775-0.txt' }, // 席勒《三十年战争史》，Morrison 英译
+  痴儿西木: { gut: 'The-Adventurous-Simplicissimus--13-being-the-description-of-the-Life-of-a-Strange-vagabond-na__33858/master/33858-8.txt' }, // 格里美尔斯豪森《痴儿西木传》，Goodrick 英译
+  方法论: { gut: 'Discourse-on-the-Method-of-Rightly-Conducting-One-s-Reason-and-of-Seeking-Truth-in-the-Sciences_59/master/59.txt' }, // 笛卡尔《谈谈方法》
+  星际信使: { gut: 'The-Sidereal-Messenger-of-Galileo-Galilei--13-and-a-Part-of-the-Preface-to-Kepler-s-Dioptrics__46036/master/46036-0.txt' }, // 伽利略《星际信使》，Carlos 英译
+  新工具: { gut: 'Novum-OrganumOr-True-Suggestions-for-the-Interpretation-of-Nature_45988/master/45988-0.txt' }, // 培根《新工具》
+  哈姆雷特: { gut: 'Hamlet_1787/master/1787.txt' }, // 莎士比亚
+  培根随笔: { gut: 'The-Essays-or-Counsels-Civil-and-Moral_575/master/575.txt' }, // 培根《随笔》
+  哈维心血运动: { gut: 'An-Anatomical-Disquisition-on-the-Motion-of-the-Heart-Blood-in-Animals-The-Circulation-of-the__67065/master/67065-0.txt' }, // 哈维《心血运动论》，Willis 英译
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
