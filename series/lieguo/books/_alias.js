@@ -58,6 +58,8 @@ const ALIAS = {
   赫尔穆特·科尔: ['科尔', 'Helmut Kohl'], 洛塔尔·德梅齐埃: ['德梅齐埃', 'Lothar de Maizière'], 瓦茨拉夫·哈维尔: ['哈维尔', 'Václav Havel'], 瓦茨拉夫·克劳斯: ['克劳斯', 'Václav Klaus'],
   弗拉迪米尔·梅恰尔: ['梅恰尔', 'Vladimír Mečiar'], 阿里·阿卜杜拉·萨利赫: ['萨利赫', 'Ali Abdullah Saleh'], 阿里·萨利姆·比德: ['比德', 'Ali Salem al-Beidh'], 伊萨亚斯·阿费沃基: ['伊萨亚斯', 'Isaias Afwerki'],
   梅莱斯·泽纳维: ['梅莱斯', 'Meles Zenawi'], 阿马塔·卡布阿: ['卡布阿', 'Amata Kabua'], 莱昂纳德·伯恩斯坦: ['伯恩斯坦', 'Leonard Bernstein'], '蒂姆·伯纳斯-李': ['伯纳斯-李', 'Tim Berners-Lee'],
+  中村国雄: ['Kuniwo Nakamura'], 江泽民: ['Jiang Zemin'], 董建华: ['Tung Chee-hwa'], 何厚铧: ['Edmund Ho'], 沙纳纳·古斯芒: ['古斯芒', 'Xanana Gusmão'],
+  塞尔吉奥·维埃拉·德梅洛: ['德梅洛', 'Sérgio Vieira de Mello'], 米蕾娅·莫斯科索: ['莫斯科索', 'Mireya Moscoso'], 杨利伟: ['Yang Liwei'], 约翰·加朗: ['加朗', 'John Garang'], 萨尔瓦·基尔: ['基尔', 'Salva Kiir'],
 };
 // 同名异人：键写作“名|生年”，只给生年相符的那一位
 const aliasOf = (n, life) => { const m = String(life || '').match(/^约?(前)?(\d+)/), y = m ? (m[1] ? '-' : '') + m[2] : '';
