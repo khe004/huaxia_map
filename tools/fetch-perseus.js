@@ -149,6 +149,12 @@ const WORKS = {
   神曲: { gut: 'Divine-Comedy-Longfellow-s-Translation-Complete_1004/master/1004.txt' },                // 但丁《神曲》，朗费罗英译（1867）
   弗鲁瓦萨尔: { gut: 'Chronicle-and-Romance--13-Froissart-Malory-Holinshed--The-Harvard-Classics-Series-_13674/master/13674.txt' }, // 哈佛古典丛书第三十五卷：弗鲁瓦萨尔《编年史》（Berners 英译）、马洛礼与霍林斯赫德选段
   十日谈: { gut: 'The-Decameron-of-Giovanni-Boccaccio_23700/master/23700.txt' },          // 薄伽丘《十日谈》，John Payne 英译（1886）
+  坎特伯雷故事: { gut: 'The-Canterbury-Tales-and-Other-Poems_2383/master/2383.txt' },          // 乔叟《坎特伯雷故事》，Skeat 校订的中古英语原文
+  蒙斯特雷莱七: { gut: 'The-Chronicles-of-Enguerrand-de-Monstrelet-Vol-7-of-13-Containing-an-account-of-the-cruel-civ__58083/master/58083-8.txt' }, // 卷七 1430–1436
+  效法基督: { gut: 'The-Imitation-of-Christ_1653/master/1653.txt' },                          // 托马斯·厄·肯培《效法基督》，Benham 英译
+  蒙斯特雷莱四: { gut: 'The-Chronicles-of-Enguerrand-de-Monstrelet-Vol-4-Containing-an-account-of-the-cruel-civil-war__52889/master/52889-8.txt' }, // 蒙斯特雷莱《编年史》，Johnes 英译（1809），卷四 1413–1418
+  蒙斯特雷莱五: { gut: 'The-chronicles-of-Enguerrand-de-Monstrelet-Vol-05-of-13-b-containing-an-account-of-the-cruel-__73983/master/73983-0.txt' }, // 卷五 1418–1422
+  蒙斯特雷莱六: { gut: 'The-Chronicles-of-Enguerrand-de-Monstrelet-Vol-06-of-13-Containing-an-account-of-the-cruel-ci__64948/master/64948-0.txt' }, // 卷六 1422–1430
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
