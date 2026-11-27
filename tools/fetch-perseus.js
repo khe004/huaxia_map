@@ -233,6 +233,13 @@ const WORKS = {
   小猎犬号航海记: { gut: 'The-Voyage-of-the-Beagle_944/master/944.txt' }, // 达尔文
   圣诞颂歌: { gut: 'A-Christmas-Carol_46/master/46.txt' }, // 狄更斯
   共产党宣言: { gut: 'The-Communist-Manifesto_61/master/61.txt' }, // 马克思与恩格斯，Samuel Moore 英译
+  论自由: { gut: 'On-Liberty_34901/master/34901.txt' }, // 密尔
+  双城记: { gut: 'A-Tale-of-Two-Cities_98/master/98.txt' }, // 狄更斯
+  物种起源: { gut: 'On-the-Origin-of-Species-By-Means-of-Natural-Selection--13-Or-the-Preservation-of-Favoured-Rac__1228/master/1228.txt' }, // 达尔文，1859 年初版
+  葛底斯堡演说: { gut: 'Gettysburg-Address_4/master/4-0.txt' }, // 林肯
+  爱丽丝漫游奇境: { gut: 'Alice-s-Adventures-in-Wonderland_11/master/11.txt' }, // 刘易斯·卡罗尔
+  罪与罚: { gut: 'Crime-and-Punishment_2554/master/2554.txt' }, // 陀思妥耶夫斯基，Constance Garnett 英译
+  战争与和平: { gut: 'War-and-Peace_2600/master/2600.txt' }, // 托尔斯泰，Louise 与 Aylmer Maude 英译
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
