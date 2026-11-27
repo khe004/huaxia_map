@@ -150,9 +150,9 @@ const SEEDS_RAW = `
 东欧|波美拉尼亚|16.0,54.0  东欧|大波兰|17.0,52.4  东欧|马佐夫舍|21.0,52.4  东欧|小波兰|20.0,50.1  东欧|西利西亚|17.0,51.0  东欧|普鲁士|20.5,54.2  东欧|立陶宛|24.0,55.2  东欧|利沃尼亚|25.5,57.0  东欧|爱沙尼亚|25.5,58.8
 东欧|诺夫哥罗德|31.3,58.5  东欧|普斯科夫|28.5,57.5  东欧|斯摩棱斯克|32.0,54.8  东欧|波洛茨克|28.0,55.4  东欧|德雷戈维奇|27.5,53.3  东欧|基辅|30.5,50.4  东欧|切尔尼戈夫|31.8,51.6  东欧|德列夫利安|28.5,51.0  东欧|沃里尼亚|25.0,51.0  东欧|加利西亚东|24.0,49.4
 东欧|维亚季奇|37.0,54.2  东欧|罗斯托夫|39.6,57.2  东欧|梁赞|40.3,53.8
-x|爱尔兰|-6.7,54.6
+x|爱尔兰|-6.7,54.6  东欧|比萨拉比亚|28.6,47.2
 `;
-const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Meurthe-et-Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔', 'Zaječarska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Suceava': '加利西亚东', 'Chernivtsi': '加利西亚东' };
+const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Meurthe-et-Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔', 'Zaječarska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Suceava': '加利西亚东', 'Chernivtsi': '加利西亚东', 'Briceni': '比萨拉比亚', 'Edineţ': '比萨拉比亚', 'Rîşcani': '比萨拉比亚', 'Glodeni': '比萨拉比亚', 'Făleşti': '比萨拉比亚', 'Ungheni': '比萨拉比亚', 'Nisporeni': '比萨拉比亚', 'Hîncesti': '比萨拉比亚', 'Leova': '比萨拉比亚', 'Cantemir': '比萨拉比亚', 'Cahul': '比萨拉比亚', 'Ocniţa': '比萨拉比亚', 'Donduseni': '比萨拉比亚', 'Soroca': '比萨拉比亚', 'Rezina': '比萨拉比亚', 'Bender': '比萨拉比亚', 'Ștefan Vodă': '比萨拉比亚', 'Causeni': '比萨拉比亚', 'Cimişlia': '比萨拉比亚', 'Basarabeasca': '比萨拉比亚', 'Taraclia': '比萨拉比亚', 'Comrat': '比萨拉比亚', 'Criuleni': '比萨拉比亚', 'Străşeni': '比萨拉比亚', 'Anenii Noi': '比萨拉比亚', 'Orhei': '比萨拉比亚', 'Chişinău': '比萨拉比亚', 'Teleneşti': '比萨拉比亚', 'Şoldăneşti': '比萨拉比亚', 'Floreşti': '比萨拉比亚', 'Ialoveni': '比萨拉比亚', 'Călărași': '比萨拉比亚', 'Drochia': '比萨拉比亚', 'Sîngerei': '比萨拉比亚', 'Bălţi': '比萨拉比亚' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -181,7 +181,7 @@ const SNAPSHOTS = [
     ['safavid', '高加索阿尔巴尼亚 大亚美尼亚 米底 阿特罗帕特尼 埃利迈斯 波西斯 帕提亚 赫卡尼亚 卡尔马尼亚 阿里亚 木鹿 锡斯坦'],
     ['vladimir', '博斯普鲁斯 克森尼索 斯基泰 萨尔马提亚 奥尔比亚 南俄草原 顿河 立陶宛 利沃尼亚 爱沙尼亚 诺夫哥罗德 普斯科夫 斯摩棱斯克 波洛茨克 德雷戈维奇 基辅 切尔尼戈夫 德列夫利安 沃里尼亚 维亚季奇 罗斯托夫 梁赞'],
     ['dutch', '巴达维'],
-    ['moldavia', '卡尔皮'],
+    ['moldavia', '比萨拉比亚 卡尔皮'],
     ['anjou', '坎提 特里诺文特 卡图维劳尼 不列颠西南 不列颠西部 不列颠中部 布里甘特 威塞克斯 东盎格利亚 诺森布里亚 苏格兰低地 喀里多尼亚'],
     ['arabs', '杜马 纳季德'],
     ['hejaz', '叶斯里卜 麦加'],
@@ -211,6 +211,7 @@ const SNAPSHOTS = [
   [1809, 5, [['franks', '罗马 萨宾 翁布里亚']]],
   [1809, 10, [['illyria', '伊斯特里亚 伊斯特里亚南 利布尔尼 达尔马提亚'], ['warsaw', '小波兰']]],
   [1810, 7, [['franks', '巴达维 北海日耳曼']]],
+  [1812, 5, [['vladimir', '比萨拉比亚']]],
   [1813, 1, [['hejaz', '叶斯里卜 麦加']]],
   [1813, 10, [['ottomans', '斯科迪斯克'], ['vladimir', '高加索阿尔巴尼亚'], ['eastfr', '伊斯特里亚 伊斯特里亚南 利布尔尼 达尔马提亚']]],
   [1813, 11, [['dutch', '巴达维']]],
