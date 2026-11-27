@@ -245,6 +245,12 @@ const WORKS = {
   查拉图斯特拉如是说: { gut: 'Thus-Spake-Zarathustra--A-Book-for-All-and-None_1998/master/1998.txt' }, // 尼采，Thomas Common 英译
   血字的研究: { gut: 'A-Study-in-Scarlet_244/master/244.txt' }, // 柯南·道尔
   黑暗之心: { gut: 'Heart-of-Darkness_219/master/219.txt' }, // 康拉德
+  布鲁克诗集: { gut: 'The-Collected-Poems-of-Rupert-Brooke_262/master/262.txt' },
+  麦克雷诗集: { gut: 'In-Flanders-Fields-and-Other-Poems_353/master/353.txt' },
+  欧文诗集: { gut: 'Poems_1034/master/1034.txt' },
+  和约的经济后果: { gut: 'The-Economic-Consequences-of-the-Peace_15776/master/15776.txt' },
+  尤利西斯: { gut: 'Ulysses_4300/master/4300.txt' },
+  荒原: { gut: 'The-Waste-Land_1321/master/1321-0.txt' },
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
