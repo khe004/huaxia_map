@@ -61,7 +61,7 @@ const FACTIONS = {
   dutch:      { color: '#f0a040', name: () => '尼德兰联省共和国', mapName: () => '联省' },
   swiss:      { color: '#f09870', name: () => '瑞士联邦', mapName: () => '瑞士' },
   savoy:     { color: '#b87898', name: () => '撒丁王国（萨伏依家族）', mapName: () => '撒丁' },
-  rhodes:     { color: '#e0e0e0', name: () => '医院骑士团（马耳他）', mapName: () => '马耳他' },
+  rhodes:     { color: '#e0d0e8', name: () => '医院骑士团（马耳他）', mapName: () => '马耳他' },
   eastfr:    { color: '#4a6a98', name: t => (t < 1765.583 ? '神圣罗马帝国（弗朗茨一世）' : '神圣罗马帝国（约瑟夫二世）'), mapName: () => '神圣罗马帝国' },
   florence:  { color: '#b0d070', name: t => (t < 1737.5 ? '托斯卡纳大公国（美第奇家族）' : '托斯卡纳大公国（洛林家族）'), mapName: () => '托斯卡纳' },
   anjou:     { color: '#c86848', name: () => '大不列颠王国（乔治三世）', mapName: () => '大不列颠' },
@@ -141,7 +141,7 @@ const SEEDS_RAW = `
 东欧|维亚季奇|37.0,54.2  东欧|罗斯托夫|39.6,57.2  东欧|梁赞|40.3,53.8
 x|爱尔兰|-6.7,54.6
 `;
-const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚' };
+const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Meurthe-et-Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -187,6 +187,7 @@ const SNAPSHOTS = [
     ['poland', '波美拉尼亚 大波兰 马佐夫舍 小波兰 德列夫利安 沃里尼亚 加利西亚东'],
     ['lithuania', '立陶宛 波洛茨克 德雷戈维奇'],
     ['hetmanate', '基辅 切尔尼戈夫'],
+    ['x', '巴克特里亚 吐火罗南'],
   ]],
   [1764, 11, [['vladimir', '基辅 切尔尼戈夫']]],
   [1769, 5, [['franks', '科西嘉']]],
