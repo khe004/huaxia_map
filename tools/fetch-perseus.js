@@ -212,6 +212,11 @@ const WORKS = {
   致富之道: { gut: 'Franklin-s-Way-to-Wealthor-Poor-Richard-Improved-_43855/master/43855.txt' }, // 富兰克林
   老实人: { gut: 'Candide_19942/master/19942.txt' }, // 伏尔泰《老实人》，英译
   社会契约论: { gut: 'The-Social-Contract--amp--Discourses_46333/master/46333.txt' }, // 卢梭，Cole 英译
+  常识: { gut: 'Common-Sense_147/master/147.txt' }, // 潘恩
+  少年维特之烦恼: { gut: 'The-Sorrows-of-Young-Werther_2527/master/2527.txt' }, // 歌德，Boylan 英译
+  纯粹理性批判: { gut: 'The-Critique-of-Pure-Reason_4280/master/4280.txt' }, // 康德，Meiklejohn 英译
+  联邦党人文集: { gut: 'The-Federalist-Papers_1404/master/1404.txt' }, // 汉密尔顿、麦迪逊、杰伊
+  卢梭忏悔录: { gut: 'The-Confessions-of-Jean-Jacques-Rousseau---Complete_3913/master/3913.txt' }, // 卢梭《忏悔录》英译
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
