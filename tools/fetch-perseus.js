@@ -226,6 +226,13 @@ const WORKS = {
   恰尔德哈洛尔德游记: { gut: 'Childe-Harold-s-Pilgrimage_5131/master/5131.txt' }, // 拜伦
   浮士德: { gut: 'Faust_14591/master/14591.txt' }, // 歌德，英译
   格林童话: { gut: 'Household-Tales-by-Brothers-Grimm_5314/master/5314-8.txt' }, // 格林兄弟，英译
+  弗兰肯斯坦: { gut: 'Frankenstein_84/master/84.txt' }, // 玛丽·雪莱
+  雪莱诗集: { gut: 'The-Complete-Poetical-Works-of-Percy-Bysshe-Shelley-Complete_4800/master/4800.txt' }, // 珀西·雪莱
+  论美国的民主: { gut: 'Democracy-in-America---Volume-1_815/master/815.txt' }, // 托克维尔，Reeve 英译
+  道格拉斯自述: { gut: 'Narrative-of-the-Life-of-Frederick-Douglass-an-American-Slave_23/master/23.txt' }, // 道格拉斯
+  小猎犬号航海记: { gut: 'The-Voyage-of-the-Beagle_944/master/944.txt' }, // 达尔文
+  圣诞颂歌: { gut: 'A-Christmas-Carol_46/master/46.txt' }, // 狄更斯
+  共产党宣言: { gut: 'The-Communist-Manifesto_61/master/61.txt' }, // 马克思与恩格斯，Samuel Moore 英译
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
