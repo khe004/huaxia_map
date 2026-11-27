@@ -222,6 +222,10 @@ const WORKS = {
   女权辩护: { gut: 'A-Vindication-of-the-Rights-of-Woman-With-Strictures-on-Political-and-Moral-Subjects_3420/master/3420.txt' }, // 沃斯通克拉夫特
   人口论: { gut: 'An-Essay-on-the-Principle-of-Population_4239/master/4239.txt' }, // 马尔萨斯
   抒情歌谣集: { gut: 'Lyrical-Ballads-With-a-Few-Other-Poems--1798-_9622/master/9622.txt' }, // 华兹华斯与柯尔律治
+  傲慢与偏见: { gut: 'Pride-and-Prejudice_1342/master/1342.txt' }, // 奥斯汀
+  恰尔德哈洛尔德游记: { gut: 'Childe-Harold-s-Pilgrimage_5131/master/5131.txt' }, // 拜伦
+  浮士德: { gut: 'Faust_14591/master/14591.txt' }, // 歌德，英译
+  格林童话: { gut: 'Household-Tales-by-Brothers-Grimm_5314/master/5314-8.txt' }, // 格林兄弟，英译
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
