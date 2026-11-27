@@ -240,6 +240,11 @@ const WORKS = {
   爱丽丝漫游奇境: { gut: 'Alice-s-Adventures-in-Wonderland_11/master/11.txt' }, // 刘易斯·卡罗尔
   罪与罚: { gut: 'Crime-and-Punishment_2554/master/2554.txt' }, // 陀思妥耶夫斯基，Constance Garnett 英译
   战争与和平: { gut: 'War-and-Peace_2600/master/2600.txt' }, // 托尔斯泰，Louise 与 Aylmer Maude 英译
+  安娜·卡列尼娜: { gut: 'Anna-Karenina_1399/master/1399.txt' }, // 托尔斯泰，Constance Garnett 英译
+  玩偶之家: { gut: 'A-Doll-s-House---a-play_2542/master/2542.txt' }, // 易卜生，William Archer 英译
+  查拉图斯特拉如是说: { gut: 'Thus-Spake-Zarathustra--A-Book-for-All-and-None_1998/master/1998.txt' }, // 尼采，Thomas Common 英译
+  血字的研究: { gut: 'A-Study-in-Scarlet_244/master/244.txt' }, // 柯南·道尔
+  黑暗之心: { gut: 'Heart-of-Darkness_219/master/219.txt' }, // 康拉德
   贺拉斯颂歌: { gut: 'Horace--Odes-and-Epodes_9646/master/9646.txt' },
   圣经: { kjv: ['Genesis', 'Exodus', 'Joshua', 'Judges', '1Samuel', '2Samuel', '1Kings', '2Kings', '2Chronicles', 'Ezra', 'Nehemiah', 'Isaiah', 'Jeremiah', 'Ezekiel', 'Daniel', 'Nahum', 'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', 'Revelation'] },
 };
