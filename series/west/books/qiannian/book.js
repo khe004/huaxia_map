@@ -14,13 +14,13 @@ const BOOK = {
   startYear: 1000,
   baseFaction: 'franks',
   view: [[-11, 36], [-10, 60], [8, 64], [30, 62], [42, 55], [48, 42], [44, 30], [32, 24], [-8, 30]],
-  scope: { provinces: ['葡萄牙', '西班牙', '安道尔', '法国', '摩纳哥', '比利时', '卢森堡', '荷兰', '瑞士', '列支敦士登', '奥地利', '德国', '意大利', '圣马力诺', '马耳他', '英国',
+  scope: { provinces: ['哈萨克斯坦', '葡萄牙', '西班牙', '安道尔', '法国', '摩纳哥', '比利时', '卢森堡', '荷兰', '瑞士', '列支敦士登', '奥地利', '德国', '意大利', '圣马力诺', '马耳他', '英国',
   '斯洛文尼亚', '克罗地亚', '波黑', '黑山', '塞尔维亚', '科索沃', '北马其顿', '阿尔巴尼亚', '希腊', '保加利亚', '罗马尼亚', '匈牙利', '斯洛伐克', '捷克',
   '土耳其', '塞浦路斯', '叙利亚', '黎巴嫩', '以色列', '巴勒斯坦', '约旦', '伊拉克', '科威特', '伊朗', '格鲁吉亚', '亚美尼亚', '阿塞拜疆',
   '沙特阿拉伯', '也门', '阿曼', '阿联酋', '卡塔尔', '巴林', '土库曼斯坦', '乌兹别克斯坦', '塔吉克斯坦',
   '埃及', '利比亚', '突尼斯', '阿尔及利亚', '摩洛哥',
   '丹麦', '挪威', '瑞典', '冰岛', '波兰', '立陶宛', '拉脱维亚', '爱沙尼亚', '白俄罗斯', '乌克兰', '摩尔多瓦'],
-  partial: { 俄罗斯: ['Krasnodar', 'Adygey', 'Rostov', 'Kaliningrad', 'Pskov', 'Novgorod', 'Leningrad', 'City of St. Petersburg', 'Smolensk', 'Bryansk', "Tver'", 'Kaluga', 'Moskovskaya', 'Moskva', 'Tula', 'Orel', 'Kursk', 'Belgorod', 'Voronezh', 'Lipetsk', "Ryazan'", "Yaroslavl'", 'Vladimir', 'Ivanovo', 'Kostroma', "Nizhegorod", "Tatarstan", "Chuvash", "Mariy-El", "Ul'yanovsk", "Samara", "Saratov", "Volgograd", "Astrakhan'", "Kalmyk", "Mordovia", "Penza", "Tambov", "Bashkortostan", "Orenburg", "Perm'", "Udmurt", "Kirov", "Sverdlovsk", "Chelyabinsk", "Komi", "Arkhangel'sk", "Nenets", "Vologda", "Karelia", "Murmansk", "Stavropol'", "Karachay-Cherkess", "Kabardin-Balkar", "North Ossetia", "Ingush", "Chechnya", "Dagestan"],
+  partial: { 俄罗斯: ['Krasnodar', 'Adygey', 'Rostov', 'Kaliningrad', 'Pskov', 'Novgorod', 'Leningrad', 'City of St. Petersburg', 'Smolensk', 'Bryansk', "Tver'", 'Kaluga', 'Moskovskaya', 'Moskva', 'Tula', 'Orel', 'Kursk', 'Belgorod', 'Voronezh', 'Lipetsk', "Ryazan'", "Yaroslavl'", 'Vladimir', 'Ivanovo', 'Kostroma', "Nizhegorod", "Tatarstan", "Chuvash", "Mariy-El", "Ul'yanovsk", "Samara", "Saratov", "Volgograd", "Astrakhan'", "Kalmyk", "Mordovia", "Penza", "Tambov", "Bashkortostan", "Orenburg", "Perm'", "Udmurt", "Kirov", "Sverdlovsk", "Chelyabinsk", "Komi", "Arkhangel'sk", "Nenets", "Vologda", "Karelia", "Murmansk", "Stavropol'", "Karachay-Cherkess", "Kabardin-Balkar", "North Ossetia", "Ingush", "Chechnya", "Dagestan", "Tyumen'", "Khanty-Mansiy", "Yamal-Nenets", "Kurgan", "Omsk", "Tomsk", "Novosibirsk", "Altay", "Kemerovo", "Gorno-Altay", "Krasnoyarsk", "Irkutsk", "Buryat", "Chita", "Sakha (Yakutia)", "Tuva", "Magadan", "Chukotka", "Kamchatka", "Okhotsk"],
     阿富汗: ['Hirat', 'Badghis', 'Farah', 'Nimroz', 'Balkh', 'Jawzjan', 'Faryab', 'Samangan', 'Kunduz', 'Takhar', 'Sari Pul', 'Baghlan'],
     巴基斯坦: ['Karachi', 'Thatta', 'Tharparkar', 'Umerkot', 'Jamshoro', 'Dadu', 'Tando Muhammad Khan', 'Hyderabad', 'Tando Allahyar', 'Badin', 'Mirpurkhas', 'Matiari', 'Nawabshah', 'Sanghar', 'Naushehro Feroze', 'Qambar Shahdadkot', 'Jacobabad', 'Shikarpur', 'Ghotki', 'Sukkur', 'Kashmore', 'Khairpur', 'Lasbela', 'Gwadar', 'Kech', 'Panjgur', 'Awaran', 'Rahim Yar Khan', 'Multan', 'Muzaffargarh', 'Lodhran', 'Bahawalpur'],
     吉尔吉斯斯坦: ['Osh', 'Jalal-Abad', 'Batken'] } },
@@ -55,8 +55,10 @@ const BOOK = {
 };
 
 const FACTIONS = {
+  oghuz:      { color: '#e0d0a0', name: () => '乌古斯叶护国', mapName: () => '乌古斯' },
+  kimek:      { color: '#88a080', name: () => '基马克汗国', mapName: () => '基马克' },
   volgabulgars: { color: '#b8b880', name: () => '伏尔加保加尔', mapName: () => '伏尔加保加尔' },
-  tribes:     { color: '#e0d0a0', name: () => '伏尔加—乌拉尔与北方诸部', mapName: () => '北方诸部', hideLabel: () => true },
+  tribes:     { color: '#c8e8c0', name: () => '伏尔加—乌拉尔与北方诸部', mapName: () => '北方诸部', hideLabel: () => true },
   dagestan:   { color: '#98a8b0', name: () => '达吉斯坦诸邦', mapName: () => '达吉斯坦', hideLabel: () => true },
   alans:      { color: '#a88088', name: () => '阿兰', mapName: () => '阿兰' },
   franks:     { color: '#5a8ac0', name: t => (t < 987.416 ? '西法兰克王国（加洛林王朝）' : '法兰西王国（卡佩王朝）'), mapName: t => (t < 987.416 ? '西法兰克' : '法兰西') },
@@ -121,7 +123,7 @@ const FACTIONS = {
   samanids:   { color: '#8090a0', name: () => '萨曼王朝', mapName: () => '萨曼王朝' },
   ziyarids:   { color: '#80a878', name: () => '齐亚尔王朝', mapName: () => '齐亚尔' },
   saffarids:  { color: '#d89078', name: () => '萨法尔王朝（锡斯坦）', mapName: () => '萨法尔' },
-  sogd:       { color: '#c8a068', name: () => '费尔干纳诸王', mapName: () => '费尔干纳', hideLabel: () => true },
+  sogd:       { color: '#d0c880', name: () => '费尔干纳诸王', mapName: () => '费尔干纳', hideLabel: () => true },
   ghaznavids: { color: '#906040', name: () => '伽色尼王朝', mapName: () => '伽色尼王朝' },
   karakhanids:{ color: '#b89060', name: () => '喀喇汗王朝', mapName: () => '喀喇汗' },
   khwarazm:   { color: '#c8b0a0', name: () => '花剌子模（马蒙家族）', mapName: () => '花剌子模' },
@@ -173,9 +175,14 @@ const SEEDS_RAW = `
 x|爱尔兰|-6.7,54.6
 伏尔加与乌拉尔|下诺夫哥罗德|44.0,56.3  伏尔加与乌拉尔|伏尔加保加尔|49.1,55.4  伏尔加与乌拉尔|伏尔加中游|50.2,53.2  伏尔加与乌拉尔|伏尔加下游|45.0,50.0  伏尔加与乌拉尔|阿斯特拉罕|47.5,46.8  伏尔加与乌拉尔|卡尔梅克草原|45.3,46.3  伏尔加与乌拉尔|莫尔多瓦|44.5,53.8  伏尔加与乌拉尔|巴什基尔|56.0,54.5  伏尔加与乌拉尔|奥伦堡|55.0,51.8  伏尔加与乌拉尔|彼尔姆|56.2,58.8  伏尔加与乌拉尔|维亚特卡|49.7,58.6  伏尔加与乌拉尔|乌拉尔东麓|61.0,56.8
 俄罗斯北部|科米|54.0,63.5  俄罗斯北部|北德维纳|42.0,64.5  俄罗斯北部|沃洛格达|40.0,59.8  俄罗斯北部|卡累利阿|33.5,63.5  俄罗斯北部|科拉|34.0,68.0  北高加索|北高加索|43.5,44.3  北高加索|达吉斯坦|47.0,43.0
+哈萨克草原|曼格什拉克|53.0,44.2  哈萨克草原|乌拉尔河下游|52.0,47.3  哈萨克草原|乌拉尔河中游|51.3,50.6  哈萨克草原|木戈贾尔|58.0,48.8  哈萨克草原|托博尔河上游|63.6,52.0  哈萨克草原|伊希姆|69.0,54.0  哈萨克草原|阿克莫拉|70.0,51.6
+哈萨克草原|萨雷阿尔卡|72.5,48.5  哈萨克草原|额尔齐斯中游|76.5,52.5  哈萨克草原|锡尔河下游|64.5,45.0  哈萨克草原|额尔齐斯上游|81.5,49.5  哈萨克草原|七河|78.0,44.5  哈萨克草原|怛罗斯|71.4,43.3  哈萨克草原|锡尔河中游|68.3,42.8
+西伯利亚|托博尔|68.3,58.2  西伯利亚|尤格拉|69.5,61.5  西伯利亚|亚马尔|74.0,66.5  西伯利亚|托博尔河中游|65.3,55.4  西伯利亚|额尔齐斯下游|73.4,55.8  西伯利亚|鄂毕中游|83.0,58.5  西伯利亚|巴拉巴|79.5,55.3
+西伯利亚|鄂毕上游|83.0,52.5  西伯利亚|库兹涅茨克|87.1,54.0  西伯利亚|阿尔泰|86.5,50.8  西伯利亚|叶尼塞|93.0,62.0  西伯利亚|安加拉|104.3,56.0  西伯利亚|贝加尔|108.0,52.5  西伯利亚|外贝加尔|115.5,52.0
+西伯利亚|勒拿|129.7,62.0  西伯利亚|图瓦|94.5,51.7  西伯利亚|科雷马|151.0,62.5  西伯利亚|楚科奇|172.0,66.0  西伯利亚|堪察加|159.0,56.5  西伯利亚|鄂霍次克|140.0,58.5
 `;
 
-const UNIT_OVERRIDES = { "Nizhegorod": "下诺夫哥罗德", "Tatarstan": "伏尔加保加尔", "Chuvash": "伏尔加保加尔", "Mariy-El": "伏尔加保加尔", "Ul'yanovsk": "伏尔加保加尔", "Samara": "伏尔加中游", "Saratov": "伏尔加下游", "Volgograd": "伏尔加下游", "Astrakhan'": "阿斯特拉罕", "Kalmyk": "卡尔梅克草原", "Mordovia": "莫尔多瓦", "Penza": "莫尔多瓦", "Tambov": "莫尔多瓦", "Bashkortostan": "巴什基尔", "Orenburg": "奥伦堡", "Perm'": "彼尔姆", "Udmurt": "彼尔姆", "Kirov": "维亚特卡", "Sverdlovsk": "乌拉尔东麓", "Chelyabinsk": "乌拉尔东麓", "Komi": "科米", "Troms og Finnmark": "哈罗加兰", "Arkhangel'sk": "北德维纳", "Nenets": "北德维纳", "Vologda": "沃洛格达", "Karelia": "卡累利阿", "Murmansk": "科拉", "Stavropol'": "北高加索", "Karachay-Cherkess": "北高加索", "Kabardin-Balkar": "北高加索", "North Ossetia": "北高加索", "Ingush": "达吉斯坦", "Chechnya": "达吉斯坦", "Dagestan": "达吉斯坦", Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Prešovský kraj": '夸狄', "Košický kraj": '夸狄', Transcarpathia: '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚' };
+const UNIT_OVERRIDES = { "Tashkent": "费尔干纳", "Mangghystau": "曼格什拉克", "Atyrau": "乌拉尔河下游", "West Kazakhstan": "乌拉尔河中游", "Aqtöbe": "木戈贾尔", "Qostanay": "托博尔河上游", "North Kazakhstan": "伊希姆", "Aqmola": "阿克莫拉", "Qaraghandy": "萨雷阿尔卡", "Pavlodar": "额尔齐斯中游", "Qyzylorda": "锡尔河下游", "East Kazakhstan": "额尔齐斯上游", "Almaty": "七河", "Zhambyl": "怛罗斯", "South Kazakhstan": "锡尔河中游", "Tyumen'": "托博尔", "Khanty-Mansiy": "尤格拉", "Yamal-Nenets": "亚马尔", "Kurgan": "托博尔河中游", "Omsk": "额尔齐斯下游", "Tomsk": "鄂毕中游", "Novosibirsk": "巴拉巴", "Altay": "鄂毕上游", "Kemerovo": "库兹涅茨克", "Gorno-Altay": "阿尔泰", "Krasnoyarsk": "叶尼塞", "Irkutsk": "安加拉", "Buryat": "贝加尔", "Chita": "外贝加尔", "Sakha (Yakutia)": "勒拿", "Tuva": "图瓦", "Magadan": "科雷马", "Chukotka": "楚科奇", "Kamchatka": "堪察加", "Okhotsk": "鄂霍次克", "Nizhegorod": "下诺夫哥罗德", "Tatarstan": "伏尔加保加尔", "Chuvash": "伏尔加保加尔", "Mariy-El": "伏尔加保加尔", "Ul'yanovsk": "伏尔加保加尔", "Samara": "伏尔加中游", "Saratov": "伏尔加下游", "Volgograd": "伏尔加下游", "Astrakhan'": "阿斯特拉罕", "Kalmyk": "卡尔梅克草原", "Mordovia": "莫尔多瓦", "Penza": "莫尔多瓦", "Tambov": "莫尔多瓦", "Bashkortostan": "巴什基尔", "Orenburg": "奥伦堡", "Perm'": "彼尔姆", "Udmurt": "彼尔姆", "Kirov": "维亚特卡", "Sverdlovsk": "乌拉尔东麓", "Chelyabinsk": "乌拉尔东麓", "Komi": "科米", "Troms og Finnmark": "哈罗加兰", "Arkhangel'sk": "北德维纳", "Nenets": "北德维纳", "Vologda": "沃洛格达", "Karelia": "卡累利阿", "Murmansk": "科拉", "Stavropol'": "北高加索", "Karachay-Cherkess": "北高加索", "Kabardin-Balkar": "北高加索", "North Ossetia": "北高加索", "Ingush": "达吉斯坦", "Chechnya": "达吉斯坦", "Dagestan": "达吉斯坦", Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Prešovský kraj": '夸狄', "Košický kraj": '夸狄', Transcarpathia: '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -204,14 +211,18 @@ const SNAPSHOTS = [
     ['khazars', '博斯普鲁斯 斯基泰 萨尔马提亚 顿河 伏尔加下游 阿斯特拉罕 卡尔梅克草原 达吉斯坦'], ['pechenegs', '奥尔比亚 南俄草原 卡尔皮'],
     ['hamdanids', '安条克 叙利亚中部 科马基尼 奥斯若恩 幼发拉底中游 阿迪亚贝尼'],
     ['buyids', '巴比伦尼亚 卡拉塞尼 米底 埃利迈斯 波西斯 卡尔马尼亚'],
-    ['samanids', '帕提亚 阿里亚 木鹿 巴克特里亚 粟特 布哈拉 花剌子模 吐火罗南'], ['ziyarids', '赫卡尼亚'], ['saffarids', '锡斯坦'], ['sogd', '费尔干纳'],
+    ['samanids', '帕提亚 阿里亚 木鹿 巴克特里亚 粟特 布哈拉 花剌子模 吐火罗南 锡尔河中游'], ['ziyarids', '赫卡尼亚'], ['saffarids', '锡斯坦'], ['sogd', '费尔干纳'],
     ['saxons', '坎提 特里诺文特 卡图维劳尼 不列颠中部 布里甘特 威塞克斯 东盎格利亚 诺森布里亚'], ['britons', '不列颠西南 不列颠西部'], ['britanni', '苏格兰低地'], ['caledonii', '喀里多尼亚'],
     ['norse', '维肯 西挪威 特伦德拉格 哈罗加兰'], ['denmark', '日德兰 西兰 斯科讷'], ['svear', '约塔兰 斯韦阿兰 诺尔兰 哥得兰'], ['iceland', '冰岛'],
     ['westslavs', '波美拉尼亚 大波兰 马佐夫舍'], ['balts', '普鲁士 立陶宛 利沃尼亚 爱沙尼亚'],
     ['volgabulgars', '伏尔加保加尔 伏尔加中游'],
     ['alans', '北高加索'],
-    ['tribes', '下诺夫哥罗德 莫尔多瓦 巴什基尔 奥伦堡 彼尔姆 维亚特卡 乌拉尔东麓 科米 北德维纳 卡累利阿 科拉'],
-    ['rus', '诺夫哥罗德 普斯科夫 斯摩棱斯克 波洛茨克 德雷戈维奇 基辅 切尔尼戈夫 德列夫利安 罗斯托夫 沃洛格达'], ['eastslavs', '沃里尼亚 加利西亚东 维亚季奇 梁赞']]],
+    ['tribes', '下诺夫哥罗德 莫尔多瓦 巴什基尔 奥伦堡 彼尔姆 维亚特卡 乌拉尔东麓 科米 北德维纳 卡累利阿 科拉 尤格拉 亚马尔 鄂毕中游 库兹涅茨克 阿尔泰 叶尼塞 安加拉 贝加尔 外贝加尔 勒拿 图瓦 科雷马 楚科奇 堪察加 鄂霍次克'],
+    ['rus', '诺夫哥罗德 普斯科夫 斯摩棱斯克 波洛茨克 德雷戈维奇 基辅 切尔尼戈夫 德列夫利安 罗斯托夫 沃洛格达'], ['eastslavs', '沃里尼亚 加利西亚东 维亚季奇 梁赞'],
+    ['oghuz', '曼格什拉克 乌拉尔河下游 乌拉尔河中游 木戈贾尔 锡尔河下游'],
+    ['kimek', '托博尔河上游 伊希姆 阿克莫拉 萨雷阿尔卡 额尔齐斯中游 额尔齐斯上游 托博尔 托博尔河中游 额尔齐斯下游 巴拉巴 鄂毕上游'],
+    ['karakhanids', '七河 怛罗斯'],
+  ]],
   // 斯维亚托斯拉夫攻灭可萨
   [965, 6, [['pechenegs', '斯基泰 萨尔马提亚 顿河'], ['rus', '博斯普鲁斯'], ['pechenegs', '伏尔加下游 阿斯特拉罕 卡尔梅克草原'], ['dagestan', '达吉斯坦']]],
   // 梅什科一世受洗，波兰见于史册
@@ -243,7 +254,7 @@ const SNAPSHOTS = [
   // 马哈茂德取得呼罗珊
   [999, 5, [['ghaznavids', '帕提亚 阿里亚 木鹿 巴克特里亚 吐火罗南']]],
   // 喀喇汗王朝攻入布哈拉，萨曼王朝灭亡
-  [999, 10, [['karakhanids', '粟特 布哈拉 费尔干纳'], ['khwarazm', '花剌子模']]],
+  [999, 10, [['karakhanids', '粟特 布哈拉 费尔干纳'], ['khwarazm', '花剌子模'], ['karakhanids', '锡尔河中游']]],
   // 巴西尔二世收复保加利亚东部与色萨利
   [1000, 8, [['east', '默西亚 特里巴利 奥德里赛 色萨利']]],
   // 伽色尼取得木尔坦与锡斯坦
@@ -305,7 +316,7 @@ const SNAPSHOTS = [
   // 奇维塔特之战
   [1053, 6, [['normans', '卢卡尼亚']]],
   // 库曼人来到黑海北岸
-  [1055, 6, [['cumans', '萨尔马提亚 顿河'], ['cumans', '伏尔加下游 阿斯特拉罕 卡尔梅克草原 奥伦堡']]],
+  [1055, 6, [['cumans', '萨尔马提亚 顿河'], ['cumans', '伏尔加下游 阿斯特拉罕 卡尔梅克草原 奥伦堡'], ['cumans', '#oghuz #kimek']]],
   // 图格里勒进入巴格达
   [1055, 12, [['seljuks', '巴比伦尼亚 卡拉塞尼 埃利迈斯 波西斯 卡尔马尼亚 阿特罗帕特尼']]],
   // 希拉勒部落洗劫凯鲁万

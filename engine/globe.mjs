@@ -1,6 +1,6 @@
 // 地球页（engine/globe.html）的数据：把 globe.json 列出的各套合集（目前华夏舆图、西方舆图，可再加其他地区）的各卷合到同一个地球上。由 build-globe.mjs 调用。
 // 每卷记：现代拼块 → 种子点的归属（与 tools/land.js、引擎同一规则）、已解析成种子序号的疆域快照、势力名称与颜色随时刻的取值、
-// 城邑、卷的年代与地域中心；另附两套底图的拼块拓扑（原样）、河湖、全球陆地轮廓与全部事件的点位。
+// 城邑、卷的年代与地域中心、底图外周边陆地的着色（BOOK.outer）；另附两套底图的拼块拓扑（原样）、河湖、全球陆地轮廓与全部事件的点位。
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import vm from 'node:vm';
@@ -37,7 +37,8 @@ function snapshots(X, seeds) {
 
 // SERIES：[{ name, dir（合集根目录，相对仓库）, books（series.json 的 books） }]。各卷用到的底图包按出现顺序编号（卷的 bm）
 export function globeData(SERIES) {
-  const vols = [], events = [], BMS = [];
+  const vols = [], events = [], BMS = [], TC = {};
+  const TOPO = b => (TC[b] = TC[b] || JSON.parse(rf(`basemaps/${b}/units.topo.json`)));
   SERIES.forEach((S, si) => S.books.forEach((b, bi) => {
     const c = {}; vm.createContext(c);
     vm.runInContext(rf(`${S.dir}books/${b.id}/book.js`) +
@@ -68,11 +69,18 @@ export function globeData(SERIES) {
     const ctr = [Math.atan2(vy, vx) * 180 / Math.PI, Math.atan2(vz, Math.hypot(vx, vy)) * 180 / Math.PI].map(d => Math.round(d * 10) / 10);
     // 城邑：[名随年, 经, 纬, 都城（1 或 [[阈值, 0|1], …]）, 今地]
     const cities = X.CITIES.map(C => [C.n, r2(C.ll[0]), r2(C.ll[1]), C.cap || 0, C.m || '']);
+    // 底图范围以外的周边陆地（拓扑 nb）按 BOOK.outer 上色：[[nb 序号, [[时刻, 势力], …]], …]（与引擎的 outerOf 同一规则）
+    const NBN = TOPO(bm).objects.nb ? TOPO(bm).objects.nb.geometries.map(g => g.properties && g.properties.n) : [];
+    const outer = [];
+    for (const [n, v] of Object.entries(B.outer || {})) {
+      const seq = typeof v === 'string' ? [[-1e9, v]] : v.map(([t, f]) => [r3(t), f]);
+      NBN.forEach((m, k) => { if (m === n) outer.push([k, seq]); });
+    }
     const vi = vols.length;
-    vols.push({ s: si, n: bi + 1, id: b.id, brand: B.brand, era: b.era, years: b.years, t0: r3(t0), t1: r3(t1), c: ctr, bm: BMS.indexOf(bm), fac, assign, snaps, cities });
+    vols.push({ s: si, n: bi + 1, id: b.id, brand: B.brand, era: b.era, years: b.years, t0: r3(t0), t1: r3(t1), c: ctr, bm: BMS.indexOf(bm), fac, assign, snaps, cities, outer });
     for (const e of X.EVENTS) events.push([vi, e.y, Math.floor(e.mo), e.t, r2(e.ll[0]), r2(e.ll[1]), e.k]);
   }));
-  const topo = BMS.map(b => JSON.parse(rf(`basemaps/${b}/units.topo.json`)));
+  const topo = BMS.map(TOPO);
   // 河湖：坐标保留两位小数；大河（china 的 m、底图配置的 bigRivers）画粗一些
   const water = BMS.map(b => {
     const G = JSON.parse(rf(`basemaps/${b}/geo.json`)), big = new Set(JSON.parse(rf(`basemaps/${b}/basemap.json`)).bigRivers || []);

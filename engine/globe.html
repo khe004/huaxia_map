@@ -170,7 +170,10 @@ const CONF = {{CONF}};
     const area = units.map(u => (u ? d3.geoArea(u) : 0)), cen = units.map(u => (u ? d3.geoCentroid(u) : [0, 0]));
     const firstU = []; geomOf.forEach((gi, ui) => { if (firstU[gi] == null) firstU[gi] = ui; });
     const ix = new Map(T.objects.units.geometries.map((g, i) => [g, i]));
-    return { T, units, geomOf, area, cen, firstU, ix };
+    // 周边陆地（各卷 BOOK.outer 上色用），序号与拓扑 nb 一致
+    const nb = T.objects.nb ? T.objects.nb.geometries.map(g => { const geo = topojson.feature(T, g).geometry; if (!geo) return null;
+      if (geo.type === 'Polygon') rewind(geo.coordinates); else if (geo.type === 'MultiPolygon') geo.coordinates.forEach(rewind); return geo; }) : [];
+    return { T, units, geomOf, area, cen, firstU, ix, nb };
   });
   const WATER = G.water.map(w => ({
     big: { type: 'MultiLineString', coordinates: w.rv.filter(r => r[0]).flatMap(r => (r[1] === 'LineString' ? [r[2]] : r[2])) },
@@ -307,6 +310,12 @@ const CONF = {{CONF}};
       const o = acc.get(fk), a = B.area[ui], [lo, la] = B.cen[ui].map(d => d * Math.PI / 180);
       o.A += a; o.x += a * Math.cos(la) * Math.cos(lo); o.y += a * Math.cos(la) * Math.sin(lo); o.z += a * Math.sin(la); o.us.push(ui);
     });
+    // 底图外的周边陆地按 BOOK.outer 上色（画在各卷拼块之下）
+    const outer = new Map();
+    for (const [k, seq] of v.outer || []) {
+      let fk = null; for (const [t0, g] of seq) if (t0 <= t + 1e-9) fk = g; const F = fk && v.fac[fk]; if (!F || F[2] || !B.nb[k]) continue;
+      const col = fillOf(at(F[1], t)); if (!outer.has(col)) outer.set(col, []); outer.get(col).push(B.nb[k]);
+    }
     // 势力分界：一个几何体两侧属不同势力（或一侧不在本卷）
     const gf = g => { const u = B.firstU[B.ix.get(g)]; return u == null ? undefined : facOfU[u]; };
     const mesh = topojson.mesh(B.T, B.T.objects.units, (a, b) => { const fa = gf(a), fb = gf(b); return (fa || fb) && fa !== fb; });
@@ -318,7 +327,7 @@ const CONF = {{CONF}};
     }).filter(Boolean).sort((a, b) => b.A - a.A);
     // 城邑：名字随年份，'' 或首个起始年之前不画
     const cities = v.cities.map(c => { const nm = c[0][0][0] <= t ? at(c[0], t) : ''; const cap = Array.isArray(c[3]) ? (c[3][0][0] <= t + 1e-9 ? at(c[3], t) : 0) : c[3]; return nm ? { n: nm, ll: [c[1], c[2]], cap: !!cap, m: c[4] } : null; }).filter(Boolean);
-    return { vi, bmi: v.bm, fills, blank, mesh, labels, cities };
+    return { vi, bmi: v.bm, fills, outer, blank, mesh, labels, cities };
   }
   function rebuild() {
     const order = picks.filter(Boolean).sort((a, b) => (active && a.vi === active.vi ? 1 : 0) - (active && b.vi === active.vi ? 1 : 0));
@@ -341,6 +350,7 @@ const CONF = {{CONF}};
     GL[0] && GL[0]();
     // c2：势力着色、河湖
     const c2 = ctx[2];
+    for (const L of layers) for (const [col, gs] of L.outer) { c2.beginPath(); for (const g of gs) path2(g); c2.fillStyle = col; c2.fill(); }
     for (const L of layers) {
       // 焦点一侧的卷盖住另一套：先抹掉它覆盖的未着色陆地上的下层颜色
       if (L === layers[layers.length - 1] && layers.length > 1) { c2.beginPath(); for (const u of L.blank) path2(u); c2.save(); c2.globalCompositeOperation = 'destination-out'; c2.fill(); c2.restore(); }
