@@ -56,6 +56,7 @@ const BOOK = {
 };
 
 const FACTIONS = {
+  afghan:     { color: '#78c8d0', name: () => '杜兰尼王朝（阿富汗）', mapName: () => '阿富汗' },
   franks:    { color: '#5a8ac0', name: t => (t < 1792.708 ? '法兰西王国（路易十六）' : t < 1795.833 ? '法兰西共和国（国民公会）' : t < 1799.833 ? '法兰西共和国（督政府）' : '法兰西共和国（执政府）'), mapName: () => '法兰西' },
   burgundy:  { color: '#a07040', name: t => (t < 1790.041 ? '奥属尼德兰（哈布斯堡家族）' : t < 1790.916 ? '比利时合众国' : '奥属尼德兰（哈布斯堡家族）'), mapName: t => (t >= 1790.041 && t < 1790.916 ? '比利时' : '奥属尼德兰') },
   dutch:      { color: '#f0a040', name: t => (t < 1795.041 ? '尼德兰联省共和国' : '巴达维亚共和国（法兰西的盟国）'), mapName: t => (t < 1795.041 ? '联省' : '巴达维亚') },
@@ -145,7 +146,7 @@ const SEEDS_RAW = `
 东欧|维亚季奇|37.0,54.2  东欧|罗斯托夫|39.6,57.2  东欧|梁赞|40.3,53.8
 x|爱尔兰|-6.7,54.6
 `;
-const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Meurthe-et-Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔', 'Suceava': '加利西亚东', 'Chernivtsi': '加利西亚东' };
+const UNIT_OVERRIDES = { Camenca: '奥尔比亚', "Stîngă Nistrului": '奥尔比亚', Transnistria: '奥尔比亚', Grigoriopol: '奥尔比亚', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Meurthe-et-Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔', 'Suceava': '加利西亚东', 'Chernivtsi': '加利西亚东' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -190,7 +191,7 @@ const SNAPSHOTS = [
     ['poland', '大波兰 马佐夫舍 小波兰 德列夫利安 沃里尼亚'],
     ['lithuania', '立陶宛 德雷戈维奇'],
     ['galicia', '加利西亚东'],
-    ['x', '巴克特里亚 吐火罗南'],
+    ['afghan', '巴克特里亚 吐火罗南'],
   ]],
   [1792, 1, [['vladimir', '奥尔比亚']]],
   [1792, 11, [['franks', '萨卢维 阿洛布罗基']]],

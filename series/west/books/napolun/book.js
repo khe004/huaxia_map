@@ -55,6 +55,7 @@ const BOOK = {
 };
 
 const FACTIONS = {
+  afghan:     { color: '#78c8d0', name: () => '杜兰尼王朝（阿富汗）', mapName: () => '阿富汗' },
   franks:    { color: '#5a8ac0', name: t => (t < 1804.333 ? '法兰西共和国（执政府）' : t < 1814.25 ? '法兰西帝国（拿破仑一世）' : t < 1815.166 ? '法兰西王国（路易十八）' : t < 1815.5 ? '法兰西帝国（拿破仑一世，百日）' : '法兰西王国（路易十八）'), mapName: t => (t < 1804.333 ? '法兰西' : t < 1814.25 || (t >= 1815.166 && t < 1815.5) ? '法兰西帝国' : '法兰西') },
   burgundy:  { color: '#a07040', name: t => (t < 1790.041 ? '奥属尼德兰（哈布斯堡家族）' : t < 1790.916 ? '比利时合众国' : '奥属尼德兰（哈布斯堡家族）'), mapName: t => (t >= 1790.041 && t < 1790.916 ? '比利时' : '奥属尼德兰') },
   dutch:      { color: '#f0a040', name: t => (t < 1806.416 ? '巴达维亚共和国（法兰西的盟国）' : t < 1813.833 ? '荷兰王国（路易·波拿巴）' : t < 1815.416 ? '联合尼德兰（主权亲王威廉一世）' : '尼德兰联合王国（威廉一世）'), mapName: t => (t < 1806.416 ? '巴达维亚' : t < 1813.833 ? '荷兰' : '尼德兰') },
@@ -152,7 +153,7 @@ const SEEDS_RAW = `
 东欧|维亚季奇|37.0,54.2  东欧|罗斯托夫|39.6,57.2  东欧|梁赞|40.3,53.8
 x|爱尔兰|-6.7,54.6  东欧|比萨拉比亚|28.6,47.2
 `;
-const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Meurthe-et-Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔', 'Zaječarska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Suceava': '加利西亚东', 'Chernivtsi': '加利西亚东', 'Briceni': '比萨拉比亚', 'Edineţ': '比萨拉比亚', 'Rîşcani': '比萨拉比亚', 'Glodeni': '比萨拉比亚', 'Făleşti': '比萨拉比亚', 'Ungheni': '比萨拉比亚', 'Nisporeni': '比萨拉比亚', 'Hîncesti': '比萨拉比亚', 'Leova': '比萨拉比亚', 'Cantemir': '比萨拉比亚', 'Cahul': '比萨拉比亚', 'Ocniţa': '比萨拉比亚', 'Donduseni': '比萨拉比亚', 'Soroca': '比萨拉比亚', 'Rezina': '比萨拉比亚', 'Bender': '比萨拉比亚', 'Ștefan Vodă': '比萨拉比亚', 'Causeni': '比萨拉比亚', 'Cimişlia': '比萨拉比亚', 'Basarabeasca': '比萨拉比亚', 'Taraclia': '比萨拉比亚', 'Comrat': '比萨拉比亚', 'Criuleni': '比萨拉比亚', 'Străşeni': '比萨拉比亚', 'Anenii Noi': '比萨拉比亚', 'Orhei': '比萨拉比亚', 'Chişinău': '比萨拉比亚', 'Teleneşti': '比萨拉比亚', 'Şoldăneşti': '比萨拉比亚', 'Floreşti': '比萨拉比亚', 'Ialoveni': '比萨拉比亚', 'Călărași': '比萨拉比亚', 'Drochia': '比萨拉比亚', 'Sîngerei': '比萨拉比亚', 'Bălţi': '比萨拉比亚' };
+const UNIT_OVERRIDES = { Camenca: '奥尔比亚', "Stîngă Nistrului": '奥尔比亚', Transnistria: '奥尔比亚', Grigoriopol: '奥尔比亚', Odessa: '奥尔比亚', Vinnytsya: '基辅', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Meurthe-et-Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔', 'Zaječarska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Suceava': '加利西亚东', 'Chernivtsi': '加利西亚东', 'Briceni': '比萨拉比亚', 'Edineţ': '比萨拉比亚', 'Rîşcani': '比萨拉比亚', 'Glodeni': '比萨拉比亚', 'Făleşti': '比萨拉比亚', 'Ungheni': '比萨拉比亚', 'Nisporeni': '比萨拉比亚', 'Hîncesti': '比萨拉比亚', 'Leova': '比萨拉比亚', 'Cantemir': '比萨拉比亚', 'Cahul': '比萨拉比亚', 'Ocniţa': '比萨拉比亚', 'Donduseni': '比萨拉比亚', 'Soroca': '比萨拉比亚', 'Rezina': '比萨拉比亚', 'Bender': '比萨拉比亚', 'Ștefan Vodă': '比萨拉比亚', 'Causeni': '比萨拉比亚', 'Cimişlia': '比萨拉比亚', 'Basarabeasca': '比萨拉比亚', 'Taraclia': '比萨拉比亚', 'Comrat': '比萨拉比亚', 'Criuleni': '比萨拉比亚', 'Străşeni': '比萨拉比亚', 'Anenii Noi': '比萨拉比亚', 'Orhei': '比萨拉比亚', 'Chişinău': '比萨拉比亚', 'Teleneşti': '比萨拉比亚', 'Şoldăneşti': '比萨拉比亚', 'Floreşti': '比萨拉比亚', 'Ialoveni': '比萨拉比亚', 'Călărași': '比萨拉比亚', 'Drochia': '比萨拉比亚', 'Sîngerei': '比萨拉比亚', 'Bălţi': '比萨拉比亚' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -194,7 +195,7 @@ const SNAPSHOTS = [
     ['denmark', '日德兰 西兰 维肯 西挪威 特伦德拉格 哈罗加兰 冰岛'],
     ['svear', '斯科讷 约塔兰 斯韦阿兰 诺尔兰 哥得兰'],
     ['galicia', '小波兰 加利西亚东'],
-    ['x', '巴克特里亚 吐火罗南'],
+    ['afghan', '巴克特里亚 吐火罗南'],
   ]],
   [1800, 6, [['cisalpine', '因苏布雷斯 塞诺马尼 波伊'], ['franks', '陶里尼']]],
   [1800, 9, [['anjou', '梅利特']]],

@@ -56,6 +56,7 @@ const BOOK = {
 };
 
 const FACTIONS = {
+  afghan:     { color: '#78c8d0', name: () => '杜兰尼王朝（阿富汗）', mapName: () => '阿富汗' },
   franks:    { color: '#5a8ac0', name: t => (t < 1774.333 ? '法兰西王国（路易十五）' : '法兰西王国（路易十六）'), mapName: () => '法兰西' },
   burgundy:  { color: '#a07040', name: () => '奥属尼德兰（哈布斯堡家族）', mapName: () => '奥属尼德兰' },
   dutch:      { color: '#f0a040', name: () => '尼德兰联省共和国', mapName: () => '联省' },
@@ -187,7 +188,7 @@ const SNAPSHOTS = [
     ['poland', '波美拉尼亚 大波兰 马佐夫舍 小波兰 德列夫利安 沃里尼亚 加利西亚东'],
     ['lithuania', '立陶宛 波洛茨克 德雷戈维奇'],
     ['hetmanate', '基辅 切尔尼戈夫'],
-    ['x', '巴克特里亚 吐火罗南'],
+    ['afghan', '巴克特里亚 吐火罗南'],
   ]],
   [1764, 11, [['vladimir', '基辅 切尔尼戈夫']]],
   [1769, 5, [['franks', '科西嘉']]],

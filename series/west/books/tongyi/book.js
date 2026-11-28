@@ -58,6 +58,7 @@ const BOOK = {
 };
 
 const FACTIONS = {
+  afghan:     { color: '#78c8d0', name: () => '阿富汗埃米尔国', mapName: () => '阿富汗' },
   franks:    { color: '#5a8ac0', name: t => (t < 1852.916 ? '法兰西第二共和国（总统路易—拿破仑·波拿巴）' : t < 1870.666 ? '法兰西第二帝国（拿破仑三世）' : '法兰西第三共和国'), mapName: () => '法兰西' },
   burgundy:  { color: '#a07040', name: t => (t < 1790.041 ? '奥属尼德兰（哈布斯堡家族）' : t < 1790.916 ? '比利时合众国' : '奥属尼德兰（哈布斯堡家族）'), mapName: t => (t >= 1790.041 && t < 1790.916 ? '比利时' : '奥属尼德兰') },
   dutch:      { color: '#f0a040', name: t => (t < 1830.583 ? '尼德兰联合王国（奥兰治家族）' : '尼德兰王国（奥兰治家族）'), mapName: () => '尼德兰' },
@@ -162,7 +163,7 @@ const SEEDS_RAW = `
 x|爱尔兰|-6.7,54.6
 外高卢|阿尔萨斯—洛林|7.1,48.9  中欧|石勒苏益格—荷尔斯泰因|9.5,54.5
 `;
-const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', Timiş: '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '阿尔萨斯—洛林', 'Bas-Rhin': '阿尔萨斯—洛林', Moselle: '阿尔萨斯—洛林', 'Schleswig-Holstein': '石勒苏益格—荷尔斯泰因', 'Rheinhessen-Pfalz': '赫西尼亚', Vosges: '塞夸尼', Saarland: '特雷维里', Dolj: '盖塔', Olt: '盖塔', Mehedinţi: '盖塔', Teleorman: '盖塔', Giurgiu: '盖塔', Călăraşi: '盖塔', Gorj: '盖塔', Vâlcea: '盖塔', Covasna: '达契亚', Tulcea: '默西亚', Suceava: '加利西亚东', 'Zaječarska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Meurthe-et-Moselle': '塞夸尼', 'Briceni': '奥尔比亚', 'Edineţ': '奥尔比亚', 'Rîşcani': '奥尔比亚', 'Glodeni': '奥尔比亚', 'Făleşti': '奥尔比亚', 'Ungheni': '奥尔比亚', 'Nisporeni': '奥尔比亚', 'Hîncesti': '奥尔比亚', 'Leova': '奥尔比亚', 'Cantemir': '奥尔比亚', 'Cahul': '奥尔比亚', 'Ocniţa': '奥尔比亚', 'Donduseni': '奥尔比亚', 'Soroca': '奥尔比亚', 'Rezina': '奥尔比亚', 'Bender': '奥尔比亚', 'Ștefan Vodă': '奥尔比亚', 'Causeni': '奥尔比亚', 'Cimişlia': '奥尔比亚', 'Basarabeasca': '奥尔比亚', 'Taraclia': '奥尔比亚', 'Comrat': '奥尔比亚', 'Criuleni': '奥尔比亚', 'Străşeni': '奥尔比亚', 'Anenii Noi': '奥尔比亚', 'Orhei': '奥尔比亚', 'Chişinău': '奥尔比亚', 'Teleneşti': '奥尔比亚', 'Şoldăneşti': '奥尔比亚', 'Floreşti': '奥尔比亚', 'Ialoveni': '奥尔比亚', 'Călărași': '奥尔比亚', 'Drochia': '奥尔比亚', 'Sîngerei': '奥尔比亚', 'Bălţi': '奥尔比亚' };
+const UNIT_OVERRIDES = { Camenca: '奥尔比亚', "Stîngă Nistrului": '奥尔比亚', Transnistria: '奥尔比亚', Grigoriopol: '奥尔比亚', Chernivtsi: '加利西亚东', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', Timiş: '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '阿尔萨斯—洛林', 'Bas-Rhin': '阿尔萨斯—洛林', Moselle: '阿尔萨斯—洛林', 'Schleswig-Holstein': '石勒苏益格—荷尔斯泰因', 'Rheinhessen-Pfalz': '赫西尼亚', Vosges: '塞夸尼', Saarland: '特雷维里', Dolj: '盖塔', Olt: '盖塔', Mehedinţi: '盖塔', Teleorman: '盖塔', Giurgiu: '盖塔', Călăraşi: '盖塔', Gorj: '盖塔', Vâlcea: '盖塔', Covasna: '达契亚', Tulcea: '默西亚', Suceava: '加利西亚东', 'Zaječarska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Meurthe-et-Moselle': '塞夸尼', 'Briceni': '奥尔比亚', 'Edineţ': '奥尔比亚', 'Rîşcani': '奥尔比亚', 'Glodeni': '奥尔比亚', 'Făleşti': '奥尔比亚', 'Ungheni': '奥尔比亚', 'Nisporeni': '奥尔比亚', 'Hîncesti': '奥尔比亚', 'Leova': '奥尔比亚', 'Cantemir': '奥尔比亚', 'Cahul': '奥尔比亚', 'Ocniţa': '奥尔比亚', 'Donduseni': '奥尔比亚', 'Soroca': '奥尔比亚', 'Rezina': '奥尔比亚', 'Bender': '奥尔比亚', 'Ștefan Vodă': '奥尔比亚', 'Causeni': '奥尔比亚', 'Cimişlia': '奥尔比亚', 'Basarabeasca': '奥尔比亚', 'Taraclia': '奥尔比亚', 'Comrat': '奥尔比亚', 'Criuleni': '奥尔比亚', 'Străşeni': '奥尔比亚', 'Anenii Noi': '奥尔比亚', 'Orhei': '奥尔比亚', 'Chişinău': '奥尔比亚', 'Teleneşti': '奥尔比亚', 'Şoldăneşti': '奥尔比亚', 'Floreşti': '奥尔比亚', 'Ialoveni': '奥尔比亚', 'Călărași': '奥尔比亚', 'Drochia': '奥尔比亚', 'Sîngerei': '奥尔比亚', 'Bălţi': '奥尔比亚' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -207,7 +208,7 @@ const SNAPSHOTS = [
     ['svear', '斯科讷 维肯 西挪威 特伦德拉格 哈罗加兰 约塔兰 斯韦阿兰 诺尔兰 哥得兰'],
     ['congress', '马佐夫舍 小波兰'],
     ['galicia', '加利西亚东'],
-    ['x', '巴克特里亚 吐火罗南'],
+    ['afghan', '巴克特里亚 吐火罗南'],
   ]],
   [1859, 2, [['romania', '盖塔 卡尔皮']]],
   [1859, 7, [['savoy', '因苏布雷斯 塞诺马尼']]],
