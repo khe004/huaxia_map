@@ -10,7 +10,7 @@ const R = new URL(`../basemaps/${process.argv[2] || 'china'}/`, import.meta.url)
 const T = JSON.parse(readFileSync(new URL('units.topo.json', R), 'utf8'));
 const BM = JSON.parse(readFileSync(new URL('basemap.json', R), 'utf8'));
 const PJ = BM.projection, [W, H] = BM.size;
-const proj = ({ conicEqualArea: d3.geoConicEqualArea, conicConformal: d3.geoConicConformal, mercator: d3.geoMercator, equirectangular: d3.geoEquirectangular })[PJ.type]().rotate(PJ.rotate || [0, 0]);
+const proj = ({ conicEqualArea: d3.geoConicEqualArea, conicConformal: d3.geoConicConformal, mercator: d3.geoMercator, equirectangular: d3.geoEquirectangular, equalEarth: d3.geoEqualEarth })[PJ.type]().rotate(PJ.rotate || [0, 0]);
 if (PJ.parallels) proj.parallels(PJ.parallels);
 proj.fitExtent(PJ.fitPadding, { type: 'MultiPoint', coordinates: PJ.fitPoints });
 

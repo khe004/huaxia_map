@@ -10,7 +10,7 @@ const C = JSON.parse(cfg); // {z, tiles:[x0,x1,y0,y1], ext:[x0,y0,x1,y1], sc, fe
 // 投影取自底图包的 basemap.json（第四个参数为底图包名，默认 china），与引擎同一算法
 const BM = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'basemaps', bmName, 'basemap.json'), 'utf8')), PJ = BM.projection;
 const [W, H] = BM.size, SC = C.sc, Z = C.z;
-const proj = ({ conicEqualArea: d3.geoConicEqualArea, conicConformal: d3.geoConicConformal, mercator: d3.geoMercator, equirectangular: d3.geoEquirectangular })[PJ.type]().rotate(PJ.rotate || [0, 0]);
+const proj = ({ conicEqualArea: d3.geoConicEqualArea, conicConformal: d3.geoConicConformal, mercator: d3.geoMercator, equirectangular: d3.geoEquirectangular, equalEarth: d3.geoEqualEarth })[PJ.type]().rotate(PJ.rotate || [0, 0]);
 if (PJ.parallels) proj.parallels(PJ.parallels);
 proj.fitExtent(PJ.fitPadding, { type: 'MultiPoint', coordinates: PJ.fitPoints });
 // tile mosaic

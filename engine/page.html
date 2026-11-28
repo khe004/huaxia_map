@@ -166,7 +166,7 @@ button { font: inherit; color: inherit; }
 .legend i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
 .legend .note { color: var(--muted); flex-basis: 100%; white-space: normal; }
 /* 图例很长时（势力多的卷）不压住整张地图：桌面限高滚动；窄屏默认收起，点“图例”展开 */
-.legend { max-height: calc(100% - 150px); overflow-y: auto; }
+.legend { max-height: min(38%, calc(100% - 150px)); overflow-y: auto; }
 .lg-tog { display: none; position: absolute; left: 12px; bottom: 8px; padding: 5px 10px; font: inherit; font-size: 12px; color: var(--ink2); background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 5px; cursor: pointer; }
 .legend .rg { font-weight: 700; color: var(--ink2); }
 /* 每个阵营（realm）另起一行，免得读者把阵营名当成上一个阵营的图例项 */

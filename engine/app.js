@@ -177,7 +177,7 @@ if (UNITS.objects.nb) {
 rewind(GEO.cn); rewind(GEO.nb); rewind(GEO.cnout);
 const svg = d3.select('#map').attr('viewBox', `0 0 ${W} ${H}`);
 const PJ = BASEMAP.projection;
-const proj = ({ conicEqualArea: d3.geoConicEqualArea, conicConformal: d3.geoConicConformal, mercator: d3.geoMercator, equirectangular: d3.geoEquirectangular })[PJ.type]()
+const proj = ({ conicEqualArea: d3.geoConicEqualArea, conicConformal: d3.geoConicConformal, mercator: d3.geoMercator, equirectangular: d3.geoEquirectangular, equalEarth: d3.geoEqualEarth })[PJ.type]()
   .rotate(PJ.rotate || [0, 0]);
 if (PJ.parallels && proj.parallels) proj.parallels(PJ.parallels);
 proj.fitExtent(PJ.fitPadding, { type: 'MultiPoint', coordinates: PJ.fitPoints });
@@ -296,10 +296,10 @@ const gModern = root.append('g').attr('class', 'modern');
 gModern.selectAll('path').data(GEO.cn.features).join('path').attr('d', path);
 
 const gLabels = root.append('g');
-// 不在本书范围内（或只部分纳入）的今省区，始终显示省名
+// 不在本书范围内（或只部分纳入）的今省区，始终显示省名（BOOK.outsideLabels 为 false 时不常显，如世界底图各卷）
 const OUTSIDE = new Set(GEO.cn.features.map(f => f.properties.n).filter(n => !(SC.provinces || []).includes(n)));
-const provLbl = gLabels.append('g').selectAll('text').data(GEO.cn.features.filter(f => !(BASEMAP.noProvLabel || ['香港', '澳门']).includes(f.properties.n))).join('text')
-  .attr('class', f => 'lbl prov-lbl' + (OUTSIDE.has(f.properties.n) ? ' always' : '')).attr('text-anchor', 'middle')
+const provLbl = gLabels.append('g').selectAll('text').data(GEO.cn.features.filter(f => f.geometry && (proj(d3.geoCentroid(f)) || [NaN]).every(Number.isFinite) && !(BASEMAP.noProvLabel || ['香港', '澳门']).includes(f.properties.n))).join('text')
+  .attr('class', f => 'lbl prov-lbl' + (OUTSIDE.has(f.properties.n) && BOOK.outsideLabels !== false ? ' always' : '')).attr('text-anchor', 'middle')
   .attr('transform', f => { const c = proj(d3.geoCentroid(f)); return `translate(${c})`; })
   .text(f => '今' + f.properties.n);
 const zhouLbl = gLabels.append('g').selectAll('text').data(ZHOU_LABELS).join('text')
