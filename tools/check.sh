@@ -3,7 +3,7 @@
 # unlinked（正文提到而未挂名的人物）只是待办清单，照常打印数量，不算失败。CI（.github/workflows/pages.yml）构建前也跑这一步。
 cd "$(dirname "$0")/.." || exit 2
 fail=0
-for t in posthumous evorder thresholds orphans refs legendname snapstep coexist citystep leaderfac facstep dupsent rivercross; do
+for t in seeds posthumous evorder thresholds orphans refs legendname snapstep coexist citystep leaderfac facstep dupsent rivercross; do
   o=$(node "tools/$t.js" "$@" 2>&1); s=$?; l=$(echo "$o" | tail -1)
   if [ $s -ne 0 ] || ! echo "$l" | grep -q "共 0 "; then echo "== $t"; echo "$o" | tail -20; fail=1; fi
 done
