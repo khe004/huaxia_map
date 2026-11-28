@@ -15,7 +15,7 @@ const OUT = `./dist/${S.out || 'series'}/`;
 const cn = n => { const D = '〇一二三四五六七八九', t = Math.floor(n / 10), o = n % 10; return n < 10 ? D[n] : (t === 1 ? '' : D[t]) + '十' + (o ? D[o] : ''); };
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const fy = y => (y < 0 ? `前 ${-y}` : `${y}`);
-let prevLast = null;
+let prevLast = null, prevFirst = null;
 // 目录页检索用的索引：全部事件与人物（跨卷人物合为一条，列出所在各卷）
 const pcx = {}; vm.createContext(pcx); vm.runInContext(rd('./books/_people.js') + ';this.PC = commonOf;', pcx);
 // 引文 **…** 改为引号：已在引号里的（如 “**…**。”、“诸将易得耳。**…**。”）不再加，免得引号重复或不成对
@@ -66,8 +66,10 @@ const rows = S.books.map((b, i) => {
   }
   // 与上一卷时间重叠（上卷末事件晚于本卷首事件）时，在年份后注明
   const es = EVENTS.slice().sort((u, v) => u.y - v.y || u.mo - v.mo), f = es[0], l = es[es.length - 1];
-  const ov = prevLast && prevLast.y + (prevLast.mo - 1) / 12 > f.y + (f.mo - 1) / 12 ? `与上卷重叠 ${f.y === prevLast.y ? fy(f.y) + ' 年' : fy(f.y) + ' – ' + fy(prevLast.y)}` : '';
-  prevLast = l;
+  // 重叠段取两卷都覆盖的部分：较晚的开头到较早的结尾
+  const oy0 = prevFirst ? Math.max(f.y, prevFirst.y) : f.y, oy1 = prevLast ? Math.min(prevLast.y, l.y) : 0;
+  const ov = prevLast && prevLast.y + (prevLast.mo - 1) / 12 > f.y + (f.mo - 1) / 12 ? `与上卷重叠 ${oy0 === oy1 ? fy(oy0) + ' 年' : fy(oy0) + ' – ' + fy(oy1)}` : '';
+  prevLast = l; prevFirst = f;
   return `<li${b.era !== S.books[i - 1]?.era ? ' class="era-start"' : ''}>
   <span class="era">${b.era !== S.books[i - 1]?.era ? esc(b.era) : ''}</span>
   <a class="vol" href="${b.id}/index.html?at=start">
