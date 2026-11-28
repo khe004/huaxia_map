@@ -43,7 +43,7 @@ const BOOK = {
     },
   },
   tags: { 后世文献: '后世文献', 常识: '常识', 少年维特之烦恼: '少年维特之烦恼', 纯粹理性批判: '纯粹理性批判', 联邦党人文集: '联邦党人文集', 卢梭忏悔录: '卢梭忏悔录' },
-  quoteLabel: '原文（英译）',
+  quoteLabel: '原文（英语原著或英译）',
   linesToggle: '罗马大道',
   ziLabel: '',
   peopleGroups: [['franks', '法兰西'], ['anjou', '不列颠与北美'], ['eastfr', '神圣罗马帝国与奥地利'], ['prussia', '普鲁士'], ['castile', '西班牙'], ['portugal', '葡萄牙'], ['svear', '瑞典'], ['poland', '波兰'], ['vladimir', '俄罗斯'], ['ottomans', '奥斯曼']],
@@ -56,6 +56,8 @@ const BOOK = {
 };
 
 const FACTIONS = {
+  usa:       { color: '#3c5aa0', name: () => '美利坚合众国', mapName: () => '美国', hideLabel: true },
+  afghan:     { color: '#78c8d0', name: () => '杜兰尼王朝（阿富汗）', mapName: () => '阿富汗' },
   franks:    { color: '#5a8ac0', name: t => (t < 1774.333 ? '法兰西王国（路易十五）' : '法兰西王国（路易十六）'), mapName: () => '法兰西' },
   burgundy:  { color: '#a07040', name: () => '奥属尼德兰（哈布斯堡家族）', mapName: () => '奥属尼德兰' },
   dutch:      { color: '#f0a040', name: () => '尼德兰联省共和国', mapName: () => '联省' },
@@ -89,7 +91,7 @@ const FACTIONS = {
   saadi:     { color: '#a06850', name: () => '阿拉维王朝', mapName: () => '阿拉维王朝' },
   libyes:     { color: '#d0d8b8', name: () => '利比亚诸部', mapName: () => '利比亚诸部', hideLabel: () => true },
   arabs:      { color: '#d0d8a0', name: () => '阿拉伯诸部', mapName: () => '阿拉伯诸部', hideLabel: () => true },
-  oman:       { color: '#f0c098', name: () => '阿曼伊玛目国（亚里巴家族）', mapName: () => '阿曼' },
+  oman:       { color: '#f0c098', name: () => '阿曼（布赛义德王朝）', mapName: () => '阿曼' },
   hejaz:      { color: '#f0b878', name: () => '汉志（麦加谢里夫，奥斯曼的附庸）', mapName: () => '汉志' },
   qarmatians: { color: '#c09890', name: () => '东阿拉伯（奥斯曼的哈萨省与诸部）', mapName: () => '哈萨' },
   yemen:      { color: '#a09060', name: () => '也门（栽德派伊玛目）', mapName: () => '也门' },
@@ -141,7 +143,7 @@ const SEEDS_RAW = `
 东欧|维亚季奇|37.0,54.2  东欧|罗斯托夫|39.6,57.2  东欧|梁赞|40.3,53.8
 x|爱尔兰|-6.7,54.6
 `;
-const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Meurthe-et-Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔' };
+const UNIT_OVERRIDES = { Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Prešovský kraj": '夸狄', "Košický kraj": '夸狄', Transcarpathia: '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', "Klaipėdos apskritis": '普鲁士', "Južnobačka oblast": '蒂萨平原', "Sremska oblast": '蒂萨平原', "Južnobanatska oblast": '蒂萨平原', "Srednjobanatska oblast": '蒂萨平原', "Caraş-Severin": '蒂萨平原', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Meurthe-et-Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -187,7 +189,7 @@ const SNAPSHOTS = [
     ['poland', '波美拉尼亚 大波兰 马佐夫舍 小波兰 德列夫利安 沃里尼亚 加利西亚东'],
     ['lithuania', '立陶宛 波洛茨克 德雷戈维奇'],
     ['hetmanate', '基辅 切尔尼戈夫'],
-    ['x', '巴克特里亚 吐火罗南'],
+    ['afghan', '巴克特里亚 吐火罗南'],
   ]],
   [1764, 11, [['vladimir', '基辅 切尔尼戈夫']]],
   [1769, 5, [['franks', '科西嘉']]],
@@ -840,7 +842,7 @@ const EVENTS = [
     d: '一月七日，法兰西气球驾驶员让—皮埃尔·布朗夏尔与美国医生约翰·杰弗里斯乘氢气球从多佛尔升空，途中为减轻重量扔掉了几乎所有东西，两个半小时后降落在法兰西加来附近的森林里，第一次乘飞行器飞越英吉利海峡。',
     who: [] },
   { y: 1785, mo: 8, t: '钻石项链事件', p: '凡尔赛', m: '今法国伊夫林省', ll: [2.12, 48.8], k: 'pol', refs: ['后世文献'],
-    d: '一个自称瓦卢瓦后裔的女骗子拉莫特伯爵夫人冒用王后的名义，骗红衣主教罗昂买下一条价值一百六十万利弗尔的钻石项链。八月，事情败露，罗昂在凡尔赛宫被当众逮捕。次年巴黎高等法院宣判罗昂无罪，舆论把矛头指向本来不知情的王后玛丽·安托瓦内特。',
+    d: '一个自称瓦卢瓦后裔的女骗子拉莫特伯爵夫人冒用王后的名义，骗枢机主教罗昂买下一条价值一百六十万利弗尔的钻石项链。八月，事情败露，罗昂在凡尔赛宫被当众逮捕。次年巴黎高等法院宣判罗昂无罪，舆论把矛头指向本来不知情的王后玛丽·安托瓦内特。',
     who: ['玛丽·安托瓦内特', '路易十六'] },
   { y: 1786, mo: 5, t: '《费加罗的婚礼》歌剧首演', p: '维也纳', m: '今奥地利首都', ll: [16.37, 48.21], k: 'cul', refs: ['后世文献'],
     d: '五月一日，莫扎特根据博马舍喜剧改编、由达·蓬特写脚本的歌剧《费加罗的婚礼》在维也纳城堡剧院首演。约瑟夫二世准许上演，删去了原剧中的政治讽刺。次年在布拉格上演大获成功，莫扎特又为布拉格写了《唐璜》。',
@@ -924,14 +926,14 @@ const PEOPLE_RAW = [
   ['威廉·赫歇尔', 'anjou', 'William Herschel', '1738–1822', '汉诺威军乐师之子，十九岁到英格兰谋生，在巴斯做管风琴师与音乐教师，业余磨制反射望远镜观测星空。1781 年发现天王星，被聘为宫廷天文学家，后来与妹妹卡罗琳一起编制星云与双星的目录。'],
   ['约瑟夫·普里斯特利', 'anjou', 'Joseph Priestley', '1733–1804', '约克郡布商之子，不信国教的牧师与教师。他发明了苏打水，研究多种气体，1774 年加热氧化汞得到一种助燃的气体，称为“脱燃素空气”，即氧气。他支持北美与后来的法国革命，晚年移居美国。'],
   ['威廉·威尔伯福斯', 'anjou', '', '', ''],
-  ['本杰明·富兰克林', 'anjou', '', '', ''],
-  ['乔治·华盛顿', 'anjou', '', '', ''],
-  ['塞缪尔·亚当斯', 'anjou', 'Samuel Adams', '1722–1803', '波士顿酿酒商之子，哈佛毕业，经营失败后从政，在马萨诸塞议会与市镇会议中组织反对不列颠征税的运动，创立通讯委员会，是波士顿倾茶事件的组织者之一，后来出席大陆会议，签署独立宣言。'],
-  ['约翰·亚当斯', 'anjou', '', '', ''],
+  ['本杰明·富兰克林', 'usa', '', '', ''],
+  ['乔治·华盛顿', 'usa', '', '', ''],
+  ['塞缪尔·亚当斯', 'usa', 'Samuel Adams', '1722–1803', '波士顿酿酒商之子，哈佛毕业，经营失败后从政，在马萨诸塞议会与市镇会议中组织反对不列颠征税的运动，创立通讯委员会，是波士顿倾茶事件的组织者之一，后来出席大陆会议，签署独立宣言。'],
+  ['约翰·亚当斯', 'usa', '', '', ''],
   ['托马斯·潘恩', 'anjou', '', '', ''],
-  ['托马斯·杰斐逊', 'anjou', '', '', ''],
-  ['詹姆斯·麦迪逊', 'anjou', '', '', ''],
-  ['亚历山大·汉密尔顿', 'anjou', '', '', ''],
+  ['托马斯·杰斐逊', 'usa', '', '', ''],
+  ['詹姆斯·麦迪逊', 'usa', '', '', ''],
+  ['亚历山大·汉密尔顿', 'usa', '', '', ''],
   // 神圣罗马帝国与奥地利
   ['弗朗茨一世', 'eastfr', '', '', ''],
   ['玛丽亚·特蕾莎', 'eastfr', '', '', ''],

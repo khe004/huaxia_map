@@ -45,7 +45,7 @@ const BOOK = {
     },
   },
   tags: { 后世文献: '后世文献', 论自由: '论自由', 双城记: '双城记', 物种起源: '物种起源', 葛底斯堡演说: '葛底斯堡演说', 爱丽丝漫游奇境: '爱丽丝漫游奇境', 罪与罚: '罪与罚', 战争与和平: '战争与和平' },
-  quoteLabel: '原文（英译）',
+  quoteLabel: '原文（英语原著或英译）',
   linesToggle: '罗马大道',
   ziLabel: '',
   peopleGroups: [['franks', '法兰西'], ['anjou', '不列颠与美国'], ['prussia', '普鲁士与德意志'], ['eastfr', '奥地利与匈牙利'], ['savoy', '撒丁与意大利'], ['vladimir', '俄罗斯'], ['ottomans', '奥斯曼与埃及']],
@@ -58,6 +58,8 @@ const BOOK = {
 };
 
 const FACTIONS = {
+  usa:       { color: '#3c5aa0', name: () => '美利坚合众国', mapName: () => '美国', hideLabel: true },
+  afghan:     { color: '#78c8d0', name: () => '阿富汗埃米尔国', mapName: () => '阿富汗' },
   franks:    { color: '#5a8ac0', name: t => (t < 1852.916 ? '法兰西第二共和国（总统路易—拿破仑·波拿巴）' : t < 1870.666 ? '法兰西第二帝国（拿破仑三世）' : '法兰西第三共和国'), mapName: () => '法兰西' },
   burgundy:  { color: '#a07040', name: t => (t < 1790.041 ? '奥属尼德兰（哈布斯堡家族）' : t < 1790.916 ? '比利时合众国' : '奥属尼德兰（哈布斯堡家族）'), mapName: t => (t >= 1790.041 && t < 1790.916 ? '比利时' : '奥属尼德兰') },
   dutch:      { color: '#f0a040', name: t => (t < 1830.583 ? '尼德兰联合王国（奥兰治家族）' : '尼德兰王国（奥兰治家族）'), mapName: () => '尼德兰' },
@@ -109,7 +111,7 @@ const FACTIONS = {
   saadi:     { color: '#a06850', name: () => '阿拉维王朝', mapName: () => '阿拉维王朝' },
   libyes:     { color: '#d0d8b8', name: () => '利比亚诸部', mapName: () => '利比亚诸部', hideLabel: () => true },
   arabs:      { color: '#d0d8a0', name: t => (t < 1818.666 ? '第一沙特国（沙特家族与瓦哈比派）' : '内志（沙特家族）'), mapName: t => (t < 1818.666 ? '沙特' : '内志') },
-  oman:       { color: '#f0c098', name: () => '阿曼伊玛目国（亚里巴家族）', mapName: () => '阿曼' },
+  oman:       { color: '#f0c098', name: () => '马斯喀特和阿曼苏丹国（布赛义德王朝）', mapName: () => '阿曼' },
   hejaz:      { color: '#f0b878', name: () => '汉志（麦加谢里夫，奥斯曼的附庸）', mapName: () => '汉志' },
   qarmatians: { color: '#c09890', name: () => '东阿拉伯（奥斯曼的哈萨省与诸部）', mapName: () => '哈萨' },
   yemen:      { color: '#a09060', name: () => '也门（栽德派伊玛目）', mapName: () => '也门' },
@@ -162,7 +164,7 @@ const SEEDS_RAW = `
 x|爱尔兰|-6.7,54.6
 外高卢|阿尔萨斯—洛林|7.1,48.9  中欧|石勒苏益格—荷尔斯泰因|9.5,54.5
 `;
-const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', Timiş: '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '阿尔萨斯—洛林', 'Bas-Rhin': '阿尔萨斯—洛林', Moselle: '阿尔萨斯—洛林', 'Schleswig-Holstein': '石勒苏益格—荷尔斯泰因', 'Rheinhessen-Pfalz': '赫西尼亚', Vosges: '塞夸尼', Saarland: '特雷维里', Dolj: '盖塔', Olt: '盖塔', Mehedinţi: '盖塔', Teleorman: '盖塔', Giurgiu: '盖塔', Călăraşi: '盖塔', Gorj: '盖塔', Vâlcea: '盖塔', Covasna: '达契亚', Tulcea: '默西亚', Suceava: '加利西亚东', 'Zaječarska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Meurthe-et-Moselle': '塞夸尼', 'Briceni': '奥尔比亚', 'Edineţ': '奥尔比亚', 'Rîşcani': '奥尔比亚', 'Glodeni': '奥尔比亚', 'Făleşti': '奥尔比亚', 'Ungheni': '奥尔比亚', 'Nisporeni': '奥尔比亚', 'Hîncesti': '奥尔比亚', 'Leova': '奥尔比亚', 'Cantemir': '奥尔比亚', 'Cahul': '奥尔比亚', 'Ocniţa': '奥尔比亚', 'Donduseni': '奥尔比亚', 'Soroca': '奥尔比亚', 'Rezina': '奥尔比亚', 'Bender': '奥尔比亚', 'Ștefan Vodă': '奥尔比亚', 'Causeni': '奥尔比亚', 'Cimişlia': '奥尔比亚', 'Basarabeasca': '奥尔比亚', 'Taraclia': '奥尔比亚', 'Comrat': '奥尔比亚', 'Criuleni': '奥尔比亚', 'Străşeni': '奥尔比亚', 'Anenii Noi': '奥尔比亚', 'Orhei': '奥尔比亚', 'Chişinău': '奥尔比亚', 'Teleneşti': '奥尔比亚', 'Şoldăneşti': '奥尔比亚', 'Floreşti': '奥尔比亚', 'Ialoveni': '奥尔比亚', 'Călărași': '奥尔比亚', 'Drochia': '奥尔比亚', 'Sîngerei': '奥尔比亚', 'Bălţi': '奥尔比亚' };
+const UNIT_OVERRIDES = { Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Južnobačka oblast": '蒂萨平原', "Sremska oblast": '蒂萨平原', "Južnobanatska oblast": '蒂萨平原', "Srednjobanatska oblast": '蒂萨平原', "Caraş-Severin": '蒂萨平原', Transcarpathia: '蒂萨平原', "Vukovarsko-srijemska županija": '潘诺尼亚', "Prešovský kraj": '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', Kaliski: '马佐夫舍', Sieradzki: '马佐夫舍', Koniński: '马佐夫舍', Włocławski: '马佐夫舍', Suwalski: '马佐夫舍', "Klaipėdos apskritis": '普鲁士', Trento: '雷蒂亚', Camenca: '奥尔比亚', "Stîngă Nistrului": '奥尔比亚', Transnistria: '奥尔比亚', Grigoriopol: '奥尔比亚', Chernivtsi: '加利西亚东', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', Timiş: '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '阿尔萨斯—洛林', 'Bas-Rhin': '阿尔萨斯—洛林', Moselle: '阿尔萨斯—洛林', 'Schleswig-Holstein': '石勒苏益格—荷尔斯泰因', 'Rheinhessen-Pfalz': '赫西尼亚', Vosges: '塞夸尼', Saarland: '特雷维里', Dolj: '盖塔', Olt: '盖塔', Mehedinţi: '盖塔', Teleorman: '盖塔', Giurgiu: '盖塔', Călăraşi: '盖塔', Gorj: '盖塔', Vâlcea: '盖塔', Covasna: '达契亚', Tulcea: '默西亚', Suceava: '加利西亚东', 'Zaječarska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Meurthe-et-Moselle': '塞夸尼', 'Briceni': '奥尔比亚', 'Edineţ': '奥尔比亚', 'Rîşcani': '奥尔比亚', 'Glodeni': '奥尔比亚', 'Făleşti': '奥尔比亚', 'Ungheni': '奥尔比亚', 'Nisporeni': '奥尔比亚', 'Hîncesti': '奥尔比亚', 'Leova': '奥尔比亚', 'Cantemir': '奥尔比亚', 'Cahul': '奥尔比亚', 'Ocniţa': '奥尔比亚', 'Donduseni': '奥尔比亚', 'Soroca': '奥尔比亚', 'Rezina': '奥尔比亚', 'Bender': '奥尔比亚', 'Ștefan Vodă': '奥尔比亚', 'Causeni': '奥尔比亚', 'Cimişlia': '奥尔比亚', 'Basarabeasca': '奥尔比亚', 'Taraclia': '奥尔比亚', 'Comrat': '奥尔比亚', 'Criuleni': '奥尔比亚', 'Străşeni': '奥尔比亚', 'Anenii Noi': '奥尔比亚', 'Orhei': '奥尔比亚', 'Chişinău': '奥尔比亚', 'Teleneşti': '奥尔比亚', 'Şoldăneşti': '奥尔比亚', 'Floreşti': '奥尔比亚', 'Ialoveni': '奥尔比亚', 'Călărași': '奥尔比亚', 'Drochia': '奥尔比亚', 'Sîngerei': '奥尔比亚', 'Bălţi': '奥尔比亚' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -195,9 +197,9 @@ const SNAPSHOTS = [
     ['belgium', '内尔维'],
     ['dutch', '巴达维'],
     ['moldavia', '卡尔皮'],
-    ['arabs', '杜马 纳季德'],
+    ['arabs', '杜马 纳季德 叶麻麦 哈萨'],
     ['hejaz', '叶斯里卜 麦加'],
-    ['qarmatians', '叶麻麦 哈萨'],
+    
     ['oman', '阿曼'],
     ['yemen', '也门 哈德拉毛 纳季兰'],
     ['uzbeks', '巴克特里亚 粟特 布哈拉 花剌子模 费尔干纳 吐火罗南'],
@@ -207,7 +209,7 @@ const SNAPSHOTS = [
     ['svear', '斯科讷 维肯 西挪威 特伦德拉格 哈罗加兰 约塔兰 斯韦阿兰 诺尔兰 哥得兰'],
     ['congress', '马佐夫舍 小波兰'],
     ['galicia', '加利西亚东'],
-    ['x', '巴克特里亚 吐火罗南'],
+    ['afghan', '巴克特里亚 吐火罗南'],
   ]],
   [1859, 2, [['romania', '盖塔 卡尔皮']]],
   [1859, 7, [['savoy', '因苏布雷斯 塞诺马尼']]],
@@ -221,7 +223,7 @@ const SNAPSHOTS = [
   [1866, 10, [['savoy', '维内蒂']]],
   [1867, 6, [['magyars', '达契亚']]],
   [1868, 5, [['vladimir', '粟特']]],
-  [1870, 9, [['savoy', '罗马 萨宾']]],
+  [1870, 9.5, [['savoy', '罗马 萨宾']]],
   [1871, 1, [['prussia', '赫西尼亚 文德利奇']]],
   [1871, 5, [['prussia', '阿尔萨斯—洛林']]],
 ];
@@ -947,7 +949,7 @@ const EVENTS = [
     who: ['莱昂·甘必大'] },
   { y: 1871, mo: 1, t: '德意志帝国', p: '凡尔赛', m: '今法国伊夫林省', ll: [2.12, 48.8], k: 'pol', refs: ['后世文献'],
     d: '南德诸邦经谈判加入北德意志邦联。一月十八日，在凡尔赛宫的镜厅，德意志诸侯拥立普鲁士国王威廉一世为德意志皇帝，德意志帝国成立，俾斯麦任帝国首相。二十八日巴黎签订停战协定。同月，萨伏依家族的阿马德奥一世到马德里即位为西班牙国王，他的支持者普里姆已于去年底遇刺身亡。',
-    who: ['威廉一世', '奥托·冯·俾斯麦', '赫尔穆特·冯·毛奇', '胡安·普里姆'] },
+    who: ['威廉一世', '奥托·冯·俾斯麦', '赫尔穆特·冯·毛奇', '胡安·普里姆'], post: ['胡安·普里姆'] },
   { y: 1871, mo: 3, t: '巴黎公社', p: '巴黎', m: '今法国首都', ll: [2.36, 48.87], k: 'war', refs: ['后世文献'],
     d: '二月选出的国民议会以保守的君主派居多，梯也尔任行政首脑。三月十八日，政府军想收走蒙马特高地的国民自卫军大炮，引发起义，梯也尔政府撤往凡尔赛。二十八日巴黎公社宣告成立，宣布政教分离，废除面包坊夜工。',
     who: ['阿道夫·梯也尔'] },
@@ -971,12 +973,12 @@ const PEOPLE_RAW = [
   ['约翰·斯图尔特·密尔', 'anjou', 'John Stuart Mill', '1806–1873', '功利主义学者詹姆斯·密尔之子，三岁学希腊文，八岁学拉丁文，受父亲与边沁的严格教育，二十岁时陷入精神危机。他在东印度公司任职三十多年，著有《逻辑体系》《政治经济学原理》《论自由》与《妇女的屈从地位》，1865 年当选议员，提出妇女选举权的议案。'],
   ['本杰明·迪斯雷利', 'anjou', '', '', ''],
   ['威廉·格莱斯顿', 'anjou', '', '', ''],
-  ['亚伯拉罕·林肯', 'anjou', 'Abraham Lincoln', '1809–1865', '生于肯塔基的木屋，在印第安纳与伊利诺伊的边疆长大，几乎没有上过学，靠自学当上律师。他做过一任国会议员，1858 年竞选参议员时与道格拉斯辩论奴隶制而闻名，1860 年当选总统，领导联邦打赢内战，1865 年四月遇刺身亡。'],
-  ['哈丽雅特·比彻·斯托', 'anjou', 'Harriet Beecher Stowe', '1811–1896', '康涅狄格州著名牧师莱曼·比彻之女，在辛辛那提住了十八年，隔河就是蓄奴的肯塔基州，接触到逃亡的奴隶。1850 年逃亡奴隶法通过后，她写成《汤姆叔叔的小屋》，此后三次访问英国，受到废奴团体的热烈欢迎。'],
-  ['罗伯特·李', 'anjou', 'Robert E. Lee', '1807–1870', '弗吉尼亚名门出身，父亲是独立战争的骑兵将领。他以第二名毕业于西点军校，在美墨战争中立功，任过西点军校校长。内战爆发时他拒绝了北军的统帅职位，随弗吉尼亚加入南方，统率北弗吉尼亚军团，1865 年投降，战后任华盛顿学院院长。'],
-  ['尤利西斯·格兰特', 'anjou', 'Ulysses S. Grant', '1822–1885', '俄亥俄的皮革匠之子，毕业于西点军校，参加过美墨战争，1854 年退伍，经商屡屡失败。内战中他攻下多纳尔逊堡与维克斯堡，1864 年任北军总司令，次年接受李的投降，1869 年起任两届美国总统。'],
+  ['亚伯拉罕·林肯', 'usa', 'Abraham Lincoln', '1809–1865', '生于肯塔基的木屋，在印第安纳与伊利诺伊的边疆长大，几乎没有上过学，靠自学当上律师。他做过一任国会议员，1858 年竞选参议员时与道格拉斯辩论奴隶制而闻名，1860 年当选总统，领导联邦打赢内战，1865 年四月遇刺身亡。'],
+  ['哈丽雅特·比彻·斯托', 'usa', 'Harriet Beecher Stowe', '1811–1896', '康涅狄格州著名牧师莱曼·比彻之女，在辛辛那提住了十八年，隔河就是蓄奴的肯塔基州，接触到逃亡的奴隶。1850 年逃亡奴隶法通过后，她写成《汤姆叔叔的小屋》，此后三次访问英国，受到废奴团体的热烈欢迎。'],
+  ['罗伯特·李', 'usa', 'Robert E. Lee', '1807–1870', '弗吉尼亚名门出身，父亲是独立战争的骑兵将领。他以第二名毕业于西点军校，在美墨战争中立功，任过西点军校校长。内战爆发时他拒绝了北军的统帅职位，随弗吉尼亚加入南方，统率北弗吉尼亚军团，1865 年投降，战后任华盛顿学院院长。'],
+  ['尤利西斯·格兰特', 'usa', 'Ulysses S. Grant', '1822–1885', '俄亥俄的皮革匠之子，毕业于西点军校，参加过美墨战争，1854 年退伍，经商屡屡失败。内战中他攻下多纳尔逊堡与维克斯堡，1864 年任北军总司令，次年接受李的投降，1869 年起任两届美国总统。'],
   ['刘易斯·卡罗尔', 'anjou', 'Lewis Carroll', '1832–1898', '本名查尔斯·勒特威奇·道奇森，柴郡牧师之子，在牛津基督堂学院读书，此后在学院任数学讲师近三十年，终身未婚。他口吃，喜爱摄影与文字游戏，1865 年出版《爱丽丝漫游奇境》，1871 年出版续集《爱丽丝镜中奇遇》。'],
-  ['弗雷德里克·道格拉斯', 'anjou', '', '', ''],
+  ['弗雷德里克·道格拉斯', 'usa', '', '', ''],
   ['查尔斯·狄更斯', 'anjou', '', '', ''],
   ['查尔斯·达尔文', 'anjou', '', '', ''],
   ['维多利亚女王', 'anjou', '', '', ''],

@@ -43,7 +43,7 @@ const BOOK = {
     },
   },
   tags: { 后世文献: '后世文献', 安娜·卡列尼娜: '安娜·卡列尼娜', 玩偶之家: '玩偶之家', 查拉图斯特拉如是说: '查拉图斯特拉如是说', 血字的研究: '血字的研究', 黑暗之心: '黑暗之心' },
-  quoteLabel: '原文（英译）',
+  quoteLabel: '原文（英语原著或英译）',
   linesToggle: '罗马大道',
   ziLabel: '',
   peopleGroups: [['prussia', '德意志'], ['anjou', '不列颠'], ['franks', '法兰西'], ['eastfr', '奥匈'], ['vladimir', '俄罗斯'], ['savoy', '意大利'], ['ottomans', '奥斯曼'], ['greece', '巴尔干诸国']],
@@ -56,6 +56,7 @@ const BOOK = {
 };
 
 const FACTIONS = {
+  afghan:     { color: '#78c8d0', name: () => '阿富汗埃米尔国', mapName: () => '阿富汗' },
   franks:    { color: '#5a8ac0', name: () => '法兰西第三共和国', mapName: () => '法兰西' },
   burgundy:  { color: '#a07040', name: t => (t < 1790.041 ? '奥属尼德兰（哈布斯堡家族）' : t < 1790.916 ? '比利时合众国' : '奥属尼德兰（哈布斯堡家族）'), mapName: t => (t >= 1790.041 && t < 1790.916 ? '比利时' : '奥属尼德兰') },
   dutch:      { color: '#f0a040', name: t => (t < 1830.583 ? '尼德兰联合王国（奥兰治家族）' : '尼德兰王国（奥兰治家族）'), mapName: () => '尼德兰' },
@@ -111,7 +112,7 @@ const FACTIONS = {
   saadi:     { color: '#a06850', name: t => (t < 1912.166 ? '摩洛哥苏丹国（阿拉维王朝）' : '摩洛哥（法国保护国）'), mapName: () => '摩洛哥' },
   libyes:     { color: '#d0d8b8', name: () => '利比亚诸部', mapName: () => '利比亚诸部', hideLabel: () => true },
   arabs:      { color: '#d0d8a0', name: () => '内志（沙特家族与拉希德家族）', mapName: () => '内志' },
-  oman:       { color: '#f0c098', name: () => '阿曼伊玛目国（亚里巴家族）', mapName: () => '阿曼' },
+  oman:       { color: '#f0c098', name: () => '马斯喀特和阿曼苏丹国（布赛义德王朝）', mapName: () => '阿曼' },
   hejaz:      { color: '#f0b878', name: () => '汉志（麦加谢里夫，奥斯曼的附庸）', mapName: () => '汉志' },
   qarmatians: { color: '#c09890', name: () => '东阿拉伯（奥斯曼的哈萨省与诸部）', mapName: () => '哈萨' },
   yemen:      { color: '#a09060', name: () => '也门（栽德派伊玛目）', mapName: () => '也门' },
@@ -165,7 +166,7 @@ x|爱尔兰|-6.7,54.6
 外高卢|阿尔萨斯—洛林|7.1,48.9  中欧|石勒苏益格—荷尔斯泰因|9.5,54.5
 色雷斯|尼什|21.9,43.3  色雷斯|多布罗加|28.9,45.0
 `;
-const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', Timiş: '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '阿尔萨斯—洛林', 'Bas-Rhin': '阿尔萨斯—洛林', Moselle: '阿尔萨斯—洛林', 'Schleswig-Holstein': '石勒苏益格—荷尔斯泰因', 'Rheinhessen-Pfalz': '赫西尼亚', Vosges: '塞夸尼', Saarland: '特雷维里', Dolj: '盖塔', Olt: '盖塔', Mehedinţi: '盖塔', Teleorman: '盖塔', Giurgiu: '盖塔', Călăraşi: '盖塔', Gorj: '盖塔', Vâlcea: '盖塔', Covasna: '达契亚', Tulcea: '多布罗加', Suceava: '加利西亚东', 'Zaječarska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Nišavska oblast': '尼什', 'Toplička oblast': '尼什', 'Jablanička oblast': '尼什', 'Pirotska oblast': '尼什', 'Pčinjska oblast': '尼什', Constanţa: '多布罗加', 'Värmlands län': '斯韦阿兰', 'Norrbottens län': '诺尔兰', Pernik: '特里巴利', Vidin: '特里巴利', 'Pomoravska oblast': '斯科迪斯克', 'Borska oblast': '斯科迪斯克', Brăila: '盖塔', Galaţi: '卡尔皮', 'Meurthe-et-Moselle': '塞夸尼', 'Briceni': '奥尔比亚', 'Edineţ': '奥尔比亚', 'Rîşcani': '奥尔比亚', 'Glodeni': '奥尔比亚', 'Făleşti': '奥尔比亚', 'Ungheni': '奥尔比亚', 'Nisporeni': '奥尔比亚', 'Hîncesti': '奥尔比亚', 'Leova': '奥尔比亚', 'Cantemir': '奥尔比亚', 'Cahul': '奥尔比亚', 'Ocniţa': '奥尔比亚', 'Donduseni': '奥尔比亚', 'Soroca': '奥尔比亚', 'Rezina': '奥尔比亚', 'Bender': '奥尔比亚', 'Ștefan Vodă': '奥尔比亚', 'Causeni': '奥尔比亚', 'Cimişlia': '奥尔比亚', 'Basarabeasca': '奥尔比亚', 'Taraclia': '奥尔比亚', 'Comrat': '奥尔比亚', 'Criuleni': '奥尔比亚', 'Străşeni': '奥尔比亚', 'Anenii Noi': '奥尔比亚', 'Orhei': '奥尔比亚', 'Chişinău': '奥尔比亚', 'Teleneşti': '奥尔比亚', 'Şoldăneşti': '奥尔比亚', 'Floreşti': '奥尔比亚', 'Ialoveni': '奥尔比亚', 'Călărași': '奥尔比亚', 'Drochia': '奥尔比亚', 'Sîngerei': '奥尔比亚', 'Bălţi': '奥尔比亚' };
+const UNIT_OVERRIDES = { Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Južnobačka oblast": '蒂萨平原', "Sremska oblast": '蒂萨平原', "Južnobanatska oblast": '蒂萨平原', "Srednjobanatska oblast": '蒂萨平原', "Caraş-Severin": '蒂萨平原', Transcarpathia: '蒂萨平原', "Vukovarsko-srijemska županija": '潘诺尼亚', "Grad Zagreb": '潘诺尼亚', "Zagrebačka županija": '潘诺尼亚', "Krapinsko-zagorska županija": '潘诺尼亚', "Sisačko-moslavačka županija": '潘诺尼亚', "Prešovský kraj": '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', Kaliski: '马佐夫舍', Sieradzki: '马佐夫舍', Koniński: '马佐夫舍', Włocławski: '马佐夫舍', Suwalski: '马佐夫舍', "Klaipėdos apskritis": '普鲁士', Trento: '雷蒂亚', Camenca: '奥尔比亚', "Stîngă Nistrului": '奥尔比亚', Transnistria: '奥尔比亚', Grigoriopol: '奥尔比亚', Chernivtsi: '加利西亚东', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', Timiş: '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '阿尔萨斯—洛林', 'Bas-Rhin': '阿尔萨斯—洛林', Moselle: '阿尔萨斯—洛林', 'Schleswig-Holstein': '石勒苏益格—荷尔斯泰因', 'Rheinhessen-Pfalz': '赫西尼亚', Vosges: '塞夸尼', Saarland: '特雷维里', Dolj: '盖塔', Olt: '盖塔', Mehedinţi: '盖塔', Teleorman: '盖塔', Giurgiu: '盖塔', Călăraşi: '盖塔', Gorj: '盖塔', Vâlcea: '盖塔', Covasna: '达契亚', Tulcea: '多布罗加', Suceava: '加利西亚东', 'Zaječarska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Nišavska oblast': '尼什', 'Toplička oblast': '尼什', 'Jablanička oblast': '尼什', 'Pirotska oblast': '尼什', 'Pčinjska oblast': '尼什', Constanţa: '多布罗加', 'Värmlands län': '斯韦阿兰', 'Norrbottens län': '诺尔兰', Pernik: '特里巴利', Vidin: '特里巴利', 'Pomoravska oblast': '斯科迪斯克', 'Borska oblast': '斯科迪斯克', Brăila: '盖塔', Galaţi: '卡尔皮', 'Meurthe-et-Moselle': '塞夸尼', 'Briceni': '奥尔比亚', 'Edineţ': '奥尔比亚', 'Rîşcani': '奥尔比亚', 'Glodeni': '奥尔比亚', 'Făleşti': '奥尔比亚', 'Ungheni': '奥尔比亚', 'Nisporeni': '奥尔比亚', 'Hîncesti': '奥尔比亚', 'Leova': '奥尔比亚', 'Cantemir': '奥尔比亚', 'Cahul': '奥尔比亚', 'Ocniţa': '奥尔比亚', 'Donduseni': '奥尔比亚', 'Soroca': '奥尔比亚', 'Rezina': '奥尔比亚', 'Bender': '奥尔比亚', 'Ștefan Vodă': '奥尔比亚', 'Causeni': '奥尔比亚', 'Cimişlia': '奥尔比亚', 'Basarabeasca': '奥尔比亚', 'Taraclia': '奥尔比亚', 'Comrat': '奥尔比亚', 'Criuleni': '奥尔比亚', 'Străşeni': '奥尔比亚', 'Anenii Noi': '奥尔比亚', 'Orhei': '奥尔比亚', 'Chişinău': '奥尔比亚', 'Teleneşti': '奥尔比亚', 'Şoldăneşti': '奥尔比亚', 'Floreşti': '奥尔比亚', 'Ialoveni': '奥尔比亚', 'Călărași': '奥尔比亚', 'Drochia': '奥尔比亚', 'Sîngerei': '奥尔比亚', 'Bălţi': '奥尔比亚' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -192,9 +193,9 @@ const SNAPSHOTS = [
     ['safavid', '米底 阿特罗帕特尼 埃利迈斯 波西斯 帕提亚 赫卡尼亚 卡尔马尼亚 阿里亚 木鹿 锡斯坦'],
     ['belgium', '内尔维'],
     ['dutch', '巴达维'],
-    ['arabs', '杜马 纳季德'],
+    ['arabs', '杜马 纳季德 叶麻麦'],
     ['hejaz', '叶斯里卜 麦加'],
-    ['qarmatians', '叶麻麦 哈萨'],
+    ['qarmatians', '哈萨'],
     ['oman', '阿曼'],
     ['yemen', '也门 哈德拉毛 纳季兰'],
     ['uzbeks', '巴克特里亚 布哈拉 花剌子模 费尔干纳 吐火罗南'],
@@ -204,7 +205,7 @@ const SNAPSHOTS = [
     ['svear', '斯科讷 维肯 西挪威 特伦德拉格 哈罗加兰 约塔兰 斯韦阿兰 诺尔兰 哥得兰'],
     ['congress', '马佐夫舍 小波兰'],
     ['galicia', '加利西亚东'],
-    ['x', '巴克特里亚 吐火罗南'],
+    ['afghan', '巴克特里亚 吐火罗南'],
   ]],
   [1876, 2, [['vladimir', '费尔干纳']]],
   [1878, 7, [['romania', '多布罗加'], ['serbia', '尼什'], ['bulgaria', '默西亚 特里巴利'], ['rumelia', '奥德里赛 黑海西岸'], ['eastfr', '阿乌塔里亚'], ['anjou', '塞浦路斯']]],
@@ -936,13 +937,13 @@ const EVENTS = [
     d: '1908 年二月，葡萄牙国王卡洛斯一世与王储在里斯本被共和派刺杀。十月五日，里斯本的共和派士兵与水兵起义，年轻的国王曼努埃尔二世流亡英国，葡萄牙宣布成立共和国，没收教会财产，驱逐耶稣会。',
     who: [] },
   { y: 1911, mo: 7, t: '阿加迪尔危机', p: '阿加迪尔', m: '今摩洛哥苏斯—马塞大区', ll: [-9.6, 30.42], k: 'dip', refs: ['后世文献'],
-    d: '法军以保护侨民为名开进摩洛哥的非斯。七月一日，威廉二世的政府派炮舰“豹号”开到大西洋岸的阿加迪尔港，要求补偿。英国财政大臣劳合·乔治发表演说警告德国，十一月德国承认法国在摩洛哥的保护权，换取法属刚果的一部分。',
+    d: '法军以保护侨民为名开进摩洛哥的菲斯。七月一日，威廉二世的政府派炮舰“豹号”开到大西洋岸的阿加迪尔港，要求补偿。英国财政大臣劳合·乔治发表演说警告德国，十一月德国承认法国在摩洛哥的保护权，换取法属刚果的一部分。',
     who: ['德皇威廉二世', '大卫·劳合·乔治'] },
   { y: 1911, mo: 10, t: '意土战争', p: '的黎波里', m: '今利比亚首都', ll: [13.19, 32.89], k: 'war', refs: ['后世文献'],
     d: '维托里奥·埃马努埃莱三世的意大利九月二十九日对苏丹穆罕默德五世的奥斯曼宣战，十月五日在的黎波里登陆，随后占领班加西等沿海城市，十一月一日意军飞行员第一次从飞机上投下炸弹。奥斯曼军官恩维尔与穆斯塔法·凯末尔到利比亚组织阿拉伯部落抵抗，意军难以深入内地。',
     who: ['维托里奥·埃马努埃莱三世', '穆罕默德五世', '恩维尔帕夏', '穆斯塔法·凯末尔'] },
-  { y: 1912, mo: 3, t: '摩洛哥成为法国保护国', p: '非斯', m: '今摩洛哥非斯—梅克内斯大区', ll: [-4.98, 34.03], k: 'pol', refs: ['后世文献'],
-    d: '三月三十日，摩洛哥苏丹阿卜杜勒哈菲兹在非斯签约，接受法国的保护，利奥泰将军任总督。北部沿海与南部一小块由西班牙保护，丹吉尔后来成为国际共管区。',
+  { y: 1912, mo: 3, t: '摩洛哥成为法国保护国', p: '菲斯', m: '今摩洛哥菲斯—梅克内斯大区', ll: [-4.98, 34.03], k: 'pol', refs: ['后世文献'],
+    d: '三月三十日，摩洛哥苏丹阿卜杜勒哈菲兹在菲斯签约，接受法国的保护，利奥泰将军任总督。北部沿海与南部一小块由西班牙保护，丹吉尔后来成为国际共管区。',
     who: [] },
   { y: 1912, mo: 4, t: '泰坦尼克号沉没', p: '北大西洋', m: '纽芬兰东南海面', ll: [-49.95, 41.73], k: 'eco', refs: ['后世文献'],
     d: '英国白星航运公司的豪华客轮“泰坦尼克号”首航从南安普顿开往纽约，四月十四日深夜在纽芬兰外海撞上冰山，次日凌晨沉没。船上二千二百多人中，一千五百多人遇难，救生艇的容量远远不够。此后各国订立公约，规定船上的救生艇必须够全体乘员使用。',

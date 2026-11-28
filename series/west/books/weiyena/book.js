@@ -45,7 +45,7 @@ const BOOK = {
     },
   },
   tags: { 后世文献: '后世文献', 弗兰肯斯坦: '弗兰肯斯坦', 雪莱诗集: '雪莱诗集', 小猎犬号航海记: '小猎犬号航海记', 论美国的民主: '论美国的民主', 圣诞颂歌: '圣诞颂歌', 道格拉斯自述: '道格拉斯自述', 共产党宣言: '共产党宣言' },
-  quoteLabel: '原文（英译）',
+  quoteLabel: '原文（英语原著或英译）',
   linesToggle: '罗马大道',
   ziLabel: '',
   peopleGroups: [['franks', '法兰西'], ['anjou', '不列颠、爱尔兰与美国'], ['eastfr', '奥地利与匈牙利'], ['prussia', '普鲁士'], ['rhine', '德意志诸邦'], ['savoy', '撒丁与意大利诸邦'], ['castile', '西班牙与拉丁美洲'], ['vladimir', '俄罗斯与波兰'], ['ottomans', '奥斯曼'], ['egypt', '埃及']],
@@ -58,6 +58,8 @@ const BOOK = {
 };
 
 const FACTIONS = {
+  usa:       { color: '#3c5aa0', name: () => '美利坚合众国', mapName: () => '美国', hideLabel: true },
+  afghan:     { color: '#78c8d0', name: () => '阿富汗（杜兰尼与巴拉克宰两家族）', mapName: () => '阿富汗' },
   franks:    { color: '#5a8ac0', name: t => (t < 1824.666 ? '法兰西王国（路易十八）' : t < 1830.5 ? '法兰西王国（查理十世）' : t < 1848.083 ? '法兰西王国（路易—菲利普）' : t < 1848.916 ? '法兰西第二共和国（临时政府）' : '法兰西第二共和国（总统路易—拿破仑·波拿巴）'), mapName: () => '法兰西' },
   burgundy:  { color: '#a07040', name: t => (t < 1790.041 ? '奥属尼德兰（哈布斯堡家族）' : t < 1790.916 ? '比利时合众国' : '奥属尼德兰（哈布斯堡家族）'), mapName: t => (t >= 1790.041 && t < 1790.916 ? '比利时' : '奥属尼德兰') },
   dutch:      { color: '#f0a040', name: t => (t < 1830.583 ? '尼德兰联合王国（奥兰治家族）' : '尼德兰王国（奥兰治家族）'), mapName: () => '尼德兰' },
@@ -108,7 +110,7 @@ const FACTIONS = {
   saadi:     { color: '#a06850', name: () => '阿拉维王朝', mapName: () => '阿拉维王朝' },
   libyes:     { color: '#d0d8b8', name: () => '利比亚诸部', mapName: () => '利比亚诸部', hideLabel: () => true },
   arabs:      { color: '#d0d8a0', name: t => (t < 1818.666 ? '第一沙特国（沙特家族与瓦哈比派）' : '内志（沙特家族）'), mapName: t => (t < 1818.666 ? '沙特' : '内志') },
-  oman:       { color: '#f0c098', name: () => '阿曼伊玛目国（亚里巴家族）', mapName: () => '阿曼' },
+  oman:       { color: '#f0c098', name: () => '马斯喀特和阿曼苏丹国（布赛义德王朝）', mapName: () => '阿曼' },
   hejaz:      { color: '#f0b878', name: () => '汉志（麦加谢里夫，奥斯曼的附庸）', mapName: () => '汉志' },
   qarmatians: { color: '#c09890', name: () => '东阿拉伯（奥斯曼的哈萨省与诸部）', mapName: () => '哈萨' },
   yemen:      { color: '#a09060', name: () => '也门（栽德派伊玛目）', mapName: () => '也门' },
@@ -160,7 +162,7 @@ const SEEDS_RAW = `
 东欧|维亚季奇|37.0,54.2  东欧|罗斯托夫|39.6,57.2  东欧|梁赞|40.3,53.8
 x|爱尔兰|-6.7,54.6
 `;
-const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Meurthe-et-Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔', 'Zaječarska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Suceava': '加利西亚东', 'Chernivtsi': '加利西亚东', 'Briceni': '奥尔比亚', 'Edineţ': '奥尔比亚', 'Rîşcani': '奥尔比亚', 'Glodeni': '奥尔比亚', 'Făleşti': '奥尔比亚', 'Ungheni': '奥尔比亚', 'Nisporeni': '奥尔比亚', 'Hîncesti': '奥尔比亚', 'Leova': '奥尔比亚', 'Cantemir': '奥尔比亚', 'Cahul': '奥尔比亚', 'Ocniţa': '奥尔比亚', 'Donduseni': '奥尔比亚', 'Soroca': '奥尔比亚', 'Rezina': '奥尔比亚', 'Bender': '奥尔比亚', 'Ștefan Vodă': '奥尔比亚', 'Causeni': '奥尔比亚', 'Cimişlia': '奥尔比亚', 'Basarabeasca': '奥尔比亚', 'Taraclia': '奥尔比亚', 'Comrat': '奥尔比亚', 'Criuleni': '奥尔比亚', 'Străşeni': '奥尔比亚', 'Anenii Noi': '奥尔比亚', 'Orhei': '奥尔比亚', 'Chişinău': '奥尔比亚', 'Teleneşti': '奥尔比亚', 'Şoldăneşti': '奥尔比亚', 'Floreşti': '奥尔比亚', 'Ialoveni': '奥尔比亚', 'Călărași': '奥尔比亚', 'Drochia': '奥尔比亚', 'Sîngerei': '奥尔比亚', 'Bălţi': '奥尔比亚' };
+const UNIT_OVERRIDES = { Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Južnobačka oblast": '蒂萨平原', "Sremska oblast": '蒂萨平原', "Južnobanatska oblast": '蒂萨平原', "Srednjobanatska oblast": '蒂萨平原', "Caraş-Severin": '蒂萨平原', Transcarpathia: '蒂萨平原', "Vukovarsko-srijemska županija": '潘诺尼亚', "Grad Zagreb": '潘诺尼亚', "Zagrebačka županija": '潘诺尼亚', "Krapinsko-zagorska županija": '潘诺尼亚', "Sisačko-moslavačka županija": '潘诺尼亚', "Prešovský kraj": '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', Kaliski: '马佐夫舍', Sieradzki: '马佐夫舍', Koniński: '马佐夫舍', Włocławski: '马佐夫舍', Suwalski: '马佐夫舍', "Klaipėdos apskritis": '普鲁士', Camenca: '奥尔比亚', "Stîngă Nistrului": '奥尔比亚', Transnistria: '奥尔比亚', Grigoriopol: '奥尔比亚', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Meurthe-et-Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔', 'Zaječarska oblast': '斯科迪斯克', 'Rasinska oblast': '斯科迪斯克', 'Zlatiborska oblast': '斯科迪斯克', 'Raška oblast': '斯科迪斯克', 'Suceava': '加利西亚东', 'Chernivtsi': '加利西亚东', 'Briceni': '奥尔比亚', 'Edineţ': '奥尔比亚', 'Rîşcani': '奥尔比亚', 'Glodeni': '奥尔比亚', 'Făleşti': '奥尔比亚', 'Ungheni': '奥尔比亚', 'Nisporeni': '奥尔比亚', 'Hîncesti': '奥尔比亚', 'Leova': '奥尔比亚', 'Cantemir': '奥尔比亚', 'Cahul': '奥尔比亚', 'Ocniţa': '奥尔比亚', 'Donduseni': '奥尔比亚', 'Soroca': '奥尔比亚', 'Rezina': '奥尔比亚', 'Bender': '奥尔比亚', 'Ștefan Vodă': '奥尔比亚', 'Causeni': '奥尔比亚', 'Cimişlia': '奥尔比亚', 'Basarabeasca': '奥尔比亚', 'Taraclia': '奥尔比亚', 'Comrat': '奥尔比亚', 'Criuleni': '奥尔比亚', 'Străşeni': '奥尔比亚', 'Anenii Noi': '奥尔比亚', 'Orhei': '奥尔比亚', 'Chişinău': '奥尔比亚', 'Teleneşti': '奥尔比亚', 'Şoldăneşti': '奥尔比亚', 'Floreşti': '奥尔比亚', 'Ialoveni': '奥尔比亚', 'Călărași': '奥尔比亚', 'Drochia': '奥尔比亚', 'Sîngerei': '奥尔比亚', 'Bălţi': '奥尔比亚' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -191,9 +193,9 @@ const SNAPSHOTS = [
     ['safavid', '大亚美尼亚 米底 阿特罗帕特尼 埃利迈斯 波西斯 帕提亚 赫卡尼亚 卡尔马尼亚 阿里亚 木鹿 锡斯坦'],
     ['dutch', '内尔维 巴达维'],
     ['moldavia', '卡尔皮'],
-    ['arabs', '杜马 纳季德'],
+    ['arabs', '杜马 纳季德 叶麻麦 哈萨'],
     ['hejaz', '叶斯里卜 麦加'],
-    ['qarmatians', '叶麻麦 哈萨'],
+    
     ['oman', '阿曼'],
     ['yemen', '也门 哈德拉毛 纳季兰'],
     ['uzbeks', '巴克特里亚 粟特 布哈拉 花剌子模 费尔干纳 吐火罗南'],
@@ -203,7 +205,7 @@ const SNAPSHOTS = [
     ['svear', '斯科讷 维肯 西挪威 特伦德拉格 哈罗加兰 约塔兰 斯韦阿兰 诺尔兰 哥得兰'],
     ['congress', '马佐夫舍 小波兰'],
     ['galicia', '加利西亚东'],
-    ['x', '巴克特里亚 吐火罗南'],
+    ['afghan', '巴克特里亚 吐火罗南'],
   ]],
   [1821, 3, [['greece', '亚该亚 阿卡迪亚 拉科尼亚 科林斯']]],
   [1828, 2, [['vladimir', '大亚美尼亚']]],
@@ -866,7 +868,7 @@ const EVENTS = [
     d: '英国在第一次阿富汗战争中惨败，1842 年一月从喀布尔撤退的军队几乎全军覆没。次年二月，查尔斯·内皮尔率领东印度公司的军队在海得拉巴附近的米亚尼击败信德的塔尔普尔埃米尔们，吞并了信德。',
     who: [] },
   { y: 1843, mo: 12, t: '狄更斯的《圣诞颂歌》', p: '伦敦', m: '今英国伦敦', ll: [-0.12, 51.51], k: 'cul', refs: ['圣诞颂歌'],
-    d: '十二月，狄更斯出版中篇小说《圣诞颂歌》，吝啬的老板斯克鲁奇对外甥的圣诞祝贺回答“**呸！骗人的鬼话！||Bah!" said Scrooge, "Humbug!**”，在圣诞夜被过去、现在与未来的圣诞幽灵带着看了自己的一生，醒来后变得慷慨仁慈。书在圣诞节前几天就卖完了第一版。',
+    d: '十二月，狄更斯出版中篇小说《圣诞颂歌》，吝啬的老板斯克鲁奇对外甥的圣诞祝贺回答“**呸！骗人的鬼话！||Bah! Humbug!**”，在圣诞夜被过去、现在与未来的圣诞幽灵带着看了自己的一生，醒来后变得慷慨仁慈。书在圣诞节前几天就卖完了第一版。',
     who: ['查尔斯·狄更斯'] },
   { y: 1844, mo: 3, t: '大仲马的《三个火枪手》', p: '巴黎', m: '今法国首都', ll: [2.35, 48.87], k: 'cul', refs: ['后世文献'],
     d: '三月起，亚历山大·仲马的《三个火枪手》在《世纪报》上连载，写路易十三时代的加斯科涅青年达达尼昂与三个火枪手的冒险。大仲马与合作者马凯一起写作了大量的历史小说，同年又开始连载《基督山伯爵》。',
@@ -971,8 +973,8 @@ const PEOPLE_RAW = [
   ['查尔斯·达尔文', 'anjou', '', '', ''],
   ['查尔斯·狄更斯', 'anjou', '', '', ''],
   ['夏洛蒂·勃朗特', 'anjou', 'Charlotte Brontë', '1816–1855', '约克郡哈沃斯牧师之女，母亲与两个姐姐早逝，她与妹妹艾米莉、安妮在荒原上的牧师住宅里长大，从小编写幻想故事。她当过教师与家庭教师，在布鲁塞尔求学。1847 年以“柯勒·贝尔”的笔名出版《简·爱》，同年艾米莉出版《呼啸山庄》，安妮出版《艾格尼丝·格雷》。'],
-  ['詹姆斯·门罗', 'anjou', 'James Monroe', '1758–1831', '弗吉尼亚种植园主之子，参加独立战争，在特伦顿负伤。他曾任驻法公使，1803 年参与购买路易斯安那，又任国务卿与陆军部长。1817 年至 1825 年任美国第五任总统，在位时购得佛罗里达，政党之争暂息，被称为“和睦时代”。'],
-  ['弗雷德里克·道格拉斯', 'anjou', '', '', ''],
+  ['詹姆斯·门罗', 'usa', 'James Monroe', '1758–1831', '弗吉尼亚种植园主之子，参加独立战争，在特伦顿负伤。他曾任驻法公使，1803 年参与购买路易斯安那，又任国务卿与陆军部长。1817 年至 1825 年任美国第五任总统，在位时购得佛罗里达，政党之争暂息，被称为“和睦时代”。'],
+  ['弗雷德里克·道格拉斯', 'usa', '', '', ''],
   ['乔治三世', 'anjou', '', '', ''],
   ['威廉·威尔伯福斯', 'anjou', '', '', ''],
   ['卡斯尔雷子爵', 'anjou', '', '', ''],
@@ -981,7 +983,7 @@ const PEOPLE_RAW = [
   ['奥地利皇帝斐迪南一世', 'eastfr', 'Ferdinand I of Austria', '1793–1875', '弗朗茨一世的长子，自幼患病，难以理政，1835 年继位后国务由梅特涅等人组成的国务会议主持，他本人以温和善良闻名。1848 年革命中他答应制定宪法，两次逃离维也纳，十二月在奥尔米茨让位给侄子弗朗茨·约瑟夫，此后住在布拉格。'],
   ['弗朗茨·约瑟夫', 'eastfr', '', '', ''],
   ['约瑟夫·拉德茨基', 'eastfr', 'Joseph Radetzky von Radetz', '1766–1858', '波希米亚贵族出身，幼年父母双亡，1784 年参军，参加过对土耳其与法兰西的历次战争，1813 年任施瓦岑贝格的参谋长，制定了莱比锡之战的作战计划。他长期统率驻意大利的奥军，1848 年八十多岁时在库斯托扎与诺瓦拉击败撒丁，任伦巴第—威尼西亚总督。'],
-  ['弗朗茨·舒伯特', 'eastfr', 'Franz Schubert', '1797–1828', '维也纳小学校长之子，童年在宫廷礼拜堂唱诗班唱歌，师从萨列里。他一生未得到正式职位，靠朋友支持作曲，写了六百多首艺术歌曲，包括《魔王》《美丽的磨坊姑娘》与《冬之旅》，还有《未完成交响曲》与弦乐四重奏《死神与少女》，三十一岁病逝。'],
+  ['弗朗茨·舒伯特', 'eastfr', 'Franz Schubert', '1797–1828', '维也纳小学校长之子，童年在宫廷礼拜堂唱诗班唱歌，师从萨列里。他一生未得到正式职位，靠朋友支持作曲，写了六百多首艺术歌曲，包括《魔王》《美丽的磨坊女》与《冬之旅》，还有《未完成交响曲》与弦乐四重奏《死神与少女》，三十一岁病逝。'],
   ['弗朗茨二世', 'eastfr', '', '', ''],
   ['路德维希·范·贝多芬', 'eastfr', '', '', ''],
   ['克莱门斯·冯·梅特涅', 'eastfr', '', '', ''],

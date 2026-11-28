@@ -45,7 +45,7 @@ const BOOK = {
     },
   },
   tags: { 后世文献: '后世文献', 格列佛游记: '格列佛游记', 哲学通信: '哲学通信', 人性论: '人性论', 汤姆琼斯: '汤姆琼斯', 致富之道: '致富之道', 老实人: '老实人', 社会契约论: '社会契约论' },
-  quoteLabel: '原文（英译）',
+  quoteLabel: '原文（英语原著或英译）',
   linesToggle: '罗马大道',
   ziLabel: '',
   peopleGroups: [['franks', '法兰西'], ['anjou', '不列颠与北美'], ['eastfr', '神圣罗马帝国与奥地利'], ['prussia', '普鲁士'], ['castile', '西班牙'], ['svear', '瑞典'], ['poland', '波兰与萨克森'], ['vladimir', '俄罗斯'], ['ottomans', '奥斯曼']],
@@ -142,7 +142,7 @@ const SEEDS_RAW = `
 东欧|维亚季奇|37.0,54.2  东欧|罗斯托夫|39.6,57.2  东欧|梁赞|40.3,53.8
 x|爱尔兰|-6.7,54.6
 `;
-const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔' };
+const UNIT_OVERRIDES = { Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Prešovský kraj": '夸狄', "Košický kraj": '夸狄', Transcarpathia: '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', "Klaipėdos apskritis": '普鲁士', "Južnobačka oblast": '蒂萨平原', "Sremska oblast": '蒂萨平原', "Južnobanatska oblast": '蒂萨平原', "Srednjobanatska oblast": '蒂萨平原', "Caraş-Severin": '蒂萨平原', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -649,7 +649,7 @@ const EVENTS = [
     d: '米尔·瓦伊斯的儿子马哈茂德率几万阿富汗人从坎大哈西进，三月在古尔纳巴德击败萨法维军，围困都城伊斯法罕七个月，城中饿死了几万人。十月苏丹·侯赛因出城投降，把王冠交给马哈茂德，阿富汗霍塔克王朝占据了伊朗中部。他的儿子塔赫马斯普二世逃往北方，萨法维王朝名存实亡。',
     who: ['苏丹·侯赛因'] },
   { y: 1723, mo: 2, t: '路易十五成年', p: '巴黎', m: '今法国首都', ll: [2.34, 48.86], k: 'pol', refs: ['后世文献'],
-    d: '二月，路易十五年满十三岁，按法兰西的惯例宣布成年亲政，摄政结束，奥尔良公爵改任首相，十二月去世。三年后，路易十五的老师、红衣主教弗勒里出任首相，此后主政十七年，法兰西财政好转，对外保持和平。',
+    d: '二月，路易十五年满十三岁，按法兰西的惯例宣布成年亲政，摄政结束，奥尔良公爵改任首相，十二月去世。三年后，路易十五的老师、枢机主教弗勒里出任首相，此后主政十七年，法兰西财政好转，对外保持和平。',
     who: ['路易十五', '奥尔良的腓力二世'] },
   { y: 1723, mo: 5, t: '巴赫到莱比锡', p: '莱比锡', m: '今德国萨克森州', ll: [12.37, 51.34], k: 'cul', refs: ['后世文献'],
     d: '五月，约翰·塞巴斯蒂安·巴赫就任莱比锡圣托马斯教堂的乐长，市议会原先中意的泰勒曼与格劳普纳都没能来。此后二十七年他在这里为每个礼拜日写作与演出康塔塔，1729 年耶稣受难日演出了《马太受难曲》。',

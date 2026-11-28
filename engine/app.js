@@ -400,7 +400,7 @@ function provHtml(j) {
 cells.on('mousemove', (ev, d) => {
   const j = d.properties.j, s = SEEDS[j], f = curSt()[j];
   // 拼块名是外文（欧洲底图的 NUTS 地区名）时与国名之间加间隔号
-  const today = `今${d.properties.p}${d.properties.p === d.properties.n ? '' : (/[A-Za-z]/.test(d.properties.n) ? ' · ' : '') + d.properties.n}`;
+  const today = `今${d.properties.p}${!d.properties.n || d.properties.p === d.properties.n ? '' : (/[A-Za-z]/.test(d.properties.n) ? ' · ' : '') + d.properties.n}`;
   showTip(ev, `<b>${esc(s.n)}</b> <span class="s">· ${esc(s.z)}</span><div>属 <span style="color:${fColor(f)}">●</span> ${fName(f, curT())}</div>${provHtml(j)}<div class="s">${today}</div>`);
 }).on('mouseleave', hideTip);
 outerCells.on('mousemove', (ev, d) => {
@@ -588,7 +588,8 @@ function overlapNote(a, b) {
   return `在 ${ovSpan(b, a)} 重叠，两卷各从不同的线索叙述`;
 }
 function ovSpan(b, a) {
-  const y0 = b.first[0], y1 = a.last[0];
+  // 重叠段取两卷都覆盖的部分：较晚的开头到较早的结尾（如后卷开头早于前卷开头时不从后卷开头算起）
+  const y0 = Math.max(b.first[0], a.first ? a.first[0] : -Infinity), y1 = Math.min(a.last[0], b.last ? b.last[0] : Infinity);
   return y0 === y1 ? `${fmtYear(y0)} 年` : `${fmtYear(y0)}–${fmtYear(y1)} 年`;
 }
 if (SER) {

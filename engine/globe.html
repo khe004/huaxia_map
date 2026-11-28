@@ -1,3 +1,6 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>寰宇舆图</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -313,7 +316,7 @@ const CONF = {{CONF}};
       return { name, ll: B.cen[best], A: o.A, col: at(F[1], t), full: at(F[3], t) };
     }).filter(Boolean).sort((a, b) => b.A - a.A);
     // 城邑：名字随年份，'' 或首个起始年之前不画
-    const cities = v.cities.map(c => { const nm = c[0][0][0] <= t ? at(c[0], t) : ''; const cap = Array.isArray(c[3]) ? at(c[3], t) : c[3]; return nm ? { n: nm, ll: [c[1], c[2]], cap: !!cap, m: c[4] } : null; }).filter(Boolean);
+    const cities = v.cities.map(c => { const nm = c[0][0][0] <= t ? at(c[0], t) : ''; const cap = Array.isArray(c[3]) ? (c[3][0][0] <= t + 1e-9 ? at(c[3], t) : 0) : c[3]; return nm ? { n: nm, ll: [c[1], c[2]], cap: !!cap, m: c[4] } : null; }).filter(Boolean);
     return { vi, bmi: v.bm, fills, blank, mesh, labels, cities };
   }
   function rebuild() {
@@ -420,7 +423,7 @@ const CONF = {{CONF}};
   }
   // 事件详情：正文取自各合集的 data/events.json（构建合集时导出），首次点开时载入
   const EVD = {};
-  const evData = si => EVD[si] || (EVD[si] = fetch(SER[si].events).then(r => r.json()).then(a => { const m = new Map(); a.forEach(x => m.set(x.book + '\u0001' + x.title + '\u0001' + x.year, x)); return m; }).catch(() => null));
+  const evData = si => EVD[si] || (EVD[si] = fetch(SER[si].events).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(a => { const m = new Map(); a.forEach(x => m.set(x.book + '\u0001' + x.title + '\u0001' + x.year, x)); return m; }).catch(() => { delete EVD[si]; return null; }));
   async function showEvent(e) {
     sel = e; draw(); panel();
     const v = V[e[0]], S = SER[v.s], box = $('#det'); box.hidden = false;
@@ -477,7 +480,7 @@ const CONF = {{CONF}};
   function flyTo(ll, k) {
     const r0 = rot.slice(), r1 = [-ll[0], -ll[1], 0]; let d = r1[0] - r0[0]; d = ((d + 540) % 360) - 180; r1[0] = r0[0] + d;
     const it = d3.interpolate(r0, r1), dur = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 900;
-    sel4.transition().duration(dur).tween('rot', () => s => { rot = it(s); redraw(); }).on('end', saveHash);
+    sel4.transition('fly').duration(dur).tween('rot', () => s => { rot = it(s); redraw(); }).on('end', saveHash);
     if (k) sel4.call(zoom.scaleTo, k);
   }
   $('#home').insertAdjacentHTML('beforebegin', (CONF.jump || []).map(([n, lo, la]) => '<button type="button" data-ll="' + lo + ',' + la + '">' + E(n) + '</button>').join(''));
