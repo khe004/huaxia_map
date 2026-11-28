@@ -20,7 +20,7 @@ const BOOK = {
   '沙特阿拉伯', '也门', '阿曼', '阿联酋', '卡塔尔', '巴林', '土库曼斯坦', '乌兹别克斯坦', '塔吉克斯坦',
   '埃及', '利比亚', '突尼斯', '阿尔及利亚', '摩洛哥',
   '丹麦', '挪威', '瑞典', '冰岛', '波兰', '立陶宛', '拉脱维亚', '爱沙尼亚', '白俄罗斯', '乌克兰', '摩尔多瓦'],
-  partial: { 俄罗斯: ['Krasnodar', 'Adygey', 'Rostov', 'Kaliningrad', 'Pskov', 'Novgorod', 'Leningrad', 'City of St. Petersburg', 'Smolensk', 'Bryansk', "Tver'", 'Kaluga', 'Moskovskaya', 'Moskva', 'Tula', 'Orel', 'Kursk', 'Belgorod', 'Voronezh', 'Lipetsk', "Ryazan'", "Yaroslavl'", 'Vladimir', 'Ivanovo', 'Kostroma'],
+  partial: { 俄罗斯: ['Krasnodar', 'Adygey', 'Rostov', 'Kaliningrad', 'Pskov', 'Novgorod', 'Leningrad', 'City of St. Petersburg', 'Smolensk', 'Bryansk', "Tver'", 'Kaluga', 'Moskovskaya', 'Moskva', 'Tula', 'Orel', 'Kursk', 'Belgorod', 'Voronezh', 'Lipetsk', "Ryazan'", "Yaroslavl'", 'Vladimir', 'Ivanovo', 'Kostroma', "Nizhegorod", "Tatarstan", "Chuvash", "Mariy-El", "Ul'yanovsk", "Samara", "Saratov", "Volgograd", "Astrakhan'", "Kalmyk", "Mordovia", "Penza", "Tambov", "Bashkortostan", "Orenburg", "Perm'", "Udmurt", "Kirov", "Sverdlovsk", "Chelyabinsk", "Komi", "Arkhangel'sk", "Nenets", "Vologda", "Karelia", "Murmansk", "Stavropol'", "Karachay-Cherkess", "Kabardin-Balkar", "North Ossetia", "Ingush", "Chechnya", "Dagestan"],
     阿富汗: ['Hirat', 'Badghis', 'Farah', 'Nimroz', 'Balkh', 'Jawzjan', 'Faryab', 'Samangan', 'Kunduz', 'Takhar', 'Sari Pul', 'Baghlan'],
     巴基斯坦: ['Karachi', 'Thatta', 'Tharparkar', 'Umerkot', 'Jamshoro', 'Dadu', 'Tando Muhammad Khan', 'Hyderabad', 'Tando Allahyar', 'Badin', 'Mirpurkhas', 'Matiari', 'Nawabshah', 'Sanghar', 'Naushehro Feroze', 'Qambar Shahdadkot', 'Jacobabad', 'Shikarpur', 'Ghotki', 'Sukkur', 'Kashmore', 'Khairpur', 'Lasbela', 'Gwadar', 'Kech', 'Panjgur', 'Awaran', 'Rahim Yar Khan', 'Multan', 'Muzaffargarh', 'Lodhran', 'Bahawalpur'],
     吉尔吉斯斯坦: ['Osh', 'Jalal-Abad', 'Batken'] } },
@@ -57,6 +57,10 @@ const BOOK = {
 };
 
 const FACTIONS = {
+  volgabulgars: { color: '#b8b880', name: () => '伏尔加保加尔', mapName: () => '伏尔加保加尔' },
+  tribes:     { color: '#e0d0a0', name: () => '伏尔加—乌拉尔与北方诸部', mapName: () => '北方诸部', hideLabel: () => true },
+  dagestan:   { color: '#98a8b0', name: () => '达吉斯坦诸邦', mapName: () => '达吉斯坦', hideLabel: () => true },
+  alans:      { color: '#a88088', name: () => '阿兰', mapName: () => '阿兰' },
   franks:     { color: '#5a8ac0', name: t => (t < 1108.583 ? '法兰西王国（腓力一世）' : t < 1137.583 ? '法兰西王国（路易六世）' : t < 1180.666 ? '法兰西王国（路易七世）' : '法兰西王国（腓力二世）'), mapName: () => '法兰西' },
   eastfr:     { color: '#4a6a98', name: t => (t < 1106.583 ? '神圣罗马帝国（亨利四世）' : t < 1125.583 ? '神圣罗马帝国（亨利五世）' : t < 1138.166 ? '神圣罗马帝国（洛塔尔三世）' : t < 1152.166 ? '神圣罗马帝国（康拉德三世）' : t < 1190.416 ? '神圣罗马帝国（腓特烈一世）' : '神圣罗马帝国（亨利六世）'), mapName: () => '神圣罗马帝国' },
   tuscany:    { color: '#b8a8d0', name: () => '托斯卡纳边区（马蒂尔达）', mapName: () => '托斯卡纳' },
@@ -174,8 +178,10 @@ const SEEDS_RAW = `
 东欧|诺夫哥罗德|31.3,58.5  东欧|普斯科夫|28.5,57.5  东欧|斯摩棱斯克|32.0,54.8  东欧|波洛茨克|28.0,55.4  东欧|德雷戈维奇|27.5,53.3  东欧|基辅|30.5,50.4  东欧|切尔尼戈夫|31.8,51.6  东欧|德列夫利安|28.5,51.0  东欧|沃里尼亚|25.0,51.0  东欧|加利西亚东|24.0,49.4
 东欧|维亚季奇|37.0,54.2  东欧|罗斯托夫|39.6,57.2  东欧|梁赞|40.3,53.8
 x|爱尔兰|-6.7,54.6
+伏尔加与乌拉尔|下诺夫哥罗德|44.0,56.3  伏尔加与乌拉尔|伏尔加保加尔|49.1,55.4  伏尔加与乌拉尔|伏尔加中游|50.2,53.2  伏尔加与乌拉尔|伏尔加下游|45.0,50.0  伏尔加与乌拉尔|阿斯特拉罕|47.5,46.8  伏尔加与乌拉尔|卡尔梅克草原|45.3,46.3  伏尔加与乌拉尔|莫尔多瓦|44.5,53.8  伏尔加与乌拉尔|巴什基尔|56.0,54.5  伏尔加与乌拉尔|奥伦堡|55.0,51.8  伏尔加与乌拉尔|彼尔姆|56.2,58.8  伏尔加与乌拉尔|维亚特卡|49.7,58.6  伏尔加与乌拉尔|乌拉尔东麓|61.0,56.8
+俄罗斯北部|科米|54.0,63.5  俄罗斯北部|北德维纳|42.0,64.5  俄罗斯北部|沃洛格达|40.0,59.8  俄罗斯北部|卡累利阿|33.5,63.5  俄罗斯北部|科拉|34.0,68.0  北高加索|北高加索|43.5,44.3  北高加索|达吉斯坦|47.0,43.0
 `;
-const UNIT_OVERRIDES = { Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Prešovský kraj": '夸狄', "Košický kraj": '夸狄', Transcarpathia: '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', Moskva: '罗斯托夫', Moskovskaya: '罗斯托夫', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚' };
+const UNIT_OVERRIDES = { "Nizhegorod": "下诺夫哥罗德", "Tatarstan": "伏尔加保加尔", "Chuvash": "伏尔加保加尔", "Mariy-El": "伏尔加保加尔", "Ul'yanovsk": "伏尔加保加尔", "Samara": "伏尔加中游", "Saratov": "伏尔加下游", "Volgograd": "伏尔加下游", "Astrakhan'": "阿斯特拉罕", "Kalmyk": "卡尔梅克草原", "Mordovia": "莫尔多瓦", "Penza": "莫尔多瓦", "Tambov": "莫尔多瓦", "Bashkortostan": "巴什基尔", "Orenburg": "奥伦堡", "Perm'": "彼尔姆", "Udmurt": "彼尔姆", "Kirov": "维亚特卡", "Sverdlovsk": "乌拉尔东麓", "Chelyabinsk": "乌拉尔东麓", "Komi": "科米", "Troms og Finnmark": "哈罗加兰", "Arkhangel'sk": "北德维纳", "Nenets": "北德维纳", "Vologda": "沃洛格达", "Karelia": "卡累利阿", "Murmansk": "科拉", "Stavropol'": "北高加索", "Karachay-Cherkess": "北高加索", "Kabardin-Balkar": "北高加索", "North Ossetia": "北高加索", "Ingush": "达吉斯坦", "Chechnya": "达吉斯坦", "Dagestan": "达吉斯坦", Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Prešovský kraj": '夸狄', "Košický kraj": '夸狄', Transcarpathia: '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', Moskva: '罗斯托夫', Moskovskaya: '罗斯托夫', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -213,8 +219,8 @@ const SNAPSHOTS = [
     ['georgia', '科尔基斯 高加索伊比利亚'],
     ['shirvan', '高加索阿尔巴尼亚'],
     ['seljuks', '大亚美尼亚 巴比伦尼亚 卡拉塞尼 米底 阿特罗帕特尼 埃利迈斯 波西斯 帕提亚 赫卡尼亚 卡尔马尼亚 木鹿 粟特 布哈拉 花剌子模'],
-    ['rus', '博斯普鲁斯 诺夫哥罗德 普斯科夫 斯摩棱斯克 波洛茨克 德雷戈维奇 基辅 切尔尼戈夫 德列夫利安 沃里尼亚 加利西亚东 维亚季奇 罗斯托夫 梁赞'],
-    ['cumans', '斯基泰 萨尔马提亚 奥尔比亚 南俄草原 顿河 卡尔皮'],
+    ['rus', '博斯普鲁斯 诺夫哥罗德 普斯科夫 斯摩棱斯克 波洛茨克 德雷戈维奇 基辅 切尔尼戈夫 德列夫利安 沃里尼亚 加利西亚东 维亚季奇 罗斯托夫 梁赞 沃洛格达'],
+    ['cumans', '斯基泰 萨尔马提亚 奥尔比亚 南俄草原 顿河 卡尔皮 伏尔加下游 阿斯特拉罕 卡尔梅克草原 奥伦堡'],
     ['antioch', '安条克'],
     ['syria', '大马士革 纳巴泰 外约旦 帕尔米拉'],
     ['aleppo', '叙利亚中部'],
@@ -236,6 +242,10 @@ const SNAPSHOTS = [
     ['iceland', '冰岛'],
     ['poland', '波美拉尼亚 大波兰 马佐夫舍 小波兰 西利西亚'],
     ['balts', '普鲁士 立陶宛 利沃尼亚 爱沙尼亚'],
+    ['volgabulgars', '伏尔加保加尔 伏尔加中游'],
+    ['alans', '北高加索'],
+    ['dagestan', '达吉斯坦'],
+    ['tribes', '下诺夫哥罗德 莫尔多瓦 巴什基尔 彼尔姆 维亚特卡 乌拉尔东麓 科米 北德维纳 卡累利阿 科拉'],
   ]],
   // 威廉二世死后，罗贝尔·柯索斯回到诺曼底
   [1100, 8, [['normandy', '诺曼底']]],
@@ -262,7 +272,7 @@ const SNAPSHOTS = [
   // 阿拉贡与纳瓦拉分开
   [1134, 9, [['aragon', '伊莱尔盖特 凯尔特伊比利亚']]],
   // 诺夫哥罗德自治
-  [1136, 5, [['novgorod', '诺夫哥罗德 普斯科夫']]],
+  [1136, 5, [['novgorod', '诺夫哥罗德 普斯科夫'], ['novgorod', '卡累利阿 北德维纳 科拉']]],
   // 约翰二世收复西里西亚
   [1137, 5, [['east', '西里西亚']]],
   // 阿拉贡与巴塞罗那联合
@@ -278,7 +288,7 @@ const SNAPSHOTS = [
   // 穆瓦希德王朝取代穆拉比特王朝，伊本·马尔达尼什据有穆尔西亚与巴伦西亚
   [1147, 3, [['almohads', '毛里塔尼亚 南毛里 加的斯 图尔德塔尼 库内伊 奥雷塔尼'], ['mardanish', '萨贡托 新迦太基']]],
   // 罗斯托夫—苏兹达尔
-  [1147, 4, [['vladimir', '罗斯托夫']]],
+  [1147, 4, [['vladimir', '罗斯托夫'], ['vladimir', '沃洛格达']]],
   // 西西里王国的阿非利加
   [1148, 6, [['normans', '迦太基 拜扎基乌姆 恩波里亚']]],
   // 巴塞罗那伯爵攻下托尔托萨与莱里达

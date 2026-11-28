@@ -20,7 +20,7 @@ const BOOK = {
   '沙特阿拉伯', '也门', '阿曼', '阿联酋', '卡塔尔', '巴林', '土库曼斯坦', '乌兹别克斯坦', '塔吉克斯坦',
   '埃及', '利比亚', '突尼斯', '阿尔及利亚', '摩洛哥',
   '丹麦', '挪威', '瑞典', '冰岛', '波兰', '立陶宛', '拉脱维亚', '爱沙尼亚', '白俄罗斯', '乌克兰', '摩尔多瓦'],
-  partial: { 俄罗斯: ['Krasnodar', 'Adygey', 'Rostov', 'Kaliningrad', 'Pskov', 'Novgorod', 'Leningrad', 'City of St. Petersburg', 'Smolensk', 'Bryansk', "Tver'", 'Kaluga', 'Moskovskaya', 'Moskva', 'Tula', 'Orel', 'Kursk', 'Belgorod', 'Voronezh', 'Lipetsk', "Ryazan'", "Yaroslavl'", 'Vladimir', 'Ivanovo', 'Kostroma'],
+  partial: { 俄罗斯: ['Krasnodar', 'Adygey', 'Rostov', 'Kaliningrad', 'Pskov', 'Novgorod', 'Leningrad', 'City of St. Petersburg', 'Smolensk', 'Bryansk', "Tver'", 'Kaluga', 'Moskovskaya', 'Moskva', 'Tula', 'Orel', 'Kursk', 'Belgorod', 'Voronezh', 'Lipetsk', "Ryazan'", "Yaroslavl'", 'Vladimir', 'Ivanovo', 'Kostroma', "Nizhegorod", "Tatarstan", "Chuvash", "Mariy-El", "Ul'yanovsk", "Samara", "Saratov", "Volgograd", "Astrakhan'", "Kalmyk", "Mordovia", "Penza", "Tambov", "Bashkortostan", "Orenburg", "Perm'", "Udmurt", "Kirov", "Sverdlovsk", "Chelyabinsk", "Komi", "Arkhangel'sk", "Nenets", "Vologda", "Karelia", "Murmansk", "Stavropol'", "Karachay-Cherkess", "Kabardin-Balkar", "North Ossetia", "Ingush", "Chechnya", "Dagestan"],
     阿富汗: ['Hirat', 'Badghis', 'Farah', 'Nimroz', 'Balkh', 'Jawzjan', 'Faryab', 'Samangan', 'Kunduz', 'Takhar', 'Sari Pul', 'Baghlan'],
     巴基斯坦: ['Karachi', 'Thatta', 'Tharparkar', 'Umerkot', 'Jamshoro', 'Dadu', 'Tando Muhammad Khan', 'Hyderabad', 'Tando Allahyar', 'Badin', 'Mirpurkhas', 'Matiari', 'Nawabshah', 'Sanghar', 'Naushehro Feroze', 'Qambar Shahdadkot', 'Jacobabad', 'Shikarpur', 'Ghotki', 'Sukkur', 'Kashmore', 'Khairpur', 'Lasbela', 'Gwadar', 'Kech', 'Panjgur', 'Awaran', 'Rahim Yar Khan', 'Multan', 'Muzaffargarh', 'Lodhran', 'Bahawalpur'],
     吉尔吉斯斯坦: ['Osh', 'Jalal-Abad', 'Batken'] } },
@@ -58,6 +58,12 @@ const BOOK = {
 };
 
 const FACTIONS = {
+  sibir:      { color: '#908880', name: () => '西伯利亚汗国', mapName: () => '西伯利亚汗国' },
+  nogai:      { color: '#e0d0b8', name: () => '诺盖汗国', mapName: () => '诺盖' },
+  kazan:      { color: '#d0a080', name: () => '喀山汗国', mapName: () => '喀山' },
+  kabarda:    { color: '#d09080', name: () => '卡巴尔达与切尔克斯诸部', mapName: () => '卡巴尔达', hideLabel: () => true },
+  dagestan:   { color: '#98a8b0', name: () => '达吉斯坦诸邦', mapName: () => '达吉斯坦', hideLabel: () => true },
+  astrakhan:  { color: '#d8d080', name: () => '阿斯特拉罕汗国', mapName: () => '阿斯特拉罕' },
   franks:     { color: '#5a8ac0', name: t => (t < 1547.166 ? '法兰西王国（弗朗索瓦一世）' : '法兰西王国（亨利二世）'), mapName: () => '法兰西' },
   burgundy:   { color: '#a07040', name: t => (t < 1555.791 ? '哈布斯堡家族的尼德兰（查理五世）' : '哈布斯堡家族的尼德兰（腓力二世）'), mapName: () => '尼德兰' },
   swiss:      { color: '#f09870', name: () => '瑞士联邦', mapName: () => '瑞士' },
@@ -143,8 +149,10 @@ const SEEDS_RAW = `
 东欧|诺夫哥罗德|31.3,58.5  东欧|普斯科夫|28.5,57.5  东欧|斯摩棱斯克|32.0,54.8  东欧|波洛茨克|28.0,55.4  东欧|德雷戈维奇|27.5,53.3  东欧|基辅|30.5,50.4  东欧|切尔尼戈夫|31.8,51.6  东欧|德列夫利安|28.5,51.0  东欧|沃里尼亚|25.0,51.0  东欧|加利西亚东|24.0,49.4
 东欧|维亚季奇|37.0,54.2  东欧|罗斯托夫|39.6,57.2  东欧|梁赞|40.3,53.8
 x|爱尔兰|-6.7,54.6
+伏尔加与乌拉尔|下诺夫哥罗德|44.0,56.3  伏尔加与乌拉尔|伏尔加保加尔|49.1,55.4  伏尔加与乌拉尔|伏尔加中游|50.2,53.2  伏尔加与乌拉尔|伏尔加下游|45.0,50.0  伏尔加与乌拉尔|阿斯特拉罕|47.5,46.8  伏尔加与乌拉尔|卡尔梅克草原|45.3,46.3  伏尔加与乌拉尔|莫尔多瓦|44.5,53.8  伏尔加与乌拉尔|巴什基尔|56.0,54.5  伏尔加与乌拉尔|奥伦堡|55.0,51.8  伏尔加与乌拉尔|彼尔姆|56.2,58.8  伏尔加与乌拉尔|维亚特卡|49.7,58.6  伏尔加与乌拉尔|乌拉尔东麓|61.0,56.8
+俄罗斯北部|科米|54.0,63.5  俄罗斯北部|北德维纳|42.0,64.5  俄罗斯北部|沃洛格达|40.0,59.8  俄罗斯北部|卡累利阿|33.5,63.5  俄罗斯北部|科拉|34.0,68.0  北高加索|北高加索|43.5,44.3  北高加索|达吉斯坦|47.0,43.0
 `;
-const UNIT_OVERRIDES = { Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Prešovský kraj": '夸狄', "Košický kraj": '夸狄', Transcarpathia: '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', "Klaipėdos apskritis": '普鲁士', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '赫西尼亚', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔' };
+const UNIT_OVERRIDES = { "Nizhegorod": "下诺夫哥罗德", "Tatarstan": "伏尔加保加尔", "Chuvash": "伏尔加保加尔", "Mariy-El": "伏尔加保加尔", "Ul'yanovsk": "伏尔加保加尔", "Samara": "伏尔加中游", "Saratov": "伏尔加下游", "Volgograd": "伏尔加下游", "Astrakhan'": "阿斯特拉罕", "Kalmyk": "卡尔梅克草原", "Mordovia": "莫尔多瓦", "Penza": "莫尔多瓦", "Tambov": "莫尔多瓦", "Bashkortostan": "巴什基尔", "Orenburg": "奥伦堡", "Perm'": "彼尔姆", "Udmurt": "彼尔姆", "Kirov": "维亚特卡", "Sverdlovsk": "乌拉尔东麓", "Chelyabinsk": "乌拉尔东麓", "Komi": "科米", "Troms og Finnmark": "哈罗加兰", "Arkhangel'sk": "北德维纳", "Nenets": "北德维纳", "Vologda": "沃洛格达", "Karelia": "卡累利阿", "Murmansk": "科拉", "Stavropol'": "北高加索", "Karachay-Cherkess": "北高加索", "Kabardin-Balkar": "北高加索", "North Ossetia": "北高加索", "Ingush": "达吉斯坦", "Chechnya": "达吉斯坦", "Dagestan": "达吉斯坦", Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Prešovský kraj": '夸狄', "Košický kraj": '夸狄', Transcarpathia: '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', "Klaipėdos apskritis": '普鲁士', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '赫西尼亚', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -188,8 +196,14 @@ const SNAPSHOTS = [
     ['teutonic', '波美拉尼亚 普鲁士 利沃尼亚 爱沙尼亚'],
     ['poland', '大波兰 马佐夫舍 小波兰 加利西亚东'],
     ['lithuania', '立陶宛 波洛茨克 德雷戈维奇 基辅 德列夫利安 沃里尼亚'],
-    ['vladimir', '诺夫哥罗德 普斯科夫 斯摩棱斯克 切尔尼戈夫 维亚季奇 罗斯托夫'],
-    ['rus', '梁赞']
+    ['vladimir', '诺夫哥罗德 普斯科夫 斯摩棱斯克 切尔尼戈夫 维亚季奇 罗斯托夫 下诺夫哥罗德 沃洛格达 彼尔姆 科米 维亚特卡 卡累利阿 北德维纳 科拉'],
+    ['rus', '梁赞'],
+    ['kazan', '伏尔加保加尔 莫尔多瓦'],
+    ['nogai', '伏尔加中游 巴什基尔 奥伦堡'],
+    ['astrakhan', '伏尔加下游 阿斯特拉罕 卡尔梅克草原'],
+    ['sibir', '乌拉尔东麓'],
+    ['kabarda', '北高加索'],
+    ['dagestan', '达吉斯坦'],
   ]],
   [1520, 11, [['denmark', '#svear']]],
   [1521, 7, [['vladimir', '梁赞']]],
@@ -206,6 +220,8 @@ const SNAPSHOTS = [
   [1541, 8, [['ottomans', '潘诺尼亚 蒂萨平原'], ['transylvania', '达契亚']]],
   [1549, 1, [['saadi', '毛里塔尼亚 南毛里']]],
   [1551, 8, [['ottomans', '恩波里亚']]],
+  [1552, 10, [['vladimir', '#kazan']]],
+  [1556, 8, [['vladimir', '#astrakhan 巴什基尔']]],
 ];
 
 const ZHOU_LABELS = [
@@ -920,6 +936,9 @@ const EVENTS = [
   { y: 1552, mo: 8, t: '帕绍和约', p: '帕绍', m: '今德国巴伐利亚州', ll: [13.46, 48.57], k: 'dip', refs: ['后世文献'],
     d: '八月，皇帝的弟弟斐迪南与新教诸侯在帕绍订约，释放被俘的萨克森选帝侯与黑森的菲利普，承认新教诸侯的地位，最终的宗教问题留待帝国议会解决。秋天查理五世亲率大军围攻梅斯，守将吉斯公爵坚守到冬天，次年一月皇帝撤围。',
     who: ['奥地利的斐迪南一世', '萨克森的莫里茨', '黑森的菲利普'] },
+  { y: 1552, mo: 10, t: '伊凡四世攻占喀山', p: '喀山', m: '今俄罗斯鞑靼斯坦共和国首府', ll: [49.11, 55.79], k: 'war', refs: ['后世文献'],
+    d: '八月，伊凡四世亲率大军围攻伏尔加河中游的喀山。工兵在城墙下挖掘地道、埋设火药，十月二日炸开城墙后攻入城中，可汗亚德加尔·穆罕默德被俘，喀山汗国灭亡，伏尔加河中游与卡马河流域并入俄罗斯。为纪念这次胜利，伊凡下令在莫斯科红场修建圣母帡幪大教堂，即后来所称的圣瓦西里大教堂。',
+    who: ['伊凡四世'] },
   { y: 1553, mo: 7, t: '爱德华六世去世', p: '伦敦', m: '今英国伦敦', ll: [-0.1, 51.51], k: 'pol', refs: ['后世文献'],
     d: '十五岁的爱德华六世患肺病，临终前在诺森伯兰公爵的安排下立下遗嘱，把王位传给信奉新教的表侄女简·格雷，而不传给信奉天主教的姐姐玛丽。七月六日爱德华去世，十日简在伦敦被宣布为女王。',
     who: ['爱德华六世', '简·格雷'] },
@@ -959,6 +978,9 @@ const EVENTS = [
   { y: 1556, mo: 7, t: '罗耀拉去世', p: '罗马', m: '今意大利罗马', ll: [12.48, 41.896], k: 'cul', refs: ['后世文献'],
     d: '耶稣会的创立者罗耀拉七月三十一日在罗马去世。耶稣会这时已有一千多名会士，在欧洲办了数十所学院，方济各·沙勿略已经到过印度与日本，死在中国广东的上川岛上。',
     who: ['罗耀拉', '方济各·沙勿略'], post: ['方济各·沙勿略'] },
+  { y: 1556, mo: 8, t: '阿斯特拉罕汗国并入俄罗斯', p: '阿斯特拉罕', m: '今俄罗斯阿斯特拉罕州首府', ll: [48.03, 46.35], k: 'war', refs: ['后世文献'],
+    d: '1554 年俄罗斯军队沿伏尔加河南下，扶立德尔维什·阿里为阿斯特拉罕可汗；他后来转而与克里木汗国联络，1556 年俄军再次南下，几乎没有遇到抵抗就占领了伏尔加河口的阿斯特拉罕，汗国并入俄罗斯。整条伏尔加河从此都在沙皇手中，伏尔加河以东的巴什基尔各部也在这几年里陆续接受沙皇的宗主权。',
+    who: ['伊凡四世'] },
 ];
 
 const PEOPLE_RAW = [
