@@ -196,9 +196,9 @@ const SNAPSHOTS = [
     ['belgium', '内尔维'],
     ['dutch', '巴达维'],
     ['moldavia', '卡尔皮'],
-    ['arabs', '杜马 纳季德'],
+    ['arabs', '杜马 纳季德 叶麻麦 哈萨'],
     ['hejaz', '叶斯里卜 麦加'],
-    ['qarmatians', '叶麻麦 哈萨'],
+    
     ['oman', '阿曼'],
     ['yemen', '也门 哈德拉毛 纳季兰'],
     ['uzbeks', '巴克特里亚 粟特 布哈拉 花剌子模 费尔干纳 吐火罗南'],
