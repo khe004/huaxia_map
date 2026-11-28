@@ -8,6 +8,7 @@
 // 范围以外的陆地（撒哈拉以南、阿拉伯半岛南部、中亚、西伯利亚、北美等）按国家放进 nb，只画陆地、不分拼块。
 // 所有陆地一起清理（去重叠、补缝）、一起简化，拼块外缘、国界与海岸线共用同一套边。
 // 拼块属性：n 名称（NUTS 用当地名，Natural Earth 用英文名），p 今国名（中文）。
+// 哈萨克斯坦与西伯利亚、远东的拼块是事后用 tools/addunits.js（配置 tools/addunits-europe.json，来源为北欧亚底图的拼块）增补的：重新生成本底图后要再跑一次，接着跑 tools/topo-retopo.js 与 tools/overview-geo.mjs europe。
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const dir = process.argv[2];
 if (!dir) { console.error('用法：node tools/units-europe.js <数据目录>'); process.exit(1); }
