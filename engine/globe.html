@@ -255,7 +255,8 @@ const CONF = {{CONF}};
     }; img.src = src; };
     // 全球贴图宽高都是 2 的幂，经度方向可以环绕
     load(worldSrc, 0, 'hasW', true); load(hiSrc, 1, 'hasH', false);
-    gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    // 单层全屏四边形画到清空的画布上，不需要混合：直接输出非预乘的 RGBA，由浏览器与下层合成一次（开混合会把透明度平方）
+    gl.disable(gl.BLEND);
     return () => {
       gl.viewport(0, 0, canvas.width, canvas.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
       if (!ready) return;
