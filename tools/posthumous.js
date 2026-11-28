@@ -22,7 +22,9 @@ for (const id of require('./books.js')()) {
 }
 for (const id of ids) {
   const c = {}; vm.createContext(c);
-  vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`, 'utf8') + ';this.X={EVENTS,PEOPLE_RAW}', c);
+  vm.runInContext(fs.readFileSync(`${R}/books/${id}/book.js`, 'utf8') + ';this.X={EVENTS,PEOPLE_RAW,BOOK}', c);
+  // 公历卷（calendar.ganzhi === false）不按夏历折算，不放过次年一二月
+  const lunar = !(c.X.BOOK.calendar && c.X.BOOK.calendar.ganzhi === false);
   const life = new Map(c.X.PEOPLE_RAW.map(p => [p[0], (pc.PC(p[0], id) || [])[1] || p[3]])), out = [];
   // 标题写着此人之死的事件（tools/death.js）：当场死难的不应标身后；同年此后的事件里再出现应标身后
   const tE = e => e.y + (e.mo - 1) / 12, diedAt = new Map();
@@ -39,7 +41,7 @@ for (const id of ids) {
     if (d == null) continue;
     if (e.src) continue; // 演义情节等虚构事件不按史实生卒检查
     // 夏历十一、十二月折成公历次年一二月的，卒年可能等于事件的上一年；写了 cal 的只在 cal 是十一、十二月时才放过
-    const lunarTail = e.mo < 3 && (!e.cal || /^[^（]*十[一二]月/.test(e.cal));
+    const lunarTail = lunar && e.mo < 3 && (!e.cal || /^[^（]*十[一二]月/.test(e.cal));
     const gone = d < e.y && !(d === e.y - 1 && lunarTail);
     if (gone && !post) out.push(`  ${e.y} ${e.t}：${w}（卒 ${d}）未标身后`);
     if (post && d > e.y) out.push(`  ${e.y} ${e.t}：${w}（卒 ${d}）标了身后但当时在世`);
