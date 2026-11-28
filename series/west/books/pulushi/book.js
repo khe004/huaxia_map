@@ -45,7 +45,7 @@ const BOOK = {
     },
   },
   tags: { 后世文献: '后世文献', 格列佛游记: '格列佛游记', 哲学通信: '哲学通信', 人性论: '人性论', 汤姆琼斯: '汤姆琼斯', 致富之道: '致富之道', 老实人: '老实人', 社会契约论: '社会契约论' },
-  quoteLabel: '原文（英译）',
+  quoteLabel: '原文（英语原著或英译）',
   linesToggle: '罗马大道',
   ziLabel: '',
   peopleGroups: [['franks', '法兰西'], ['anjou', '不列颠与北美'], ['eastfr', '神圣罗马帝国与奥地利'], ['prussia', '普鲁士'], ['castile', '西班牙'], ['svear', '瑞典'], ['poland', '波兰与萨克森'], ['vladimir', '俄罗斯'], ['ottomans', '奥斯曼']],

@@ -44,7 +44,7 @@ const BOOK = {
     },
   },
   tags: { 后世文献: '后世文献', 政府论: '政府论', 人类理解论: '人类理解论', 光学: '光学', 神正论: '神正论', 批评论: '批评论', 鲁滨孙漂流记: '鲁滨孙漂流记' },
-  quoteLabel: '原文（英译）',
+  quoteLabel: '原文（英语原著或英译）',
   linesToggle: '罗马大道',
   ziLabel: '',
   peopleGroups: [['franks', '法兰西'], ['anjou', '英格兰与不列颠'], ['eastfr', '神圣罗马帝国与奥地利'], ['castile', '西班牙'], ['svear', '瑞典'], ['poland', '波兰与萨克森'], ['vladimir', '俄罗斯'], ['ottomans', '奥斯曼'], ['papacy', '教廷']],
