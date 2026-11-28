@@ -142,7 +142,7 @@ const SEEDS_RAW = `
 东欧|维亚季奇|37.0,54.2  东欧|罗斯托夫|39.6,57.2  东欧|梁赞|40.3,53.8
 x|爱尔兰|-6.7,54.6
 `;
-const UNIT_OVERRIDES = { 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔' };
+const UNIT_OVERRIDES = { Wien: '诺里库姆', "Wiener Umland/Südteil": '诺里库姆', "Wiener Umland/Nordteil": '诺里库姆', Waldviertel: '诺里库姆', Weinviertel: '诺里库姆', "Prešovský kraj": '夸狄', "Košický kraj": '夸狄', Transcarpathia: '夸狄', Katowicki: '西利西亚', Tyski: '西利西亚', Rybnicki: '西利西亚', Gliwicki: '西利西亚', Bytomski: '西利西亚', "Klaipėdos apskritis": '普鲁士', 'As Suways': '培琉喜阿姆', Braunschweig: '日耳曼', Mittelfranken: '赫西尼亚', 'Severnobačka oblast': '蒂萨平原', 'Reggio di Calabria': '布鲁提乌姆', 'Peiraias, Nisoi': '阿提卡', Glarus: '赫尔维蒂', Thurgau: '赫尔维蒂', Khanaqin: '阿迪亚贝尼', 'Al-Hatra': '幼发拉底中游', 'Al-Rifai': '巴比伦尼亚', 'Al-Rutba': '帕尔米拉', Sinjar: '幼发拉底中游', 'Timiş': '蒂萨平原', 'Severnobanatska oblast': '蒂萨平原', Münster: '北海日耳曼', 'Zuidwest-Drenthe': '北海日耳曼', 'Zuidoost-Friesland': '北海日耳曼', 'Noord-Friesland': '北海日耳曼', Mittelburgenland: '潘诺尼亚', 'Komárom-Esztergom': '潘诺尼亚', 'Haut-Rhin': '雷米', 'Bas-Rhin': '雷米', 'Moselle': '雷米', 'Dolj': '盖塔', 'Olt': '盖塔', 'Mehedinţi': '盖塔', 'Gorj': '盖塔', 'Vâlcea': '盖塔' };
 
 // 疆域变迁：[年, 月, [[势力, '种子名 / @分组 / #势力 / *'], ...]]
 const SNAPSHOTS = [
@@ -767,7 +767,7 @@ const EVENTS = [
   { y: 1663, mo: 9, t: '奥斯曼人攻下新扎姆基', p: '新扎姆基', m: '今斯洛伐克尼特拉州', ll: [18.16, 47.99], k: 'war', refs: ['后世文献'],
     d: '大维齐尔柯普吕吕·法佐尔·艾哈迈德帕夏亲率大军进攻匈牙利，九月攻下哈布斯堡在多瑙河以北的要塞新扎姆基（埃尔谢克新堡），奥斯曼的骑兵一直劫掠到摩拉维亚。',
     who: ['柯普吕吕·法佐尔·艾哈迈德帕夏'] },
-  { y: 1664, mo: 5, t: '《伪君子》在凡尔赛上演', p: '凡尔赛', m: '今法国伊夫林省', ll: [2.12, 48.8], k: 'cul', refs: ['后世文献'],
+  { y: 1664, mo: 5, t: '《伪君子》在凡尔赛上演', p: '凡尔赛', m: '今法国伊夫林省', ll: [2.12, 48.8], k: 'cul', refs: ['伪君子', '后世文献'],
     d: '五月，路易十四在凡尔赛举行“魔法岛之乐”的游园盛会，演员兼剧作家莫里哀在会上演出了喜剧《伪君子》的前三幕，讽刺一个假装虔诚、骗取财产的人。巴黎的教会人士大为愤怒，国王只得禁止公演，莫里哀改了两次，1669 年才获准公演。',
     who: ['莫里哀', '路易十四'] },
   { y: 1664, mo: 8, t: '圣哥达之战与沃什堡和约', p: '圣哥达', m: '今匈牙利沃什州', ll: [16.27, 46.95], k: 'war', refs: ['后世文献'],
